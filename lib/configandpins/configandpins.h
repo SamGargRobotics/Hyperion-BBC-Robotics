@@ -69,7 +69,7 @@ bool angleIsInside(float angleBoundCounterClockwise, float angleBoundClockwise, 
 #define PID_d 1
 #define PID_abs_max 1
 
-#define EXPO_MIN_VAL 90
+#define EXPO_MIN_VAL 60
 #define ORBIT_MULTIPLIER 2.71828182846
 
 #endif
