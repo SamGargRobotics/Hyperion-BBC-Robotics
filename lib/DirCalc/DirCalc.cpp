@@ -82,6 +82,7 @@ float DirectionCalc::trigOrbit(float ballStr, float ballDir) {
 
 float DirectionCalc::exponentialOrbit(float ballDir) {
     // Standard exponential orbit, to be initially used for debugging and simpler versions of orbitting.
+    // Find our exponential graph here: https://www.desmos.com/calculator/mjjqu8ujy0
     if(ballDir > 180) {
         return ballDir - min(0.04*pow(ORBIT_MULTIPLIER, 4.5*ballDir), EXPO_MIN_VAL);
     } else {
