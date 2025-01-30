@@ -11,6 +11,11 @@ import sensor
 import time
 import image
 from math import *
+from pyb import UART
+
+# Setting up UART
+uart = UART(3, 115200, timeout_char=100) #(only UART 1 or 3 available,baud rate,delay b/w frames)
+uart.init(115200, bits=8, parity=None, stop=1, timeout_char=10)
 
 # Vars
 YellowIsAttack = False

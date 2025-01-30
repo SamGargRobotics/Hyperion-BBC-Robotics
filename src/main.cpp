@@ -27,6 +27,7 @@ void setup() {
     while(!compass.begin()) {
         Serial.println("bno ded ;(");
     }
+    Serial2.begin(115200); // Camera Serial Communication
 }
 
 void loop() {
