@@ -45,11 +45,11 @@ def YellowFind():
         #print("X Dist: "+str(XZero-blob.cx()))
         XDIST = XZero-blob.cx()
         if(XDIST < 0):
-            XDIST*=-1
+            #XDIST*=-1
         #print("Y Dist: "+str(YZero-blob.cy()))
         YDIST = YZero-blob.cy()
         if(YDIST < 0):
-            YDIST*=-1
+            #YDIST*=-1
         HDIST = sqrt((XDIST*XDIST)+(YDIST*YDIST))
         return [XDIST,YDIST,HDIST]
         #img.draw_string(0,0,"Blue Len: "+str(XDIST),13,color=(0,0,255))
@@ -72,11 +72,11 @@ def BlueFind():
         #print("X Dist: "+str(XZero-blob.cx()))
         XDIST = XZero-blob.cx()
         if(XDIST < 0):
-            XDIST*=-1
+            #XDIST*=-1
         #print("Y Dist: "+str(YZero-blob.cy()))
         YDIST = YZero-blob.cy()
         if(YDIST < 0):
-            YDIST*=-1
+            #YDIST*=-1
         HDIST = sqrt((XDIST*XDIST)+(YDIST*YDIST))
         return [XDIST,YDIST,HDIST]
         #img.draw_string(0,0,"Blue Len: "+str(XDIST),13,color=(0,0,255))
