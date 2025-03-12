@@ -1,5 +1,7 @@
 #include "DirCalc.h"
 
+// make a way to scale the thingy
+
 float DirectionCalc::trigOrbit(float ballStr, float ballDir) {
     // Check for any exceptions to the orbit (that wont work with the regular calculations)
     if(ballDir >= 1 && ballDir <= 44) {
@@ -18,7 +20,7 @@ float DirectionCalc::trigOrbit(float ballStr, float ballDir) {
         moveAngle = 90 - secondaryAngle;
     } else if(ballDir >= 91 && ballDir <= 134) {
         // Calculating for the case that the ball is between 91 to 134 degrees relative to the robot (in direction)
-        mainAngle = ballDir - 90;
+        mainAngle = ballDir - 90; //!! Make more efficient way of calculaitng mainAngle
         lateralMoveDis = ballDis*cosf(mainAngle);
         verticalMoveDis = ballDis*sinf(mainAngle);
         secondaryAngle = atanf(increaseVerticalDis(verticalMoveDis)/lateralMoveDis);
@@ -82,7 +84,7 @@ float DirectionCalc::trigOrbit(float ballStr, float ballDir) {
 
 float DirectionCalc::exponentialOrbit(float ballDir) {
     // Standard exponential orbit, to be initially used for debugging and simpler versions of orbitting.
-    // Find our exponential graph here: https://www.desmos.com/calculator/mjjqu8ujy0
+    // Find our exponentia  l graph here: https://www.desmos.com/calculator/mjjqu8ujy0
     if(ballDir > 180) {
         return ballDir - min(0.04*pow(ORBIT_MULTIPLIER, 4.5*ballDir), EXPO_MIN_VAL);
     } else {

@@ -72,4 +72,6 @@ bool angleIsInside(float angleBoundCounterClockwise, float angleBoundClockwise, 
 #define EXPO_MIN_VAL 60
 #define ORBIT_MULTIPLIER 2.71828182846
 
+#define BAT_READ_PIN 38
+
 #endif

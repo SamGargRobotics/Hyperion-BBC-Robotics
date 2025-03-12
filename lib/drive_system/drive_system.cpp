@@ -11,16 +11,28 @@ void Drive_system::init() {
     }
 }
 
-void Drive_system::run(float speed, float angle, float heading, float correction) {
-    // Complete movement calculations and assign them to the 'values' list to write to the motors for later.
-    for(uint8_t i = 0; i < MOTORNUM; i++) {
-        values[i] = sinf(DEG_TO_RAD * (motorAngles[i] - angle)) * speed + correction;
+void Drive_system::run(float speed, float angle, float heading, float correction, float batteryLevel) {
+    // If batteryLevel is 0 or less, stop all motors
+    if (batteryLevel <= 0) {
+        scaleFactor = 0.0f;  // Completely stop all motors
+    } else if (batteryLevel > 100) {
+        scaleFactor = 1.0f;  // Cap scaling at 100%
+    } else {
+        scaleFactor = batteryLevel / 100.0f;  // Scale normally
     }
 
-    // Use the calculations saved in the list 'values' to write to the motors (pwm, analog), (inA/inB, digitally).
-    for(uint8_t i = 0; i < MOTORNUM; i++) {
+    // Calculate motor values with scaling
+    for (uint8_t i = 0; i < MOTORNUM; i++) {
+        values[i] = (sinf(DEG_TO_RAD * (motorAngles[i] - angle)) * speed + correction) * scaleFactor;
+
+        // If a value is negative, stop that motor
+        if (values[i] < 0) {
+            values[i] = 0;
+        }
+
+        // Apply values to motors
         analogWrite(motorPWM[i], values[i]);
-        digitalWrite(motorInA[i], (values[i]) > 0);
-        digitalWrite(motorInB[i], (values[i]) < 0);
+        digitalWrite(motorInA[i], values[i] > 0);
+        digitalWrite(motorInB[i], values[i] < 0);
     }
 }
