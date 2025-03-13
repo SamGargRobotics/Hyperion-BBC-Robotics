@@ -1,3 +1,10 @@
+/*!
+ * @file tssp_system.cpp
+ * 
+ * @mainpage Multiple TSSP58038 Sensor's
+ * 
+ * This is a library for multiple TSSP50838 Sensor
+*/
 #include "tssp_system.h"
 #include <configandpins.h>
 
@@ -7,6 +14,9 @@ void Tssp_system::init() {
     }
 }
 
+/*!
+ * @brief Reads the TSSP50838's (multiple at once)
+*/
 void Tssp_system::read() {
     // Read the tssp itself
     for(int y = 0; y < 255; y++) {
@@ -27,6 +37,17 @@ void Tssp_system::read() {
             if(readTssp[i] > largestReading) {
                 largestReading = readTssp[i];
                 highestTssp = i;
+            }
+        }
+    }
+
+    for (uint8_t i = 0; i < TSSPNUM; i++) {
+        if(readingTsspIgnores[i] == 0) {
+            if(readTssp == 0) {
+                detectingBall = false;
+            } else {
+                detectingBall = true;
+                break;
             }
         }
     }

@@ -1,15 +1,27 @@
+/*!
+ * @file tssp_system.h
+ * 
+ * This is a library for the TSSP58038 to read multiple TSSP58038's at once.
+ * 
+ * S.Garg (Brisbane Boys' College)
+*/
+
 #ifndef TSSP_SYSTEM_H
 #define TSSP_SYSTEM_H
 
 #include <Arduino.h>
 #include <configandpins.h>
 
+/*!
+ * @brief Class that stores state and functions for ineracting with multiple TSSP58038's at once.
+*/
 class Tssp_system {
 public:
     Tssp_system() {};
     void init();
     void read();
     int deviationReading(int midTssp);
+    bool detectingBall = true;
     int ballStr = 0;
     int ballDir = 0;
     int highestTssp = 0;
