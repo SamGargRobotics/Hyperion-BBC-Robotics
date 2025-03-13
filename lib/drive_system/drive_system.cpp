@@ -11,7 +11,7 @@ void Drive_system::init() {
     }
 }
 
-void Drive_system::run(float speed, float angle, float heading, float correction, float batteryLevel) {
+void Drive_system::run(float speed, float angle, float heading, float correction, float batteryLevel, bool moveToggle) {
     // If batteryLevel is 0 or less, stop all motors
     if (batteryLevel <= 0) {
         scaleFactor = 0.0f;  // Completely stop all motors
@@ -31,8 +31,10 @@ void Drive_system::run(float speed, float angle, float heading, float correction
         }
 
         // Apply values to motors
-        analogWrite(motorPWM[i], values[i]);
-        digitalWrite(motorInA[i], values[i] > 0);
-        digitalWrite(motorInB[i], values[i] < 0);
+        if(moveToggle) {
+            analogWrite(motorPWM[i], values[i]);
+            digitalWrite(motorInA[i], values[i] > 0);
+            digitalWrite(motorInB[i], values[i] < 0);
+        }
     }
 }

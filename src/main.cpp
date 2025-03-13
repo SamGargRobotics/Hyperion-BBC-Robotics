@@ -42,5 +42,5 @@ void loop() {
     moveDirection = dirCalc.trigOrbit(tssp.ballStr, tssp.ballDir);
     moveSpeed = dirCalc.calcSpeed(tssp.ballStr);
 
-    motors.run(moveSpeed, moveDirection, 0, correction, batteryCurrentLevel);
+    motors.run(moveSpeed, moveDirection, 0, correction, batteryCurrentLevel, true); //change tssp system so that it also outputs if all tssps read 0 (nothing on field); modify move toggle
 }

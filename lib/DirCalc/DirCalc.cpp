@@ -1,7 +1,5 @@
 #include "DirCalc.h"
 
-// make a way to scale the thingy
-
 float DirectionCalc::trigOrbit(float ballStr, float ballDir) {
     // Check for any exceptions to the orbit (that wont work with the regular calculations)
     if(ballDir >= 1 && ballDir <= 44) {
@@ -84,13 +82,54 @@ float DirectionCalc::trigOrbit(float ballStr, float ballDir) {
 
 float DirectionCalc::exponentialOrbit(float ballDir) {
     // Standard exponential orbit, to be initially used for debugging and simpler versions of orbitting.
-    // Find our exponentia  l graph here: https://www.desmos.com/calculator/mjjqu8ujy0
+    // Find our exponential graph here: https://www.desmos.com/calculator/mjjqu8ujy0
     if(ballDir > 180) {
         return ballDir - min(0.04*pow(ORBIT_MULTIPLIER, 4.5*ballDir), EXPO_MIN_VAL);
     } else {
         return ballDir + min(0.04*pow(ORBIT_MULTIPLIER, 4.5*ballDir), EXPO_MIN_VAL);
     }
 }
+
+int DirectionCalc::defenderMovement(float goalDir, float goalDis, float ballDir) {
+    // Determine forward or backward movement relative to the semi-circle
+    if (goalDis > GOAL_SEMI_CIRCLE_RADIUS_CM) {
+        goalDisRelativeDirection = -1; // Move Backwards
+    } else if (goalDis < GOAL_SEMI_CIRCLE_RADIUS_CM) {
+        goalDisRelativeDirection = 1; // Move Forwards
+    } else {
+        goalDisRelativeDirection = 0; // Stay Still
+    }
+
+    // Calculate rotation offset and constrain it
+    defenderRotationOffset = 90 - goalDir;
+    defenderRotationOffset = constrain(defenderRotationOffset, -90, 90);
+
+    // Determine left or right movement based on ball direction
+    if (ballDir < 180 && ballDir >= 1) {
+        ballRobotRelativeDirection = -1; // Move Right
+    } else if (ballDir > 180) {
+        ballRobotRelativeDirection = 1; // Move Left
+    } else {
+        ballRobotRelativeDirection = 0; // Stay Still
+    }
+
+    // Determine if the defender should move
+    defenderMoving = (goalDisRelativeDirection == 0 && ballRobotRelativeDirection == 0);
+
+    // Return movement angle based on direction
+    if (goalDisRelativeDirection == -1 && ballRobotRelativeDirection == -1) {
+        return 135;
+    } else if (goalDisRelativeDirection == -1 && ballRobotRelativeDirection == 1) {
+        return 225;
+    } else if (goalDisRelativeDirection == 1 && ballRobotRelativeDirection == -1) {
+        return 45;
+    } else if (goalDisRelativeDirection == 1 && ballRobotRelativeDirection == 1) {
+        return 315;
+    } else {
+        return 0;
+    }
+}
+
 
 float DirectionCalc::calcSpeed(float ballStr) { return -1*BALL_STRENGTH_MULTIPLIER*ballStr+255; } // Calculate movement speed based on the distance of the ball. The further away the ball is, the faster the robot must move. The closer the robot is, the slower it is. However, if the ball is directly infront of the robot, it will travel at full speed.
 float DirectionCalc::ballDisScale(float ballStr) { return ballStr*BALL_DIS_MULTIPLIER; } //TUNE THE MULTIPLCATION BY THE CONSTANT

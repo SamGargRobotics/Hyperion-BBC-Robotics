@@ -74,4 +74,6 @@ bool angleIsInside(float angleBoundCounterClockwise, float angleBoundClockwise, 
 
 #define BAT_READ_PIN 38
 
+#define GOAL_SEMI_CIRCLE_RADIUS_CM 10
+
 #endif

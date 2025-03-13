@@ -8,7 +8,7 @@ class Drive_system {
 public:
     Drive_system() {};
     void init();
-    void run(float speed, float angle, float heading, float correction, float batteryLevel);
+    void run(float speed, float angle, float heading, float correction, float batteryLevel, bool moveToggle);
 private: 
     int motorInA[MOTORNUM] = {FRINA, BRINA, BLINA, FLINA};
     int motorInB[MOTORNUM] = {FRINB, BRINB, BLINB, FLINB};
