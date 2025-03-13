@@ -76,4 +76,10 @@ bool angleIsInside(float angleBoundCounterClockwise, float angleBoundClockwise, 
 
 #define GOAL_SEMI_CIRCLE_RADIUS_CM 10
 
+#define BLUETOOTH_SERIAL Serial1
+#define BLUETOOTH_BAUD 9600
+#define BLUETOOTH_PACKET_SIZE 6
+#define BLUETOOTH_START_BITE 254
+#define BLUETOOTH_NO_DATA 255   
+
 #endif
