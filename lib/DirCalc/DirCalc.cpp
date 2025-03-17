@@ -1,3 +1,10 @@
+/*!
+ * @file DirCalc.cpp
+ * 
+ * @mainpage Direction Calculations for Robot
+ * 
+ * This is a library for direction calculations within the robot's code.
+*/
 #include "DirCalc.h"
 
 float DirectionCalc::trigOrbit(float ballStr, float ballDir) {
@@ -89,46 +96,71 @@ float DirectionCalc::exponentialOrbit(float ballDir) {
         return ballDir + min(0.04*pow(ORBIT_MULTIPLIER, 4.5*ballDir), EXPO_MIN_VAL);
     }
 }
-
+/*!
+ * @brief Main code for the robot that determines it's current positioning and 
+ *        the direction it needs to move in
+*/
 int DirectionCalc::defenderMovement(float goalDir, float goalDis, float ballDir) {
     // Determine forward or backward movement relative to the semi-circle
     if (goalDis > GOAL_SEMI_CIRCLE_RADIUS_CM) {
-        goalDisRelativeDirection = -1; // Move Backwards
+        goalDisRelativeDirection = -1;
+        goalDisCalculatedRelativeDirection = 180; // Move Backwards
     } else if (goalDis < GOAL_SEMI_CIRCLE_RADIUS_CM) {
-        goalDisRelativeDirection = 1; // Move Forwards
+        goalDisRelativeDirection = 1;
+        goalDisCalculatedRelativeDirection = 0;  // Move Forwards
     } else {
         goalDisRelativeDirection = 0; // Stay Still
     }
 
-    // Calculate rotation offset and constrain it
-    defenderRotationOffset = 90 - goalDir;
-    defenderRotationOffset = constrain(defenderRotationOffset, -90, 90);
-
-    // Determine left or right movement based on ball direction
-    if (ballDir < 180 && ballDir >= 1) {
-        ballRobotRelativeDirection = -1; // Move Right
-    } else if (ballDir > 180) {
-        ballRobotRelativeDirection = 1; // Move Left
-    } else {
-        ballRobotRelativeDirection = 0; // Stay Still
-    }
-
     // Determine if the defender should move
     defenderMoving = (goalDisRelativeDirection == 0 && ballRobotRelativeDirection == 0);
-
+    
     // Return movement angle based on direction
-    if (goalDisRelativeDirection == -1 && ballRobotRelativeDirection == -1) {
-        return 135;
-    } else if (goalDisRelativeDirection == -1 && ballRobotRelativeDirection == 1) {
-        return 225;
-    } else if (goalDisRelativeDirection == 1 && ballRobotRelativeDirection == -1) {
-        return 45;
-    } else if (goalDisRelativeDirection == 1 && ballRobotRelativeDirection == 1) {
-        return 315;
+    if(goalDisCalculatedRelativeDirection != -1) {
+        defenderMoving = true;
+        return findMiddleAngle(ballDir, goalDisCalculatedRelativeDirection);
     } else {
-        return 0;
+        defenderMoving = false;
+        return -1;
     }
 }
+
+/*!
+ * @brief Calculates the rotation of the defender in accordance to the ball 
+ *        direction
+*/
+void DirectionCalc::defenderRotCalc(float goalDir) {
+    defenderRotationOffset = 90 - goalDir;
+    defenderRotationOffset = constrain(defenderRotationOffset, -90, 90);
+}
+
+/*!
+ * @brief Finds the middle of two angles, used in the defender code to find the
+ *        middle value between goal and ball direction.
+*/
+double DirectionCalc::findMiddleAngle(double angle1, double angle2) {
+    // Convert angles to radians
+    double angle1_rad = angle1 * M_PI / 180.0;
+    double angle2_rad = angle2 * M_PI / 180.0;
+
+    // Calculate the Cartesian coordinates (x, y)
+    double x = cos(angle1_rad) + cos(angle2_rad);
+    double y = sin(angle1_rad) + sin(angle2_rad);
+
+    // Calculate the middle angle using atan2
+    double middle_angle_rad = atan2(y, x);
+
+    // Convert the result back to degrees
+    double middle_angle_deg = middle_angle_rad * 180.0 / M_PI;
+
+    // Normalize the angle to be between 0 and 360 degrees
+    if (middle_angle_deg < 0) {
+        middle_angle_deg += 360.0;
+    }
+
+    return middle_angle_deg;
+}
+
 
 
 float DirectionCalc::calcSpeed(float ballStr) { return -1*BALL_STRENGTH_MULTIPLIER*ballStr+255; } // Calculate movement speed based on the distance of the ball. The further away the ball is, the faster the robot must move. The closer the robot is, the slower it is. However, if the ball is directly infront of the robot, it will travel at full speed.

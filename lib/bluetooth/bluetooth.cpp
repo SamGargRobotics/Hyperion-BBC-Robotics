@@ -16,3 +16,56 @@ void Bluetooth::init() {
     last_received_time = micros();
     last_sent_time = micros();
 }
+
+/*!
+ * @brief Main controlling function, determines when the HC-05 interacts with 
+ *        other modules.
+*/
+void Bluetooth::update(float batLevel, float ballDir, float ballDis) {
+    unsigned long current_time = micros();
+    if(current_time - last_sent_time > 250000) {
+        send(batLevel, ballDir, ballDis);
+    }
+    read_data = read();
+    if(read_data) {
+        last_received_time = micros();
+    }
+    current_time = micros();
+    connection = current_time - last_received_time > 2000000 ? false : true;
+}
+
+/*!
+ * @brief If the serial has more than one full packet, it attempts to read the bluetooth module.
+*/
+bool Bluetooth::read() {
+    // See if serial has more than one full packet
+    while(BLUETOOTH_SERIAL.available() >= BLUETOOTH_PACKET_SIZE) {
+        // Checks if the serial has the associatde starting BYTE
+        if(BLUETOOTH_SERIAL.read() == BLUETOOTH_START_BYTE) {
+            for(int i = 0; i < BLUETOOTH_PACKET_SIZE - 1; i++) {
+                // Reads information sent on the serial
+                bluetoothBuffer[i] = BLUETOOTH_SERIAL.read();
+            }
+            // Assigned associated public variables with information read from the serial
+            otherRobotBallLocation[0] = (bluetoothBuffer[0] == BLUETOOTH_NO_DATA ? -1 : bluetoothBuffer[0]);
+            otherRobotBallLocation[1] = (bluetoothBuffer[0] == BLUETOOTH_NO_DATA ? -1 : bluetoothBuffer[1]);
+            otherRobotBatteryLevel = (bluetoothBuffer[2] == BLUETOOTH_NO_DATA ? -1 : bluetoothBuffer[2]);
+            // Returns true if the data from the serial was read.
+            return true;
+        }
+    }
+    // Returns false if the data was not read at all.
+    return false;
+}
+
+/*!
+ * @brief Writes data to the bluetooth module for other bluetooth devices to
+ *        read off (other HC-05's)
+*/
+void Bluetooth::send(float batLevel, float ballDir, float ballDis) {
+    BLUETOOTH_SERIAL.write(BLUETOOTH_START_BYTE);
+    BLUETOOTH_SERIAL.write(int(ballDir));
+    BLUETOOTH_SERIAL.write(int(ballDis));
+    BLUETOOTH_SERIAL.write(int(batLevel));
+    last_sent_time = micros();
+}
