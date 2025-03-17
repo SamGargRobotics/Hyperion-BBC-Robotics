@@ -20,49 +20,51 @@ int8_t findSign(float value);
 bool angleIsInside(float angleBoundCounterClockwise, float angleBoundClockwise, float angleCheck);
 
 #define MOTORNUM 4
-#define FRPWM 0
-#define FRINA 0
-#define FRINB 0
-#define FLPWM 0
-#define FLINA 0
-#define FLINB 0
-#define BRPWM 0
-#define BRINA 0
-#define BRINB 0
-#define BLPWM 0
-#define BLINA 0
-#define BLINB 0
+#define FRPWM 25
+#define FRINA 27
+#define FRINB 26
+#define FLPWM 11
+#define FLINA 24
+#define FLINB 12
+#define BRPWM 28
+#define BRINA 30
+#define BRINB 29
+#define BLPWM 8
+#define BLINA 10
+#define BLINB 9
 
 #define BALL_DIS_MULTIPLIER 1
 #define TSSPNUM 16
 #define TSSP_DEVIATION_CONSTANT 0
 #define BALL_STRENGTH_MULTIPLIER 1
-#define TSSP1 0
-#define TSSP2 0
-#define TSSP3 0
-#define TSSP4 0
-#define TSSP5 0
-#define TSSP6 0
-#define TSSP6 0
-#define TSSP7 0
-#define TSSP8 0
-#define TSSP9 0
-#define TSSP10 0
-#define TSSP11 0
-#define TSSP12 0
-#define TSSP13 0
-#define TSSP14 0
-#define TSSP15 0
-#define TSSP16 0
+#define TSSP1 16
+#define TSSP2 13
+#define TSSP3 41
+#define TSSP4 40
+#define TSSP5 39
+#define TSSP6 37
+#define TSSP7 36
+#define TSSP8 33
+#define TSSP9 32
+#define TSSP10 7
+#define TSSP11 6
+#define TSSP12 5
+#define TSSP13 4
+#define TSSP14 3
+#define TSSP15 2
+#define TSSP16 17
 
-#define NUM_LS 1
-#define NUMBER_MUX 1
+#define NUM_LS 32
+#define NUMBER_MUX 2
 #define LS_OFFSET 1
-#define LIGHT_PIN 1
-#define LIGHT_PIN_DIGI_0 1
-#define LIGHT_PIN_DIGI_1 1
-#define LIGHT_PIN_DIGI_2 1
-#define LIGHT_PIN_DIGI_3 1
+#define LIGHT_PIN 21
+#define LIGHT_PIN2 20
+#define LIGHT_PIN_DIGI_0 23
+#define LIGHT_PIN_DIGI_1 22
+#define LIGHT_PIN_DIGI_2 15
+#define LIGHT_PIN_DIGI_3 14
+
+#define BAT_READ_PIN 38
 
 #define PID_p 1
 #define PID_i 1
@@ -71,8 +73,6 @@ bool angleIsInside(float angleBoundCounterClockwise, float angleBoundClockwise, 
 
 #define EXPO_MIN_VAL 60
 #define ORBIT_MULTIPLIER 2.71828182846
-
-#define BAT_READ_PIN 38
 
 #define GOAL_SEMI_CIRCLE_RADIUS_CM 10
 
