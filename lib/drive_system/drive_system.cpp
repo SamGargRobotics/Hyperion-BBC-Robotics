@@ -1,9 +1,19 @@
+/*!
+ * @file drive_system.cpp
+ * 
+ * @mainpage Direction : 4 motor speeds.
+ * 
+ * This is a library to calculate the speed of 4 motors based on the direction
+ * given.
+*/
 #include "drive_system.h"
 #include <configandpins.h>
 #include <math.h>
 
+/*!
+ * @brief Initializes the motors for use.
+*/
 void Drive_system::init() {
-    // Initialize the motor pins so that you may send data to them.
     for(uint8_t i = 0; i < MOTORNUM; i++) {
         pinMode(motorInA[i], OUTPUT);
         pinMode(motorInB[i], OUTPUT);
@@ -11,6 +21,17 @@ void Drive_system::init() {
     }
 }
 
+/*!
+ * @brief Calculates the motor speed and writes to each motor accordingly.
+ * 
+ * @param speed Scaled speed needed.
+ * @param angle Angle that the robot should move in.
+ * @param heading Heading of the robot relative to the field rather than the
+ *                robot direction.
+ * @param correction Rotation needed to ensure that the robot stays forward.
+ * @param batteryLevel Current battery level of the robot.
+ * @param moveToggle If the robot should move or not.
+*/
 void Drive_system::run(float speed, float angle, float heading, float correction, float batteryLevel, bool moveToggle) {
     // If batteryLevel is 0 or less, stop all motors
     if (batteryLevel <= 0) {

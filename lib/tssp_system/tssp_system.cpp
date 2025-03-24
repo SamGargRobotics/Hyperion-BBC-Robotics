@@ -69,6 +69,15 @@ void Tssp_system::read() {
     ballDir = (highestTssp-1)*30;
 }
 
+/*!
+ * @brief Approximates the exact angle of the ball based on readings from the
+ *        tssp higher and lower to the one reading the highest value.
+ * 
+ * @param midTssp Tssp that reads the highest value.
+ * 
+ * @return Offset value of the current direction that the main function is
+ *         reading.
+*/
 int Tssp_system::deviationReading(int midTssp) {
     // Take all necessary readings relative to the tssp with the highest reading (one above the tssp and one below the tssp)
     // First check that midTssp isn't of two other special cases, if not, assume that midTssp is of a normal case.

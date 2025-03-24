@@ -1,14 +1,28 @@
+/*!
+ * @file drive_system.h
+ * 
+ * This is a library that calculates the speed of the 4 motors based on a
+ * singular direction that the robot should move in.
+ * 
+ * S.Garg (Brisbane Boys' College)
+*/
 #ifndef DRIVE_SYSTEM_H
 #define DRIVE_SYSTEM_H
 
 #include <Arduino.h>
 #include <configandpins.h>
 
+/*!
+* @brief Class that stores state and functions for calculating the direction
+         relative to speed for 4 motors.
+*/
+
 class Drive_system {
 public:
     Drive_system() {};
     void init();
     void run(float speed, float angle, float heading, float correction, float batteryLevel, bool moveToggle);
+    bool attack = true;
 private: 
     int motorInA[MOTORNUM] = {FRINA, BRINA, BLINA, FLINA};
     int motorInB[MOTORNUM] = {FRINB, BRINB, BLINB, FLINB};

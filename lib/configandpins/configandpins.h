@@ -1,3 +1,12 @@
+/*!
+ * @file configandpins.h
+ * 
+ * This is a library used widely across most libraries as it contains
+ * customizable information all in one file.
+ * 
+ * S.Garg (Brisbane Boys' College)
+ * T.McCabe (Brisbane Boys' College)
+*/
 #ifndef CONFIGANDPINS_H
 #define CONFIGANDPINS_H
 

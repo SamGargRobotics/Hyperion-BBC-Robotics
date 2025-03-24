@@ -20,14 +20,18 @@ sensors_event_t rotation;
 BatRead batteryLevel;
 
 float correction = 0;
-float moveDirection = 0;
+float attackerMoveDirection = 0;
+float defenderMoveDirection = 0;
 float moveSpeed = 0;
 float batteryCurrentLevel = 0;
+float goalDir = 0;
+float goalDis = 0;
 
 void setup() {
     Serial.begin(9600);
     tssp.init();
     motors.init();
+    bluetooth.init();
     batteryLevel.init();
     compass.setExtCrystalUse(true);
     while(!compass.begin()) {
@@ -39,9 +43,13 @@ void setup() {
 void loop() {
     compass.getEvent(&rotation); //(rotation.orientation.x)
     tssp.read();
+    batteryCurrentLevel = batteryLevel.read();
     correction = compass_correct.update(rotation.orientation.x > 180 ? rotation.orientation.x - 360 : rotation.orientation.x, 0);
-    float batteryCurrentLevel = batteryLevel.read();
-    moveDirection = dirCalc.trigOrbit(tssp.ballStr, tssp.ballDir);
+
+    attackerMoveDirection = dirCalc.trigOrbit(tssp.ballStr, tssp.ballDir);
+    defenderMoveDirection = dirCalc.defenderMovement(goalDir, goalDis, tssp.ballDir);
     moveSpeed = dirCalc.calcSpeed(tssp.ballStr);
-    motors.run(moveSpeed, moveDirection, 0, correction, batteryCurrentLevel, tssp.detectingBall);
+
+
+    motors.run(moveSpeed,(motors.attack?attackerMoveDirection:defenderMoveDirection), 0, correction, batteryCurrentLevel, tssp.detectingBall);
 }
