@@ -2,7 +2,7 @@
 #include <configandpins.h>
 #include <drive_system.h>
 #include <tssp_system.h>
-#include <light_system.h>
+#include <LSLB.h>
 #include <DirCalc.h>
 #include <PID.h>
 #include <Adafruit_Sensor.h>
@@ -13,6 +13,7 @@
 Drive_system motors;
 Bluetooth bluetooth;
 Tssp_system tssp;
+LSystem ls;
 DirectionCalc dirCalc;
 bno::Adafruit_BNO055 compass;
 PID compass_correct(PID_p, PID_i, PID_d, PID_abs_max);

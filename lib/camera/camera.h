@@ -1,8 +1,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
-
+ 
 #include <Arduino.h>
-
+ 
 class Camera {
 public:
     Camera();
@@ -15,5 +15,5 @@ private:
     int goal_y;
     float angle_to_goal;
 }
-
-#endif
+ 
+#endifw
