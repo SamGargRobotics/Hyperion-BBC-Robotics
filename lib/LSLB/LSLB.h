@@ -25,6 +25,15 @@ private:
     int loopReadClamp(int value,int min, int max);
     const int whiteThreshold = 20;
     int pinList[4] = {LIGHT_PIN_DIGI_0, LIGHT_PIN_DIGI_1, LIGHT_PIN_DIGI_2, LIGHT_PIN_DIGI_3};
+    int maxIndex = 44;
+    int minIndex = 44;
+    int clustersList[3][2];
+    int clusterAmount = 0; //if three die
+    int clusterCenter[3] = {44, 44, 44};
+    int center;
+    int averageDirection = -1;
+    int loopTut = 0;
+    uint8_t loopCount = 0;
 };
  
 #endif

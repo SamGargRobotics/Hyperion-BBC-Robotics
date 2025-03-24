@@ -27,10 +27,12 @@ float moveSpeed = 0;
 float batteryCurrentLevel = 0;
 float goalDir = 0;
 float goalDis = 0;
+float lineDirection = 0;
 
 void setup() {
     Serial.begin(9600);
     tssp.init();
+    ls.init();
     motors.init();
     bluetooth.init();
     batteryLevel.init();
@@ -47,10 +49,9 @@ void loop() {
     batteryCurrentLevel = batteryLevel.read();
     correction = compass_correct.update(rotation.orientation.x > 180 ? rotation.orientation.x - 360 : rotation.orientation.x, 0);
 
+    lineDirection = ls.calculateLineDirection();
     attackerMoveDirection = dirCalc.trigOrbit(tssp.ballStr, tssp.ballDir);
     defenderMoveDirection = dirCalc.defenderMovement(goalDir, goalDis, tssp.ballDir);
     moveSpeed = dirCalc.calcSpeed(tssp.ballStr);
-
-
-    motors.run(moveSpeed,(motors.attack?attackerMoveDirection:defenderMoveDirection), 0, correction, batteryCurrentLevel, tssp.detectingBall);
+    motors.run(moveSpeed,(motors.attack?attackerMoveDirection:defenderMoveDirection), 0, correction, batteryCurrentLevel, lineDirection, motors.attack?(goalDir):(dirCalc.defenderRotationOffset), tssp.detectingBall);
 }

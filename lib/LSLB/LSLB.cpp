@@ -62,10 +62,6 @@ int LSystem::calculateLineDirection() {
             senorIsWhite[i] = 1;
         }
     }
-    int maxIndex = 44;
-    int minIndex = 44;
-    int clustersList[3][2];
-    int clusterAmount = 0; //if three die
     for(int j = 0; j < NUM_LS; j++) {
         if(senorIsWhite[j] == 1) {
             if(senorIsWhite[loopReadClamp(j-1,0,NUM_LS)] == 0) { //loopReadClamp(j-1,0,NUM_LS)
@@ -80,8 +76,6 @@ int LSystem::calculateLineDirection() {
             }
         }
     }
-    int clusterCenter[3] = {44, 44, 44};
-    int center;
     for(uint8_t c = 0; c < clusterAmount; c++) {
         minIndex = clustersList[c][0];
         maxIndex = clustersList[c][1];
@@ -96,9 +90,6 @@ int LSystem::calculateLineDirection() {
         }
         clusterCenter[c] = center;
     }
-    int averageDirection;
-    int loopTut = 0;
-    uint8_t loopCount = 0;
     for(uint8_t k = 0; k < 4; k++) {
         if(clusterCenter[k] != 44) {
             loopTut += clusterCenter[k];

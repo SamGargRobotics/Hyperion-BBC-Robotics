@@ -30,9 +30,11 @@ void Drive_system::init() {
  *                robot direction.
  * @param correction Rotation needed to ensure that the robot stays forward.
  * @param batteryLevel Current battery level of the robot.
+ * @param lineDir Direction of line (if there is not any line; -1)
+ * @param goalDir Direction of attacking/defending goal depending on strategic method.
  * @param moveToggle If the robot should move or not.
 */
-void Drive_system::run(float speed, float angle, float heading, float correction, float batteryLevel, bool moveToggle) {
+void Drive_system::run(float speed, float angle, float heading, float correction, float batteryLevel, float lineDir, float goalDir, bool moveToggle) {
     // If batteryLevel is 0 or less, stop all motors
     if (batteryLevel <= 0) {
         scaleFactor = 0.0f;  // Completely stop all motors
@@ -42,9 +44,15 @@ void Drive_system::run(float speed, float angle, float heading, float correction
         scaleFactor = batteryLevel / 100.0f;  // Scale normally
     }
 
+    if(lineDir == -1) {
+        moveCalcDir = angle;
+    } else {
+        moveCalcDir = lineDir;
+    }
+
     // Calculate motor values with scaling
     for (uint8_t i = 0; i < MOTORNUM; i++) {
-        values[i] = (sinf(DEG_TO_RAD * (motorAngles[i] - angle)) * speed + correction) * scaleFactor;
+        values[i] = (sinf(DEG_TO_RAD * (motorAngles[i] - moveCalcDir)) * speed + correction + goalDir) * scaleFactor;
 
         // If a value is negative, stop that motor
         if (values[i] < 0) {

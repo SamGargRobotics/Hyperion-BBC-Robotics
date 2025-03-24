@@ -21,7 +21,7 @@ class Drive_system {
 public:
     Drive_system() {};
     void init();
-    void run(float speed, float angle, float heading, float correction, float batteryLevel, bool moveToggle);
+    void run(float speed, float angle, float heading, float correction, float batteryLevel, float lineDir, float goalDir, bool moveToggle);
     bool attack = true;
 private: 
     int motorInA[MOTORNUM] = {FRINA, BRINA, BLINA, FLINA};
@@ -30,6 +30,7 @@ private:
     int motorAngles[MOTORNUM] = {45, 135, 225, 315};
     float values[MOTORNUM] = {0};
     float scaleFactor = 0;
+    float moveCalcDir = -1;
 };
 
 #endif
