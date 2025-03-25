@@ -159,6 +159,22 @@ void DirectionCalc::defenderRotCalc(float goalDir) {
 }
 
 /*!
+ * @brief Calculates whether local robot is attacking or defending.
+ * 
+ * @param externalBallDis The ball distance away from the other robot.
+ * @param ballDis The ball distance away from the local robot.
+ * 
+ * @return True if attack, false if defense.
+*/
+bool DirectionCalc::calculateStrategy(float externalBallDis, float ballDis) {
+    if(ballDis < externalBallDis) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*!
  * @brief Finds the middle of two angles, used in the defender code to find the
  *        middle value between goal and ball direction.
  * 

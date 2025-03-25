@@ -49,6 +49,7 @@ void loop() {
     batteryCurrentLevel = batteryLevel.read();
     correction = compass_correct.update(rotation.orientation.x > 180 ? rotation.orientation.x - 360 : rotation.orientation.x, 0);
 
+    move.attack = dirCalc.calculateStrategy();
     lineDirection = ls.calculateLineDirection();
     attackerMoveDirection = dirCalc.trigOrbit(tssp.ballStr, tssp.ballDir);
     defenderMoveDirection = dirCalc.defenderMovement(goalDir, goalDis, tssp.ballDir);
