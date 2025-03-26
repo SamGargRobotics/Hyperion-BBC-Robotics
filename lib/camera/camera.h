@@ -1,8 +1,19 @@
+/*!
+ * @file camera.h
+ * 
+ * This is a library to read and manipulate the OPENMV HC-plus-R3
+ * 
+ * S.Garg (Brisbane Boys' College)
+*/
 #ifndef CAMERA_H
 #define CAMERA_H
  
 #include <Arduino.h>
- 
+
+/*!
+ * @brief Class that stores state and functions for interacting with the OPENMV
+          HC-plus-R3.
+*/
 class Camera {
 public:
     Camera();
