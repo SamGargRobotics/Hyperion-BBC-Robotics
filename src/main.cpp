@@ -7,6 +7,7 @@
 #include <PID.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
+#include <camera.h>
 #include <batread.h>
 #include <bluetooth.h>
 
@@ -49,7 +50,7 @@ void loop() {
     batteryCurrentLevel = batteryLevel.read();
     correction = compass_correct.update(rotation.orientation.x > 180 ? rotation.orientation.x - 360 : rotation.orientation.x, 0);
 
-    move.attack = dirCalc.calculateStrategy();
+    motors.attack = dirCalc.calculateStrategy(bluetooth.otherRobotBallLocation[1], dirCalc.ballDis); //ERRORING BECAUSE OF PERAMS
     lineDirection = ls.calculateLineDirection();
     attackerMoveDirection = dirCalc.trigOrbit(tssp.ballStr, tssp.ballDir);
     defenderMoveDirection = dirCalc.defenderMovement(goalDir, goalDis, tssp.ballDir);

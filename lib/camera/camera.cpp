@@ -31,7 +31,6 @@ void Camera::read_camera(){
                 goal_y = Serial1.read();
                 goal_index = Serial1.read(); //goal color
                 angle_to_goal = calculate_theta(goal_x,goal_y);
-                return [angle_to_goal,goal_index];
             }
         }
     }

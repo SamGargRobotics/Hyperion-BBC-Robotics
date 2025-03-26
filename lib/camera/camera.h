@@ -10,10 +10,11 @@ public:
     void read_camera();
     float calculate_hypot(float x, float y);
     float calculate_theta(float o, float h);
+    float goal_index;
+    float angle_to_goal;
 private:
     int goal_x;
     int goal_y;
-    float angle_to_goal;
-}
+};
  
-#endifw
+#endif
