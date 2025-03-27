@@ -6,7 +6,7 @@
  * 
  * S.Garg (Brisbane Boys' College)
  * T.McCabe (Brisbane Boys' College)
-*/
+ */
 #ifndef CONFIGANDPINS_H
 #define CONFIGANDPINS_H
 

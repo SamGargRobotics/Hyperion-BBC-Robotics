@@ -5,14 +5,14 @@
  * 
  * This is a library to calculate the speed of 4 motors based on the direction
  * given.
-*/
+ */
 #include "drive_system.h"
 #include <configandpins.h>
 #include <math.h>
 
 /*!
  * @brief Initializes the motors for use.
-*/
+ */
 void Drive_system::init() {
     for(uint8_t i = 0; i < MOTORNUM; i++) {
         pinMode(motorInA[i], OUTPUT);
@@ -33,7 +33,7 @@ void Drive_system::init() {
  * @param lineDir Direction of line (if there is not any line; -1)
  * @param goalDir Direction of attacking/defending goal depending on strategic method.
  * @param moveToggle If the robot should move or not.
-*/
+ */
 void Drive_system::run(float speed, float angle, float heading, float correction, float batteryLevel, float lineDir, float goalDir, bool moveToggle) {
     // If batteryLevel is 0 or less, stop all motors
     if (batteryLevel <= 0) {

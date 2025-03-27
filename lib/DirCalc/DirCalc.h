@@ -5,7 +5,7 @@
  * in terms of robot movement
  * 
  * S.Garg (Brisbane Boys' College)
-*/
+ */
 #ifndef DIRCALC_H
 #define DIRCALC_H
 
@@ -16,7 +16,7 @@
 /*!
  * @brief Class that stores state and functions for calculating orbit and 
  *        movement directions
-*/
+ */
 class DirectionCalc {
 public:
     DirectionCalc() {};

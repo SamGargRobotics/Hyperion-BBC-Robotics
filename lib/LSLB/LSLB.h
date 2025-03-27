@@ -4,7 +4,7 @@
  * This is a library to calculate the lines direction for outs
  *
  * T.McCabe (Brisbane Boys' College)
-*/
+ */
 #ifndef LSystem_H
 #define LSystem_H
  
@@ -14,7 +14,7 @@
  
 /*!
  * @brief Class that stores state and functions for calculating the direction of the line for outs
-*/
+ */
 class LSystem {
 public:
     LSystem() {};

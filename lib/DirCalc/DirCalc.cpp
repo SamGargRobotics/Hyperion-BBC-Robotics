@@ -4,7 +4,7 @@
  * @mainpage Direction Calculations for Robot
  * 
  * This is a library for direction calculations within the robot's code.
-*/
+ */
 #include "DirCalc.h"
 
 /*! 
@@ -14,7 +14,7 @@
  * @param ballDir Direction of ball relative to front of robot. (degrees)
  * 
  * @return Robot movement angle.
-*/
+ */
 float DirectionCalc::trigOrbit(float ballStr, float ballDir) {
     // Check for any exceptions to the orbit (that wont work with the regular calculations)
     if(ballDir >= 1 && ballDir <= 44) {
@@ -101,7 +101,7 @@ float DirectionCalc::trigOrbit(float ballStr, float ballDir) {
  * @param ballDir Current ball direction.
  * 
  * @return Robot movement angle.
-*/
+ */
 float DirectionCalc::exponentialOrbit(float ballDir) {
     // Standard exponential orbit, to be initially used for debugging and simpler versions of orbitting.
     // Find our exponential graph here: https://www.desmos.com/calculator/mjjqu8ujy0
@@ -121,7 +121,7 @@ float DirectionCalc::exponentialOrbit(float ballDir) {
  * @param ballDir Current direction of the ball.
  * 
  * @return Robot movement angle.
-*/
+ */
 int DirectionCalc::defenderMovement(float goalDir, float goalDis, float ballDir) {
     // Determine forward or backward movement relative to the semi-circle
     if (goalDis > GOAL_SEMI_CIRCLE_RADIUS_CM) {
@@ -152,7 +152,7 @@ int DirectionCalc::defenderMovement(float goalDir, float goalDis, float ballDir)
  *        direction
  * 
  * @param goalDir Current direction of the goal.
-*/
+ */
 void DirectionCalc::defenderRotCalc(float goalDir) {
     defenderRotationOffset = 90 - goalDir;
     defenderRotationOffset = constrain(defenderRotationOffset, -90, 90);
@@ -165,7 +165,7 @@ void DirectionCalc::defenderRotCalc(float goalDir) {
  * @param ballDis The ball distance away from the local robot.
  * 
  * @return True if attack, false if defense.
-*/
+ */
 bool DirectionCalc::calculateStrategy(float externalBallDis, float ballDis) {
     if(ballDis < externalBallDis) {
         return true;
@@ -182,7 +182,7 @@ bool DirectionCalc::calculateStrategy(float externalBallDis, float ballDis) {
  * @param angle2 The second angle used to find the middle angle.
  * 
  * @return Middle angle of the two angles provided in perameters.
-*/
+ */
 double DirectionCalc::findMiddleAngle(double angle1, double angle2) {
     // Convert angles to radians
     double angle1_rad = angle1 * M_PI / 180.0;
@@ -215,7 +215,7 @@ double DirectionCalc::findMiddleAngle(double angle1, double angle2) {
  * @param ballStr Distance away from the ball.
  * 
  * @return Returns a speed value for the robot to move.
-*/
+ */
 float DirectionCalc::calcSpeed(float ballStr) { 
     return -1*BALL_STRENGTH_MULTIPLIER*ballStr+255; 
 }
@@ -226,7 +226,7 @@ float DirectionCalc::calcSpeed(float ballStr) {
  * @param ballStr Distance away from the ball.
  * 
  * @return Ball Distance away from the ball (cm).
-*/
+ */
 float DirectionCalc::ballDisScale(float ballStr) { 
     return ballStr*BALL_DIS_MULTIPLIER; //TUNE THE MULTIPLCATION BY THE CONSTANT
 }
@@ -237,7 +237,7 @@ float DirectionCalc::ballDisScale(float ballStr) {
  * @param verticalDis Vertical distance of the ball away from the ball.
  * 
  * @return Scaled vertical distance away from the ball in terms of robot.
-*/
+ */
 float DirectionCalc::decreaseVerticalDis(float verticalDis) {
     return (1 * verticalDis + 0); //LINEAR FUNCTION - NEEDS TUNING
 }
@@ -248,7 +248,7 @@ float DirectionCalc::decreaseVerticalDis(float verticalDis) {
  * @param verDis Vertical distance of the ball away from the ball.
  * 
  * @return Scaled vertical distance away from the bal in terms of robot.
-*/
+ */
 float DirectionCalc::increaseVerticalDis(float verDis) {
     return (1 * verDis + 0);  //LINEAR FUNCTION - NEEDS TUNING
 }

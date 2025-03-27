@@ -3,8 +3,9 @@
  * 
  * This is a library to read and manipulate the OPENMV HC-plus-R3
  * 
+ * T.McCabe (Brisbane Boys' College)
  * S.Garg (Brisbane Boys' College)
-*/
+ */
 #ifndef CAMERA_H
 #define CAMERA_H
  
@@ -12,8 +13,8 @@
 
 /*!
  * @brief Class that stores state and functions for interacting with the OPENMV
-          HC-plus-R3.
-*/
+ *        HC-plus-R3.
+ */
 class Camera {
 public:
     Camera();

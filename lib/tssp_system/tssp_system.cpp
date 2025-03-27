@@ -4,7 +4,7 @@
  * @mainpage Multiple TSSP58038 Sensor's
  * 
  * This is a library for multiple TSSP50838 Sensor
-*/
+ */
 #include "tssp_system.h"
 #include <configandpins.h>
 
@@ -16,7 +16,7 @@ void Tssp_system::init() {
 
 /*!
  * @brief Reads the TSSP50838's (multiple at once)
-*/
+ */
 void Tssp_system::read() {
     // Read the tssp itself
     for(int y = 0; y < 255; y++) {
@@ -77,7 +77,7 @@ void Tssp_system::read() {
  * 
  * @return Offset value of the current direction that the main function is
  *         reading.
-*/
+ */
 int Tssp_system::deviationReading(int midTssp) {
     // Take all necessary readings relative to the tssp with the highest reading (one above the tssp and one below the tssp)
     // First check that midTssp isn't of two other special cases, if not, assume that midTssp is of a normal case.

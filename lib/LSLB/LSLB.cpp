@@ -4,13 +4,13 @@
  * @mainpage LS calculations for Robot
  *
  * This is a library for LS calculations within the robot's code.
-*/
+ */
  
 #include "LSLB.h"
  
 /*!
  * @brief Initalizes The Light System
-*/
+ */
 void LSystem::init() {
     for(uint8_t i = 0; i < 4; i++) {
         pinMode(pinList[i], OUTPUT);
@@ -24,7 +24,7 @@ void LSystem::init() {
  * @param min the minim value to constrain to
  * @param max the maxium vaule to constrain to
  * @return the value after the constrains are applied
-*/
+ */
 int LSystem::loopReadClamp(int value, int min, int max) {
     if (value < 0 || min != 0) {
         return ((value % max) + max) % max;
@@ -37,7 +37,7 @@ int LSystem::loopReadClamp(int value, int min, int max) {
  * @brief reads a single light sensor
  * @param sensor_num the sensors index in the light sensor array that you want to read
  * @return returns the value of the light sensor
-*/
+ */
 int LSystem::readOne(int sensor_num) {
     for(int i = 0; i < 4; i++) {
         digitalWrite(pinList[i], (sensor_num>>i)&0x01);
@@ -52,7 +52,7 @@ int LSystem::readOne(int sensor_num) {
 /*!
  * @brief calculates the direction of the white line to detect outs
  * @return returns the direction of the line 0 - 31 (returns it as the light sensors index)
-*/
+ */
 int LSystem::calculateLineDirection() {
     int senorValues[NUM_LS] = {0};
     int senorIsWhite[NUM_LS] = {0};

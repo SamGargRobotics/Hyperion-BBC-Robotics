@@ -4,7 +4,7 @@
  * This is a library for the TSSP58038 to read multiple TSSP58038's at once.
  * 
  * S.Garg (Brisbane Boys' College)
-*/
+ */
 
 #ifndef TSSP_SYSTEM_H
 #define TSSP_SYSTEM_H
@@ -13,8 +13,8 @@
 #include <configandpins.h>
 
 /*!
- * @brief Class that stores state and functions for ineracting with multiple TSSP58038's at once.
-*/
+ * @brief Class that stores state and functions for interacting with multiple TSSP58038's at once.
+ */
 class Tssp_system {
 public:
     Tssp_system() {};

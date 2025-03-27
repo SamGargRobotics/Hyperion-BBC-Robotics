@@ -5,12 +5,12 @@
  * 
  * This is a library for reading and sending values accross a HC-05 Bluetooth
  * Module
-*/
+ */
 #include <bluetooth.h>
 
 /*!
  * @brief Initializes the module for use accross the library and code
-*/
+ */
 void Bluetooth::init() {
     BLUETOOTH_SERIAL.begin(BLUETOOTH_BAUD);
     last_received_time = micros();
@@ -23,7 +23,7 @@ void Bluetooth::init() {
  * @param batLevel Current Battery Level of Robot.
  * @param ballDir Current Direction of Ball.
  * @param ballDis Current Distance of Ball away from robot (cm).
-*/
+ */
 void Bluetooth::update(float batLevel, float ballDir, float ballDis) {
     unsigned long current_time = micros();
     if(current_time - last_sent_time > 250000) {
@@ -41,7 +41,7 @@ void Bluetooth::update(float batLevel, float ballDir, float ballDis) {
  * @brief If the serial has more than one full packet, it attempts to read the bluetooth module.
  * 
  * @return If there is any data in the packet.
-*/
+ */
 bool Bluetooth::read() {
     // See if serial has more than one full packet
     while(BLUETOOTH_SERIAL.available() >= BLUETOOTH_PACKET_SIZE) {
@@ -69,7 +69,7 @@ bool Bluetooth::read() {
  * @param batLevel Current battery level of the robot.
  * @param ballDir Current direction of the ball.
  * @param ballDis Current distance of the ball away from the robot (cm).
-*/
+ */
 void Bluetooth::send(float batLevel, float ballDir, float ballDis) {
     BLUETOOTH_SERIAL.write(BLUETOOTH_START_BYTE);
     BLUETOOTH_SERIAL.write(int(ballDir));
