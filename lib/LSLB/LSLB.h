@@ -4,6 +4,7 @@
  * This is a library to calculate the lines direction for outs
  *
  * T.McCabe (Brisbane Boys' College)
+ * S.Garg (Brisbane Boys' College)
  */
 #ifndef LSystem_H
 #define LSystem_H
@@ -19,7 +20,11 @@ class LSystem {
 public:
     LSystem() {};
     void init();
-    int calculateLineDirection();
+    void calculateLineDirection();
+    void calculateLineState();
+    int lineDirection = -1;
+    int lineState = 1;
+    int previousLineDirections[10] = {0};
 private:
     int readOne(int sensor_num);
     int loopReadClamp(int value,int min, int max);
@@ -31,8 +36,9 @@ private:
     int clusterAmount = 0; //if three die
     int clusterCenter[3] = {44, 44, 44};
     int center;
-    int averageDirection = -1;
     int loopTut = 0;
+    int flaggedLineDirection = 0;
+    int lineDirectionArray = 0;
     uint8_t loopCount = 0;
 };
  

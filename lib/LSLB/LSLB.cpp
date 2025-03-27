@@ -51,9 +51,8 @@ int LSystem::readOne(int sensor_num) {
  
 /*!
  * @brief calculates the direction of the white line to detect outs
- * @return returns the direction of the line 0 - 31 (returns it as the light sensors index)
  */
-int LSystem::calculateLineDirection() {
+void LSystem::calculateLineDirection() {
     int senorValues[NUM_LS] = {0};
     int senorIsWhite[NUM_LS] = {0};
     for(int i = 0; i < NUM_LS; i++) {
@@ -96,7 +95,45 @@ int LSystem::calculateLineDirection() {
             loopCount += 1;
         }
     }
-    averageDirection = round(loopTut/loopCount);
-    return averageDirection;
+    lineDirection = round(loopTut/loopCount);
+    if(previousLineDirections[10] != 0) {
+        lineDirectionArray = 0;
+    }
+    previousLineDirections[lineDirectionArray] = lineDirection;
+    lineDirectionArray++;
 }
- 
+
+/*!
+ * @brief Calculates the state at which the robot is relative to the line and field.
+ */
+void LSystem::calculateLineState() {
+    while(lineState == 1) {
+        if(lineDirection != -1) {
+            lineState = 2;
+            previousLineDirections[lineDirectionArray-1] = -2;
+        }
+    }
+    while(lineState == 2) {
+        if(previousLineDirections[lineDirectionArray-1] == -2) {
+            lineState = 3;
+            flaggedLineDirection = previousLineDirections[lineDirectionArray];
+        }
+        if(lineDirection == -1) {
+            lineState = 1;
+        }
+    }
+    while(lineState == 3) {
+        if(lineDirection == -1) {
+            lineState = 4;
+        }
+        if(previousLineDirections[lineDirectionArray-1] == -2) {
+            lineState = 2;
+            flaggedLineDirection = previousLineDirections[lineDirectionArray];
+        }
+    } 
+    while(lineState = 4) {
+        if(lineDirection != -1) {
+            lineState = 3;
+        }
+    }
+}
