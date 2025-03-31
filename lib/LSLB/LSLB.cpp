@@ -131,7 +131,7 @@ void LSystem::calculateLineState() {
             flaggedLineDirection = previousLineDirections[lineDirectionArray];
         }
     } 
-    while(lineState = 4) {
+    while(lineState == 4) {
         if(lineDirection != -1) {
             lineState = 3;
         }

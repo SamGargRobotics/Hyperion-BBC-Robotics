@@ -54,7 +54,7 @@ void Tssp_system::read() {
 
     // Deviation reading (See function for explanation) - Is only used when deviationFunctionToggle is activated.
     if(deviationFunctionToggle) {
-        ballDirOffset = deviationReading(highestTssp); // [NOTE FOR EDITOR] ADD THIS TO FINAL BALL DIR VALUE
+        ballDirOffset = deviationReading(highestTssp-1); // [NOTE FOR EDITOR] ADD THIS TO FINAL BALL DIR VALUE
     }
 
     // Add up all the readings from the tssps to calculate ballStr reading later
@@ -87,7 +87,7 @@ int Tssp_system::deviationReading(int midTssp) {
         leadingTsspReading = readTssp[0];
     } else if(midTssp == 0) {
         midTsspReading = readTssp[midTssp];
-        followingTsspReading = readTssp[TSSPNUM];
+        followingTsspReading = readTssp[TSSPNUM-1];
         leadingTsspReading = readTssp[midTssp+1];
     } else {
         midTsspReading = readTssp[midTssp];
