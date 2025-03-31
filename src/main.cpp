@@ -57,7 +57,7 @@ void loop() {
     moveSpeed = dirCalc.calcSpeed(tssp.ballStr);
     motors.run(moveSpeed,(motors.attack?attackerMoveDirection:defenderMoveDirection), 0, correction, batteryCurrentLevel, ls.lineDirection, motors.attack?(goalDir):(dirCalc.defenderRotationOffset), tssp.detectingBall);
 } 
-/* 
+/*
 if there is NOT connection --> Defend
     else if:
         bat high + ball Closer : Attack
