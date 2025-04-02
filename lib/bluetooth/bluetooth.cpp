@@ -38,7 +38,8 @@ void Bluetooth::update(float batLevel, float ballDir, float ballDis) {
 }
 
 /*!
- * @brief If the serial has more than one full packet, it attempts to read the bluetooth module.
+ * @brief If the serial has more than one full packet, it attempts to read the
+          bluetooth module.
  * 
  * @return If there is any data in the packet.
  */
@@ -51,10 +52,14 @@ bool Bluetooth::read() {
                 // Reads information sent on the serial
                 bluetoothBuffer[i] = BLUETOOTH_SERIAL.read();
             }
-            // Assigned associated public variables with information read from the serial
-            otherRobotBallLocation[0] = (bluetoothBuffer[0] == BLUETOOTH_NO_DATA ? -1 : bluetoothBuffer[0]);
-            otherRobotBallLocation[1] = (bluetoothBuffer[0] == BLUETOOTH_NO_DATA ? -1 : bluetoothBuffer[1]);
-            otherRobotBatteryLevel = (bluetoothBuffer[2] == BLUETOOTH_NO_DATA ? -1 : bluetoothBuffer[2]);
+            // Assigned associated public variables with information read from 
+            // the serial
+            otherRobotBallLocation[0] = (bluetoothBuffer[0] == \
+                                BLUETOOTH_NO_DATA ? -1 : bluetoothBuffer[0]);
+            otherRobotBallLocation[1] = (bluetoothBuffer[0] == \
+                                BLUETOOTH_NO_DATA ? -1 : bluetoothBuffer[1]);
+            otherRobotBatteryLevel = (bluetoothBuffer[2] == BLUETOOTH_NO_DATA \
+                                ? -1 : bluetoothBuffer[2]);
             // Returns true if the data from the serial was read.
             return true;
         }

@@ -9,7 +9,7 @@
 #define BLUETOOTH_H
 
 #include <Arduino.h>
-#include <configandpins.h>
+#include <common.h>
 
 /*!
  * @brief Class that stores state and functions for interacting with the HC-05 

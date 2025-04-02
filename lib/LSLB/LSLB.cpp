@@ -19,7 +19,8 @@ void LSystem::init() {
     pinMode(LIGHT_PIN2, INPUT);
 }
 /*!
- * @brief a constraint function that loops to the other side/max or min if out side of the max and min
+ * @brief a constraint function that loops to the other side/max or min if out 
+          side of the max and min
  * @param value the value the is being constrained
  * @param min the minim value to constrain to
  * @param max the maxium vaule to constrain to
@@ -35,7 +36,8 @@ int LSystem::loopReadClamp(int value, int min, int max) {
  
 /*!
  * @brief reads a single light sensor
- * @param sensor_num the sensors index in the light sensor array that you want to read
+ * @param sensor_num the sensors index in the light sensor array that you want 
+ *                   to read
  * @return returns the value of the light sensor
  */
 int LSystem::readOne(int sensor_num) {
@@ -63,9 +65,11 @@ void LSystem::calculateLineDirection() {
     }
     for(int j = 0; j < NUM_LS; j++) {
         if(senorIsWhite[j] == 1) {
-            if(senorIsWhite[loopReadClamp(j-1,0,NUM_LS)] == 0) { //loopReadClamp(j-1,0,NUM_LS)
+            if(senorIsWhite[loopReadClamp(j-1,0,NUM_LS)] == 0) { 
+                //loopReadClamp(j-1,0,NUM_LS)
                 minIndex = j;
-            } else if(senorIsWhite[loopReadClamp(j-1,0,NUM_LS)] == 0) { //loopReadClamp(j-1,0,NUM_LS)
+            } else if(senorIsWhite[loopReadClamp(j-1,0,NUM_LS)] == 0) { 
+                //loopReadClamp(j-1,0,NUM_LS)
                 maxIndex = j;
                 clustersList[clusterAmount][0] = minIndex;
                 clustersList[clusterAmount][1] = maxIndex;
@@ -104,7 +108,8 @@ void LSystem::calculateLineDirection() {
 }
 
 /*!
- * @brief Calculates the state at which the robot is relative to the line and field.
+ * @brief Calculates the state at which the robot is relative to the line and 
+          field.
  */
 void LSystem::calculateLineState() {
     while(lineState == 1) {

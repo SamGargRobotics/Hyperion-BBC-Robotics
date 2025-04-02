@@ -10,7 +10,8 @@
 #define DIRCALC_H
 
 #include <Arduino.h>
-#include <configandpins.h>
+#include <common.h>
+#include <config.h>
 #include <math.h>
 
 /*!

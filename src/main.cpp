@@ -1,5 +1,7 @@
 #include <Arduino.h>
-#include <configandpins.h>
+#include <pins.h>
+#include <common.h>
+#include <config.h>
 #include <drive_system.h>
 #include <tssp_system.h>
 #include <LSLB.h>
@@ -10,11 +12,13 @@
 #include <camera.h>
 #include <batread.h>
 #include <bluetooth.h>
+#include <camera.h>
 
 Drive_system motors;
 Bluetooth bluetooth;
 Tssp_system tssp;
 LSystem ls;
+Camera cam;
 DirectionCalc dirCalc;
 bno::Adafruit_BNO055 compass;
 PID compass_correct(PID_p, PID_i, PID_d, PID_abs_max);
@@ -28,6 +32,7 @@ float moveSpeed = 0;
 float batteryCurrentLevel = 0;
 float goalDir = 0;
 float goalDis = 0;
+bool robotFrontQuadrant = false;
 
 void setup() {
     Serial.begin(9600);
@@ -37,6 +42,7 @@ void setup() {
     bluetooth.init();
     batteryLevel.init();
     compass.setExtCrystalUse(true);
+    cam.init();
     while(!compass.begin()) {
         Serial.println("bno ded ;(");
     }
@@ -47,21 +53,25 @@ void loop() {
     compass.getEvent(&rotation); //(rotation.orientation.x)
     tssp.read();
     batteryCurrentLevel = batteryLevel.read();
-    correction = compass_correct.update(rotation.orientation.x > 180 ? rotation.orientation.x - 360 : rotation.orientation.x, 0);
+    correction = compass_correct.update(rotation.orientation.x > 180 ? \
+                 rotation.orientation.x - 360 : rotation.orientation.x, 0);
+    cam.read_camera();
 
-    motors.attack = dirCalc.calculateStrategy(bluetooth.otherRobotBallLocation[1], dirCalc.ballDis); //ERRORING BECAUSE OF PERAMS
+    robotFrontQuadrant = (cam.goal_y_attack < cam.goal_y_defend);
+    motors.attack = dirCalc.calculateStrategy(
+                    bluetooth.otherRobotBallLocation[1], dirCalc.ballDis);
+
     ls.calculateLineDirection();
     ls.calculateLineState();
+    
     attackerMoveDirection = dirCalc.trigOrbit(tssp.ballStr, tssp.ballDir);
-    defenderMoveDirection = dirCalc.defenderMovement(goalDir, goalDis, tssp.ballDir);
+    defenderMoveDirection = dirCalc.defenderMovement(goalDir, goalDis, 
+                                                    tssp.ballDir);
+                                                    
     moveSpeed = dirCalc.calcSpeed(tssp.ballStr);
-    motors.run(moveSpeed,(motors.attack?attackerMoveDirection:defenderMoveDirection), 0, correction, batteryCurrentLevel, ls.lineDirection, motors.attack?(goalDir):(dirCalc.defenderRotationOffset), tssp.detectingBall);
-} 
-/*
-if there is NOT connection --> Defend
-    else if:
-        bat high + ball Closer : Attack
-        bat high + ball far : defend
-        bat low + ball closer : attack
-        bat low + ball far : defend
-*/
+    motors.run(moveSpeed,
+            (motors.attack?attackerMoveDirection:defenderMoveDirection), 0,
+            correction, batteryCurrentLevel, ls.lineDirection,
+            motors.attack?(goalDir):(dirCalc.defenderRotationOffset), 
+            tssp.detectingBall);
+}

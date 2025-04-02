@@ -6,7 +6,6 @@
  * This is a library for multiple TSSP50838 Sensor
  */
 #include "tssp_system.h"
-#include <configandpins.h>
 
 void Tssp_system::init() {
     for(uint8_t i = 0; i < TSSPNUM; i++) {
@@ -26,12 +25,15 @@ void Tssp_system::read() {
         delayMicroseconds(3);
     }
     
-    // Check for any broken sensors (so that we can ignore them in our code later)
+    // Check for any broken sensors (so that we can ignore them in our code 
+    // later)
     for (uint8_t i = 0; i < TSSPNUM; i++) {
-        readingTsspIgnores[i] = (readTssp[i] == 255 || readTssp[i] == -1) ? 1 : 0;
+        readingTsspIgnores[i] = (readTssp[i] == 255 || readTssp[i] == -1) ?
+                                1 : 0;
     }
 
-    // Find the sensor with the highest reading (meaning the ball is nearest to that sensor)
+    // Find the sensor with the highest reading (meaning the ball is nearest to 
+    // that sensor)
     for (uint8_t i = 0; i < TSSPNUM; i++) {
         if(readingTsspIgnores[i] == 0) {
             if(readTssp[i] > largestReading) {
@@ -52,9 +54,11 @@ void Tssp_system::read() {
         }
     }
 
-    // Deviation reading (See function for explanation) - Is only used when deviationFunctionToggle is activated.
+    // Deviation reading (See function for explanation) - Is only used when 
+    // deviationFunctionToggle is activated.
     if(deviationFunctionToggle) {
-        ballDirOffset = deviationReading(highestTssp-1); // [NOTE FOR EDITOR] ADD THIS TO FINAL BALL DIR VALUE
+        ballDirOffset = deviationReading(highestTssp-1); // [NOTE FOR EDITOR] 
+        // ADD THIS TO FINAL BALL DIR VALUE
     }
 
     // Add up all the readings from the tssps to calculate ballStr reading later
@@ -79,8 +83,10 @@ void Tssp_system::read() {
  *         reading.
  */
 int Tssp_system::deviationReading(int midTssp) {
-    // Take all necessary readings relative to the tssp with the highest reading (one above the tssp and one below the tssp)
-    // First check that midTssp isn't of two other special cases, if not, assume that midTssp is of a normal case.
+    // Take all necessary readings relative to the tssp with the highest reading
+    // (one above the tssp and one below the tssp)
+    // First check that midTssp isn't of two other special cases, if not, assume
+    // that midTssp is of a normal case.
     if(midTssp == TSSPNUM) {
         midTsspReading = readTssp[midTssp];
         followingTsspReading = readTssp[midTssp-1];
@@ -95,16 +101,20 @@ int Tssp_system::deviationReading(int midTssp) {
         leadingTsspReading = readTssp[midTssp+1];
     }
 
-    // Finding if either the one above, or one below has the bigger reading. By doing this, we know which index we can get to calculate the offset.
+    // Finding if either the one above, or one below has the bigger reading. By 
+    // doing this, we know which index we can get to calculate the offset.
     leadingTsspBigger = leadingTsspReading >= followingTsspReading ? 1 : 0;
 
-    // Subtract the readings depending on which value is bigger, by doing this, an offset value is created between the highest tssp value, and the highest value of the two tssps beside the highest valued tssp.
+    // Subtract the readings depending on which value is bigger, by doing this, 
+    // an offset value is created between the highest tssp value, and the 
+    // highest value of the two tssps beside the highest valued tssp.
     if(leadingTsspBigger) {
         deviationOffset = midTsspReading - leadingTsspReading;
     } else {
         deviationOffset = midTsspReading - followingTsspReading;
     }
 
-    // Multiply the deviation offset by a constant, to turn it into a more accurate offset reading.
+    // Multiply the deviation offset by a constant, to turn it into a more 
+    // accurate offset reading.
     return deviationOffset * TSSP_DEVIATION_CONSTANT;
 }

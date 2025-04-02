@@ -8,11 +8,12 @@
 #define BATREAD_H
 
 #include <Arduino.h>
-#include <configandpins.h>
+#include <pins.h>
 
 /*!
  * @brief Class that stores state and functions for interacting with the
- *        robot's electrical circuit using voltage dividers to uncover battery level.
+ *        robot's electrical circuit using voltage dividers to uncover battery
+ *        level.
  */
 class BatRead { 
 public:

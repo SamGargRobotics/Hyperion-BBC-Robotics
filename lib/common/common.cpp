@@ -1,17 +1,21 @@
 /*!
- * @file configandpins.cpp
+ * @file common.cpp
  * 
  * @mainpage Defining functions commonly used accross the code.
  * 
  * Defining functions commonly used across the code
  */
-#include "configandpins.h"
+
+ #include "common.h"
 
 /**
- * @brief Computes the floating-point modulus operation that always returns a non-negative remainder.
+ * @brief Computes the floating-point modulus operation that always returns a 
+ *        non-negative remainder.
  * 
- * This function calculates the remainder of `x` divided by `m`, ensuring that the result is always non-negative.
- * It correctly handles negative values of `x` by adding `m` when the remainder is negative.
+ * This function calculates the remainder of `x` divided by `m`, ensuring that 
+ * the result is always non-negative.
+ * It correctly handles negative values of `x` by adding `m` when the remainder 
+ * is negative.
  * 
  * @param x The dividend (floating-point number).
  * @param m The divisor (floating-point number).

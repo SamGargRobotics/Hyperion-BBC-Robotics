@@ -10,10 +10,13 @@
 #define TSSP_SYSTEM_H
 
 #include <Arduino.h>
-#include <configandpins.h>
+#include <config.h>
+#include <pins.h>
+#include <common.h>
 
 /*!
- * @brief Class that stores state and functions for interacting with multiple TSSP58038's at once.
+ * @brief Class that stores state and functions for interacting with multiple 
+          TSSP58038's at once.
  */
 class Tssp_system {
 public:
@@ -29,7 +32,9 @@ private:
     bool deviationFunctionToggle = false;
     bool leadingTsspBigger = false;
     int readTssp[TSSPNUM] = {0};
-    int tsspPins[TSSPNUM] = {TSSP1, TSSP2, TSSP3, TSSP4, TSSP5, TSSP6, TSSP7, TSSP8, TSSP9, TSSP10, TSSP11, TSSP12, TSSP13, TSSP14, TSSP15, TSSP16};
+    int tsspPins[TSSPNUM] = {TSSP1, TSSP2, TSSP3, TSSP4, TSSP5, TSSP6, TSSP7,
+                            TSSP8, TSSP9, TSSP10, TSSP11, TSSP12, TSSP13, 
+                            TSSP14, TSSP15, TSSP16};
     int readingTsspIgnores[TSSPNUM] = {0};
     int largestReading = 0;
     int addedAngles = 0;
