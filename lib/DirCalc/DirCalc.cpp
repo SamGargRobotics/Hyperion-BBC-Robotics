@@ -117,20 +117,27 @@ float DirectionCalc::trigOrbit(float ballStr, float ballDir) {
  * @brief Calculates movement direction using an exponential equation.
  * 
  * @param ballDir Current ball direction.
+ * @param ballStr Current ball strength.
  * 
  * @return Robot movement angle.
  */
-float DirectionCalc::exponentialOrbit(float ballDir) {
+float DirectionCalc::exponentialOrbit(float ballDir, float ballStr) {
     // Standard exponential orbit, to be initially used for debugging and 
     // simpler versions of orbitting.
     // Find our exponential graph here: 
     // https://www.desmos.com/calculator/mjjqu8ujy0
     if(ballDir > 180) {
-        return ballDir - min(0.04*pow(ORBIT_MULTIPLIER, 4.5*ballDir), 
-                            EXPO_MIN_VAL);
+        modBallDir = ballDir-360;
+        // return ballDir - min(0.04*pow(ORBIT_MULTIPLIER, 4.5*ballDir), 
+        //                     EXPO_MIN_VAL);
+
+        return ballDir + (-1*min(0.04*(pow(EULER, -4.5*modBallDir) - 1), 60));
+
     } else {
-        return ballDir + min(0.04*pow(ORBIT_MULTIPLIER, 4.5*ballDir), 
-                            EXPO_MIN_VAL);
+        // return ballDir + min(0.04*pow(ORBIT_MULTIPLIER, 4.5*ballDir), 
+        //                     EXPO_MIN_VAL);
+
+        return ballDir + (min(0.04*(pow(EULER, 4.5*ballDir) - 1), 60));
     }
 }
 
@@ -236,12 +243,13 @@ double DirectionCalc::findMiddleAngle(double angle1, double angle2) {
  *        the robot is, the slower it is. However, if the ball is directly
  *        infront of the robot, it will travel at full speed.
  * 
- * @param ballStr Distance away from the ball.
+ * @param ballStr_ratio Normalized ball strenght (0.92-0.97)
+ * @param voltage Battery voltage (11-12.6V)
  * 
  * @return Returns a speed value for the robot to move.
  */
-float DirectionCalc::calcSpeed(float ballStr) { 
-    return -1*BALL_STRENGTH_MULTIPLIER*ballStr+255; 
+float DirectionCalc::calcSpeed(float ballStr) {
+    return max(min(pow(EULER, -0.02*(ballStr-(96.5*EULER))) + 30, 100), 40) / 100;
 }
 
 /*!

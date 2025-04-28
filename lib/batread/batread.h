@@ -8,6 +8,7 @@
 #define BATREAD_H
 
 #include <Arduino.h>
+#include <config.h>
 #include <pins.h>
 
 /*!
@@ -19,11 +20,14 @@ class BatRead {
 public:
     BatRead() {};
     void init();
-    float read();
+    void read();
+    float volts = 0;
+    bool motorOn = false;
 private:
+    void calcBat(float rawVal);
+    void calcSwitchStatus(float V);
+    //! @brief Raw value read from the pin.
     float rawValue = 0;
-    float highest = 2.9302325581;
-    float lowest = 2.651167907;
 };
 
 #endif

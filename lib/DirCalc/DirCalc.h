@@ -24,7 +24,7 @@ public:
     bool defenderMoving = false;
     bool calculateStrategy(float externalBallDis, float ballDis);
     float trigOrbit(float ballStr, float ballDir);
-    float exponentialOrbit(float ballDir);
+    float exponentialOrbit(float ballDir, float ballStr);
     float calcSpeed(float ballStr);
     float ballDis = 0;
     float defenderRotationOffset = 0;
@@ -32,6 +32,9 @@ public:
     void defenderRotCalc(float goalDir);
 private:
     double findMiddleAngle(double angle1, double angle2);
+    double ballStr_max = 0;
+    double ballStr_actual = 0;
+    double speed = 0;
     int StandardCases[8] = {0, 45, 90, 135, 180, 225, 270, 315};
     int standardCaseNum = 0;
     int goalDisRelativeDirection = 0;
@@ -45,6 +48,7 @@ private:
     float secondaryAngle = 0;
     float lateralMoveDis = 0;
     float verticalMoveDis = 0;
+    float modBallDir = 0;
 };
 
 #endif

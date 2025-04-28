@@ -24,20 +24,49 @@
 #define NUMBER_MUX 2
 
 //! @def PID_p @brief Proportional aspect of PID
-#define PID_p 1
+#define PID_p 0.9
 //! @def PID_i @brief Intergral aspect of PID
-#define PID_i 1
+#define PID_i 0
 //! @def PID_d @brief Derivative aspect of PID
-#define PID_d 1
+#define PID_d 0.075 //0.06
 //! @def PID_abs_max @brief Absoloute max of PID
-#define PID_abs_max 1
+#define PID_abs_max 100
+
+//! @def BAT_MOTOROFF_THRESH @brief Thresh to determine if motor switch off
+#define BAT_MOTOROFF_THRESH 0.5
 
 //! @def EXPO_MIN_VAL @brief Minimum value of the exponential orbit
-#define EXPO_MIN_VAL 60
+#define EXPO_MIN_VAL 75
 //! @def ORBIT_MULTIPLIER @brief Multiplier for the exponential orbit
 #define ORBIT_MULTIPLIER 2.71828182846
 
 //! @def GOAL_SEMI_CIRCLE_RADIUS_CM @brief The defender's arc orbit around goal
 #define GOAL_SEMI_CIRCLE_RADIUS_CM 10
+//! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot switches
+// strats for orbit
+#define ORBIT_STRENGTH_RADIUS 45
+
+//! @def CORRECTION_TEST @brief Testing Correction Only if True
+#define CORRECTION_TEST false
+//! @def BALL_FOLLOW_TEST @brief Testing Corretion + Ball Follow if true
+#define BALL_FOLLOW_TEST false
+//! @def SET_SPEED @brief Speed that is set for running
+#define SET_SPEED 75
+
+//! @def BATTERY_CRITICAL @brief The battery level where the battery is critical
+#define BATTERY_CRITICAL 11.7
+
+//! @def cameraSerial @brief Serial that the camera sends data over to
+#define cameraSerial Serial8
+
+#define DEBUG (DEBUG_MOTORS || DEBUG_IMU || DEBUG_TSSP_SENSOR_VAL || DEBUG_TSSP_IGNORE || TSSP_DEBUG_SPEC_SENSOR || DEBUG_TSSP);
+#define DEBUG_MOTORS false
+#define DEBUG_IMU false
+#define DEBUG_TSSP false
+#define DEBUG_TSSP_SENSOR_VAL false
+#define DEBUG_TSSP_IGNORE false
+#define TSSP_DEBUG_SPEC_SENSOR false
+#define BAT_READ_RAWVAL false
+#define BAT_READ_VOLTS false
 
 #endif

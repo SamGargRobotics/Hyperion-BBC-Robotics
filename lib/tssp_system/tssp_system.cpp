@@ -7,6 +7,9 @@
  */
 #include "tssp_system.h"
 
+/*!
+ * @brief Initialize all the tssp's accordingly
+ */
 void Tssp_system::init() {
     for(uint8_t i = 0; i < TSSPNUM; i++) {
         pinMode(tsspPins[i], INPUT);
@@ -14,23 +17,61 @@ void Tssp_system::init() {
 }
 
 /*!
- * @brief Reads the TSSP50838's (multiple at once)
+ * @brief Reading the tssps and calculating any that are broken to ignor later
  */
 void Tssp_system::read() {
-    // Read the tssp itself
+    for(int i = 0; i < TSSPNUM; i++) {
+        readTssp[i] = 0;
+    }
+
+    largestReading = 0;
+    highestTssp = 0;
+    detectingBall = false;
+
     for(int y = 0; y < 255; y++) {
         for(uint8_t i = 0; i < TSSPNUM; i++) {
             readTssp[i] += (1 - digitalRead(tsspPins[i]));
         }
-        delayMicroseconds(3);
+        delayMicroseconds(30);
     }
-    
-    // Check for any broken sensors (so that we can ignore them in our code 
-    // later)
+
+    #if TSSP_DEBUG_SPEC_SENSOR
+        for(int y = 0; y < 255; y++) {
+            for(uint8_t i = 0; i < TSSPNUM; i++) {
+                oneSensorReading += (1-digitalRead(TSSP1));
+            }
+        }
+        Serial.println(oneSensorReading);
+    #endif
+
     for (uint8_t i = 0; i < TSSPNUM; i++) {
         readingTsspIgnores[i] = (readTssp[i] == 255 || readTssp[i] == -1) ?
-                                1 : 0;
+                                true : false;
     }
+
+    for (int i = 0; i < TSSPNUM; i++) {
+        if (readingTsspIgnores[i] == 0) {  // Only check non-ignored sensors
+            if (readTssp[i] != 0 && readTssp[i] != 255) {  // Ball is seen at this index
+                detectingBall = true;
+                break;  // Exit the loop since ball is found
+            }
+        }
+    }
+}
+
+/*!
+ * @brief Reads the TSSP50838's in a manner that has little to no maths.
+ */
+void Tssp_system::normalCalc() {
+    for(int i = 0; i < TSSPNUM; i++) {
+        readingTsspIgnores[i] = false;
+    }
+
+    normalBallDir = 0;
+    addedAngles = 0;
+    oneSensorReading = 0;
+
+    read();
 
     // Find the sensor with the highest reading (meaning the ball is nearest to 
     // that sensor)
@@ -43,23 +84,17 @@ void Tssp_system::read() {
         }
     }
 
-    for (uint8_t i = 0; i < TSSPNUM; i++) {
-        if(readingTsspIgnores[i] == 0) {
-            if(readTssp == 0) {
-                detectingBall = false;
-            } else {
-                detectingBall = true;
-                break;
-            }
-        }
+    for(uint8_t i = 0; i < TSSPNUM; i++){
+        readTssp[i] = (readTssp[i] == 255 || readTssp[i] == -1) ? (readTssp[i+1] + readTssp[i-1])/2 : readTssp[i];
     }
 
-    // Deviation reading (See function for explanation) - Is only used when 
-    // deviationFunctionToggle is activated.
-    if(deviationFunctionToggle) {
-        ballDirOffset = deviationReading(highestTssp-1); // [NOTE FOR EDITOR] 
-        // ADD THIS TO FINAL BALL DIR VALUE
-    }
+    #if DEBUG_TSSP_SENSOR_VAL
+        for(uint8_t i = 0; i < TSSPNUM; i++) {
+            Serial.print(readTssp[i]);
+            Serial.print("\t");
+        }
+        Serial.println();
+    #endif
 
     // Add up all the readings from the tssps to calculate ballStr reading later
     for(uint8_t i = 0; i < TSSPNUM; i++) {
@@ -70,51 +105,73 @@ void Tssp_system::read() {
 
     //Final Calculations
     ballStr = addedAngles/TSSPNUM;
-    ballDir = (highestTssp-1)*30;
+    normalBallDir = ((highestTssp == 0)?highestTssp:(highestTssp-1))*(360/TSSPNUM);
 }
 
 /*!
- * @brief Approximates the exact angle of the ball based on readings from the
- *        tssp higher and lower to the one reading the highest value.
- * 
- * @param midTssp Tssp that reads the highest value.
- * 
- * @return Offset value of the current direction that the main function is
- *         reading.
+ * @brief Reads the TSSP50838's in a manner that has alot of maths.
  */
-int Tssp_system::deviationReading(int midTssp) {
-    // Take all necessary readings relative to the tssp with the highest reading
-    // (one above the tssp and one below the tssp)
-    // First check that midTssp isn't of two other special cases, if not, assume
-    // that midTssp is of a normal case.
-    if(midTssp == TSSPNUM) {
-        midTsspReading = readTssp[midTssp];
-        followingTsspReading = readTssp[midTssp-1];
-        leadingTsspReading = readTssp[0];
-    } else if(midTssp == 0) {
-        midTsspReading = readTssp[midTssp];
-        followingTsspReading = readTssp[TSSPNUM-1];
-        leadingTsspReading = readTssp[midTssp+1];
-    } else {
-        midTsspReading = readTssp[midTssp];
-        followingTsspReading = readTssp[midTssp-1];
-        leadingTsspReading = readTssp[midTssp+1];
+void Tssp_system::advancedCalc() {
+    advancedBallDir = 0;
+
+    read();
+
+    // Find the top 4 highest values
+    for(int i = 0; i < TSSPNUM; i++) {
+        if(readTssp[i] > top4Tssps[0]) {
+            top4Tssps[0] = i;
+        }
+    }
+    for(int i = 0; i < TSSPNUM; i++) {
+        if(i != top4Tssps[0]) {
+            if(readTssp[i] > top4Tssps[1]) {
+                top4Tssps[1] = i;
+            }
+        }
+    }
+    for(int i = 0; i < TSSPNUM; i++) {
+        if(i != top4Tssps[0] && i != top4Tssps[1]) {
+            if(readTssp[i] > top4Tssps[2]) {
+                top4Tssps[2] = i;
+            }
+        }
+    }
+    for(int i = 0; i < TSSPNUM; i++) {
+        if(i != top4Tssps[0] && i != top4Tssps[1] && i != top4Tssps[2]) {
+            top4Tssps[3] = i;
+        }
     }
 
-    // Finding if either the one above, or one below has the bigger reading. By 
-    // doing this, we know which index we can get to calculate the offset.
-    leadingTsspBigger = leadingTsspReading >= followingTsspReading ? 1 : 0;
+    //Calculate X and Y components of angle using unit circle
+    xcomp = (top4Tssps[0] * tsspXComponents[top4Tssps[0]]) + \
+            (top4Tssps[1] * tsspXComponents[top4Tssps[1]]) + \
+            (top4Tssps[2] * tsspXComponents[top4Tssps[2]]) + \
+            (top4Tssps[3] * tsspXComponents[top4Tssps[3]]);
 
-    // Subtract the readings depending on which value is bigger, by doing this, 
-    // an offset value is created between the highest tssp value, and the 
-    // highest value of the two tssps beside the highest valued tssp.
-    if(leadingTsspBigger) {
-        deviationOffset = midTsspReading - leadingTsspReading;
-    } else {
-        deviationOffset = midTsspReading - followingTsspReading;
+    ycomp = (top4Tssps[0] * tsspYComponents[top4Tssps[0]]) + \
+            (top4Tssps[1] * tsspYComponents[top4Tssps[1]]) + \
+            (top4Tssps[2] * tsspYComponents[top4Tssps[2]]) + \
+            (top4Tssps[3] * tsspYComponents[top4Tssps[3]]);
+
+    //Create arctan function to calculate angle (like physics as sam understands it 💀)
+    advancedBallDir = atanf(xcomp/ycomp) * RAD_TO_DEG;
+
+    //Ensure that the special cases in the unit circle and basic angle maths is accounted for
+    if(advancedBallDir < 0) {
+        advancedBallDir += 180;
     }
 
-    // Multiply the deviation offset by a constant, to turn it into a more 
-    // accurate offset reading.
-    return deviationOffset * TSSP_DEVIATION_CONSTANT;
+    if(xcomp < 0) {
+        advancedBallDir += 180;
+    }
+    
+    // Calculate Ball Strength
+    advancedBallStr = ((top4Tssps[0] * FIRST_HIGHEST_TSSP_STR_MULTIPLIER) + \
+                      (top4Tssps[1] * SECOND_HIGHEST_TSSP_STR_MULTIPLIER) + \
+                      (top4Tssps[2] * THIRD_HIGHEST_TSSP_STR_MULTIPLIER) + \
+                      (top4Tssps[3] * FOURTH_HIGHEST_TSSP_STR_MULTIPLIER)) / \
+                      (FIRST_HIGHEST_TSSP_STR_MULTIPLIER + 
+                      SECOND_HIGHEST_TSSP_STR_MULTIPLIER +
+                      THIRD_HIGHEST_TSSP_STR_MULTIPLIER  + 
+                      FOURTH_HIGHEST_TSSP_STR_MULTIPLIER );
 }

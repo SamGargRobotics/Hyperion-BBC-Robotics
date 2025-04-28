@@ -25,38 +25,12 @@ void Drive_system::init() {
  * 
  * @param speed Scaled speed needed.
  * @param angle Angle that the robot should move in.
- * @param heading Heading of the robot relative to the field rather than the
- *                robot direction.
  * @param correction Rotation needed to ensure that the robot stays forward.
- * @param batteryLevel Current battery level of the robot.
- * @param lineDir Direction of line (if there is not any line; -1)
- * @param goalDir Direction of attacking/defending goal depending on strategic 
- *                method.
- * @param moveToggle If the robot should move or not.
  */
-void Drive_system::run(float speed, float angle, float heading,
-                        float correction, float batteryLevel, 
-                        float lineDir, float goalDir, 
-                        bool moveToggle) {
-    // If batteryLevel is 0 or less, stop all motors
-    if (batteryLevel <= 0) {
-        scaleFactor = 0.0f;  // Completely stop all motors
-    } else if (batteryLevel > 100) {
-        scaleFactor = 1.0f;  // Cap scaling at 100%
-    } else {
-        scaleFactor = batteryLevel / 100.0f;  // Scale normally
-    }
-
-    if(lineDir == -1) {
-        moveCalcDir = angle;
-    } else {
-        moveCalcDir = lineDir;
-    }
-
-    // Calculate motor values with scaling
+void Drive_system::run(float speed, float angle, float correction) {
+    float dir = 450.0f - angle;
     for(uint8_t i = 0; i < MOTORNUM; i++) {
-        values[i] = (sinf(DEG_TO_RAD * (motorAngles[i] - moveCalcDir)) * speed \
-                    + correction + goalDir) * scaleFactor;
+        values[i] = cosf(DEG_TO_RAD * (dir + 270.0 - motorAngles[i])) * speed + correction;
     }
 
     largestSpeed = 0;
@@ -67,17 +41,23 @@ void Drive_system::run(float speed, float angle, float heading,
         }
     }
 
-    if(largestSpeed > 255) {
+    if(largestSpeed > 255.0f) {
         for(uint8_t i = 0; i < MOTORNUM; i++) {
-            values[i] *= (255 / largestSpeed);
+            values[i] *= (255.0f / largestSpeed);
         }
     }
 
-    for(uint8_t i = 0; i < MOTORNUM; i++) {
-        if(moveToggle) {
-            analogWrite(motorPWM[i], values[i]);
-            digitalWrite(motorInA[i], values[i] > 0);
-            digitalWrite(motorInB[i], values[i] < 0);
+    #if DEBUG_MOTORS
+        for(uint8_t i = 0; i < MOTORNUM; i++) {
+            Serial.print(values[i]);
+            Serial.print(" ");
         }
+        Serial.println();
+    #endif
+
+    for(uint8_t i = 0; i < MOTORNUM; i++) {
+        analogWrite(motorPWM[i], abs(round(values[i])));
+        digitalWrite(motorInA[i], (values[i] > 0));
+        digitalWrite(motorInB[i], (values[i] < 0));
     }
 }

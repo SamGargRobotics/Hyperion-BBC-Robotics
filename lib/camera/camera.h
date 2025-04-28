@@ -9,6 +9,8 @@
 #define CAMERA_H
  
 #include <Arduino.h>
+#include <math.h>
+#include <config.h>
  
 /*!
  * @brief Class that stores state and functions for reading what the camera is 
@@ -18,17 +20,15 @@ class Camera {
 public:
     void init();
     void read_camera();
-    int goal_x_attack;
-    int goal_x_defend;
-    int goal_y_attack;
-    int goal_y_defend;
-    float angle_to_goal_attack;
-    float angle_to_goal_defend;
+    int goal_x_yellow;
+    int goal_x_blue;
+    int goal_y_yellow;
+    int goal_y_blue;
+    float angle_to_goal_yellow;
+    float angle_to_goal_blue;
 private:
     float calculate_hypot(float x, float y);
     float calculate_theta(float o, float h);
-    int goal_index_defend;
-    int goal_index_attack;
 };
  
 #endif

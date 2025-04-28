@@ -18,8 +18,29 @@ void BatRead::init() {
  * @brief Reads the pin as an analog value to ensure that it can be used across
  *        the code.
  */
-float BatRead::read() { 
+void BatRead::read() { 
     rawValue = analogRead(BAT_READ_PIN);
-    float scaledValue = ((rawValue - lowest) / (highest - lowest)) * 100;
-    return scaledValue; //returns a value from 0-100.
+    calcBat(rawValue);
+    calcSwitchStatus(volts);
+    #if BAT_READ_RAWVAL
+        Serial.println(rawValue);
+    #endif
+}
+
+/*!
+ * @brief Calculates battery in volts according to analog reading.
+ * 
+ * @param rawVal Analog value from the batread function
+*/
+void BatRead::calcBat(float rawVal) {
+    volts = (rawVal-18.25)/70.5;
+}
+
+/*!
+ * @brief Calculates whether the motor switch is on or off.
+ * 
+ * @param V Voltage of the Battery.
+ */
+void BatRead::calcSwitchStatus(float V) {
+    motorOn = (V > BAT_MOTOROFF_THRESH);
 }

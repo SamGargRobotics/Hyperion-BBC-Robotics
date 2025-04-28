@@ -14,27 +14,27 @@
 //! @def FRPWM @brief Front Right Motor Power Pin
 #define FRPWM 25
 //! @def FRINA @brief Front Right Motor Input A
-#define FRINA 27
+#define FRINA 26
 //! @def FRINB @brief Front Right Motor Input B
-#define FRINB 26
+#define FRINB 27
 //! @def FLPWM @brief Front Left Motor Power Pin
 #define FLPWM 11
 //! @def FLINA @brief Front Left Motor Input A
-#define FLINA 24
+#define FLINA 12
 //! @def FLINB @brief Front Left Motor Input B
-#define FLINB 12
+#define FLINB 24
 //! @def BRPWM @brief Back Right Motor Power Pin
 #define BRPWM 28
 //! @def BRINA @brief Back Right Motor Input A
-#define BRINA 30
+#define BRINA 29
 //! @def BRINB @brief Back Right Motor Input B
-#define BRINB 29
+#define BRINB 30
 //! @def BLPWM @brief Back Left Motor Power Pin
 #define BLPWM 8
 //! @def BLINA @brief Back Left Motor Input A
-#define BLINA 10
+#define BLINA 9
 //! @def BLINB @brief Back Left Motor Input B
-#define BLINB 9
+#define BLINB 10
 
 //! @def TSSP1 @brief Tssp Pin
 #define TSSP1 16
@@ -53,7 +53,7 @@
 //! @def TSSP8 @brief Tssp Pin
 #define TSSP8 33
 //! @def TSSP9 @brief Tssp Pin
-#define TSSP9 32
+#define TSSP9 31
 //! @def TSSP10 @brief Tssp Pin
 #define TSSP10 7
 //! @def TSSP11 @brief Tssp Pin
@@ -84,5 +84,7 @@
 
 //! @def BAT_READ_PIN @brief Pin used to read battery of robot LiPo
 #define BAT_READ_PIN 38
+//! @def BAT_LED_PIN @brief LED pin for the battery warning critical battery
+#define BAT_LED_PIN 35
 
 #endif

@@ -23,13 +23,12 @@ class Drive_system {
 public:
     Drive_system() {};
     void init();
-    void run(float speed, float angle, float heading, float correction,
-            float batteryLevel, float lineDir, float goalDir, bool moveToggle);
+    void run(float speed, float angle, float correction);
     bool attack = true;
 private: 
-    int motorInA[MOTORNUM] = {FRINA, BRINA, BLINA, FLINA};
-    int motorInB[MOTORNUM] = {FRINB, BRINB, BLINB, FLINB};
-    int motorPWM[MOTORNUM] = {FRPWM, BRPWM, BLPWM, FLPWM};
+    int motorInA[MOTORNUM] = {FRINA, FLINA, BLINA, BRINA};
+    int motorInB[MOTORNUM] = {FRINB, FLINB, BLINB, BRINB};
+    int motorPWM[MOTORNUM] = {FRPWM, FLPWM, BLPWM, BRPWM};
     int motorAngles[MOTORNUM] = {45, 135, 225, 315};
     float values[MOTORNUM] = {0};
     float largestSpeed = 0;

@@ -7,7 +7,6 @@
 */
  
 #include "camera.h"
-#include <math.h>
  
 // i think we need the UART Libary
  
@@ -15,7 +14,7 @@
  * @brief Initalizes The Camera System
 */
 void Camera::init(){
-    Serial1.begin(115200); // frequancey thing :D
+    cameraSerial.begin(115200); // frequancey thing :D
 }
 /*!
  * @brief a function that comuniates to the camera and recieves its information
@@ -23,30 +22,20 @@ void Camera::init(){
  *         goal_index (colour), angle_to_goal]
 */
 void Camera::read_camera(){
-    if (Serial.available() >= 5) {
+    if (cameraSerial.available() >= 6) {
         // read the incoming stuff
-        if(Serial1.read() == 200){
-            if(Serial1.peek() == 122){
-                Serial.read();
-                goal_x_attack = Serial1.read();
-                goal_y_attack = Serial1.read();
-                goal_index_attack = Serial1.read(); //goal color
-                angle_to_goal_attack = calculate_theta(goal_x_attack,goal_y_attack);
-                if(Serial1.peek() == 202){
-                    Serial.read();
-                    goal_x_defend = Serial1.read();
-                    goal_y_defend = Serial1.read();
-                    goal_index_defend = Serial1.read(); //goal color
-                    angle_to_goal_defend = calculate_theta(goal_x_defend,goal_y_defend);
-                }
+        if(cameraSerial.read() == 200){
+            if(cameraSerial.peek() == 122){
+                cameraSerial.read();
+                goal_x_yellow = cameraSerial.read();
+                goal_y_yellow = cameraSerial.read();
+                angle_to_goal_yellow = calculate_theta(goal_x_yellow,goal_y_yellow);
+                goal_x_blue = cameraSerial.read();
+                goal_y_blue = cameraSerial.read();
+                angle_to_goal_blue = calculate_theta(goal_x_blue,goal_y_blue);
             }
         }
     }
-   
-    goal_x_defend = Serial1.read();
-    goal_y_defend = Serial1.read();
-    goal_index_defend = Serial1.read(); //goal color
-    angle_to_goal_defend = calculate_theta(goal_x_defend,goal_y_defend);
 }
  
 /*!
