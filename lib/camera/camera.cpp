@@ -27,11 +27,11 @@ void Camera::read_camera(){
         if(cameraSerial.read() == 200){
             if(cameraSerial.peek() == 122){
                 cameraSerial.read();
-                goal_x_yellow = cameraSerial.read();
-                goal_y_yellow = cameraSerial.read();
+                goal_x_yellow = cameraSerial.read()-60;
+                goal_y_yellow = cameraSerial.read()-60;
                 angle_to_goal_yellow = calculate_theta(goal_x_yellow,goal_y_yellow);
-                goal_x_blue = cameraSerial.read();
-                goal_y_blue = cameraSerial.read();
+                goal_x_blue = cameraSerial.read()-60;
+                goal_y_blue = cameraSerial.read()-60;
                 angle_to_goal_blue = calculate_theta(goal_x_blue,goal_y_blue);
             }
         }
