@@ -1,9 +1,5 @@
 /*!
  * @file batread.cpp
- * 
- * @mainpage Voltage Dividers
- * 
- * This is a library to read the robot's battery level using voltage dividers. 
  */
 #include "batread.h"
 

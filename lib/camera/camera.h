@@ -1,9 +1,12 @@
 /*!
  * @file LSLB.h
  *
- * This is a library to read what the camera is transmitting for goal tracking
+ * @mainpage This is a library to read what the camera is transmitting for goal 
+ * tracking
+ * 
+ * @date 30/04/25
  *
- * T.McCabe (Brisbane Boys' College)
+ * @author T.McCabe (Brisbane Boys' College)
 */
 #ifndef CAMERA_H
 #define CAMERA_H

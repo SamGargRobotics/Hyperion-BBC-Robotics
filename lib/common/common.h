@@ -1,11 +1,13 @@
 /*!
  * @file common.h
  * 
- * This is a library of common information and settings used over multiple
- * libraries.
+ * @mainpage This is a library of common information and settings used over 
+ * multiple libraries.
  * 
- * S.Garg (Brisbane Boys' College)
- * T.McCabe (Brisbane Boys' College)
+ * @date 30/04/25
+ * 
+ * @author S.Garg (Brisbane Boys' College)
+ * @author T.McCabe (Brisbane Boys' College)
  */
 #ifndef COMMON_H
 #define COMMON_H

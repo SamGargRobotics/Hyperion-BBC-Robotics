@@ -1,9 +1,11 @@
 /*!
  * @file bluetooth.h
  * 
- * This is a library for the HC-05 Bluetooth Module
+ * @mainpage This is a library for the HC-05 Bluetooth Module
  * 
- * S.Garg (Brisbane Boys' College)
+ * @date 30/04/25
+ * 
+ * @author S.Garg (Brisbane Boys' College)
  */
 #ifndef BLUETOOTH_H
 #define BLUETOOTH_H

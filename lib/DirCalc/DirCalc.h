@@ -1,10 +1,12 @@
 /*!
  * @file DirCalc.h
  * 
- * This is a library to calculate movement directions and general calculations 
+ * @mainpage This is a library to calculate movement directions and general calculations 
  * in terms of robot movement
  * 
- * S.Garg (Brisbane Boys' College)
+ * @date 30/04/25
+ * 
+ * @author S.Garg (Brisbane Boys' College)
  */
 #ifndef DIRCALC_H
 #define DIRCALC_H

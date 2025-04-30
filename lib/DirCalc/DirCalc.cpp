@@ -1,9 +1,5 @@
 /*!
  * @file DirCalc.cpp
- * 
- * @mainpage Direction Calculations for Robot
- * 
- * This is a library for direction calculations within the robot's code.
  */
 #include "DirCalc.h"
 

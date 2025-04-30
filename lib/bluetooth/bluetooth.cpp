@@ -1,10 +1,5 @@
 /*!
  * @file bluetooth.cpp
- * 
- * @mainpage HC-05 Bluetooth Module
- * 
- * This is a library for reading and sending values accross a HC-05 Bluetooth
- * Module
  */
 #include <bluetooth.h>
 

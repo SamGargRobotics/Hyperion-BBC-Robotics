@@ -1,8 +1,11 @@
 /*!
  * @file batread.h
- * This is a library used to read the battery level of the robot.
  * 
- * S.Garg (Brisbane Boys' College)
+ * @mainpage This is a library used to read the battery level of the robot.
+ * 
+ * @date 30/04/25
+ * 
+ * @author S.Garg (Brisbane Boys' College)
  */
 #ifndef BATREAD_H
 #define BATREAD_H

@@ -1,16 +1,28 @@
 /*!
  * @file config.h
  * 
- * This is a library that includes variables and defines that change the code's
- * behaviour.
+ * @mainpage This is a library that includes variables and defines that change 
+ * the code's behaviour.
  * 
- * S.Garg (Brisbane Boys' College)
- * T.McCabe (Brisbane Boys' College)
+ * @date 30/04/25
+ * 
+ * @author S.Garg (Brisbane Boys' College)
+ * @author T.McCabe (Brisbane Boys' College)
  */
 #ifndef CONFIG_H
 #define CONFIG_H
 
 #include <Arduino.h>
+//! @def attackingGoal @brief Blue = 1, Yelow = 0; Assigns which goal attacking
+#define attackingGoal true
+//! @def CORRECTION_TEST @brief Testing Correction Only if True
+#define CORRECTION_TEST false
+//! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
+#define GOAL_TRACKING_TOGGLE 1
+//! @def BALL_FOLLOW_TEST @brief Testing Corretion + Ball Follow if true
+#define BALL_FOLLOW_TEST false
+//! @def SET_SPEED @brief Speed that is set for running
+#define SET_SPEED 75
 
 //! @def MOTORNUM @brief Number of motors.
 #define MOTORNUM 4
@@ -46,13 +58,6 @@
 // strats for orbit
 #define ORBIT_STRENGTH_RADIUS 45
 
-//! @def CORRECTION_TEST @brief Testing Correction Only if True
-#define CORRECTION_TEST false
-//! @def BALL_FOLLOW_TEST @brief Testing Corretion + Ball Follow if true
-#define BALL_FOLLOW_TEST false
-//! @def SET_SPEED @brief Speed that is set for running
-#define SET_SPEED 75
-
 //! @def BATTERY_CRITICAL @brief The battery level where the battery is critical
 #define BATTERY_CRITICAL 11.7
 
@@ -68,5 +73,6 @@
 #define TSSP_DEBUG_SPEC_SENSOR false
 #define BAT_READ_RAWVAL false
 #define BAT_READ_VOLTS false
+#define DEBUG_GOAL_TRACKING false
 
 #endif

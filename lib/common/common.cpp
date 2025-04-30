@@ -1,9 +1,5 @@
 /*!
  * @file common.cpp
- * 
- * @mainpage Defining functions commonly used accross the code.
- * 
- * Defining functions commonly used across the code
  */
 
  #include "common.h"
