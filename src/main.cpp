@@ -15,6 +15,8 @@
 #include <camera.h>
 #include <Wire.h>
 
+float pid_d = PID_d;
+
 Drive_system motors;
 Bluetooth bluetooth;
 Tssp_system tssp;
@@ -22,7 +24,7 @@ LSystem ls;
 Camera cam;
 DirectionCalc dirCalc;
 bno::Adafruit_BNO055 compass = bno::Adafruit_BNO055(-1, 0x29, &Wire);
-PID compass_correct(PID_p, PID_i, PID_d, PID_abs_max);
+PID compass_correct(PID_p, PID_i, pid_d);
 sensors_event_t rotation;
 BatRead batteryLevel;
 
@@ -51,6 +53,7 @@ float currentBatteryLevelVolts = 0;
 bool robotFrontQuadrant = false;
 //! @brief If the motor switch is turned on
 bool motorOn = false;
+float heading = 0;
 
 void setup() {
     Serial.begin(9600);
@@ -63,9 +66,9 @@ void setup() {
     compass.setExtCrystalUse(true);
     cam.init();
     pinMode(BAT_LED_PIN, OUTPUT);
-    while(!compass.begin()) {
-        Serial.println("bno ded ;(");
-    }
+    // while(!compass.begin()) {
+    //     Serial.println("bno ded ;(");
+    // }
 }
 
 void loop() {
@@ -80,22 +83,21 @@ void loop() {
     yellowGoalTarget = floatMod(-1*cam.angle_to_goal_yellow, 360) > 180 ? \
                        floatMod(-1*cam.angle_to_goal_yellow, 360) - 360 : \
                        floatMod(-1*cam.angle_to_goal_yellow, 360);
-    goalTrackingCorrection = -1*compass_correct.update((attackingGoal) ? \
-                             blueGoalTarget:yellowGoalTarget, 0);
-    regularTrackingCorrection = -1*compass_correct.update( \
-                                rotation.orientation.x > 180 ? \
-                                rotation.orientation.x - 360 : \
-                                rotation.orientation.x, 0);
-
+    goalTrackingCorrection = (attackingGoal) ? blueGoalTarget:yellowGoalTarget;
+    regularTrackingCorrection = rotation.orientation.x > 180 ? rotation.orientation.x - 360 : rotation.orientation.x;
     #if GOAL_TRACKING_TOGGLE
-        if(goalTrackingCorrection <= -90 || goalTrackingCorrection >= 90) {
-            correction = regularTrackingCorrection;
+        if(cam.goal_x_blue == 0 && cam.goal_y_blue == 0) {
+            heading = regularTrackingCorrection;
+            pid_d = 0.075;
         } else {
-            correction = goalTrackingCorrection;
+            heading = goalTrackingCorrection;
+            pid_d = 0.0375;
         }
     #else
-        correction = regularTrackingCorrection;
+        heading = regularTrackingCorrection;
     #endif
+
+    correction = -1*compass_correct.update(heading, 0);
 
     robotFrontQuadrant = (cam.goal_y_blue < cam.goal_y_yellow);
     motors.attack = dirCalc.calculateStrategy(
@@ -113,7 +115,11 @@ void loop() {
 
     #if DEBUG_IMU
         Serial.print(rotation.orientation.x);
-        Serial.print(" ");
+        Serial.print("\t");
+        Serial.print(heading);
+        Serial.print("\t");
+        Serial.print(goalTrackingCorrection);
+        Serial.print("\t");
         Serial.println(correction);
     #endif
 

@@ -24,14 +24,30 @@ void Camera::read_camera(){
             if(cameraSerial.peek() == 122){
                 cameraSerial.read();
                 goal_x_yellow = cameraSerial.read();
-                ((goal_x_yellow == 0) ? goal_x_yellow = 0 : goal_x_yellow-60);
+                if(goal_x_yellow == 0) {
+                    goal_x_yellow = goal_x_yellow;
+                } else {
+                    goal_x_yellow -= 60;
+                }
                 goal_y_yellow = cameraSerial.read();
-                ((goal_y_yellow == 0) ? goal_y_yellow = 0 : goal_y_yellow-60);
+                if(goal_y_yellow == 0) {
+                    goal_y_yellow = goal_y_yellow;
+                } else {
+                    goal_y_yellow -= 60;
+                }
                 angle_to_goal_yellow = calculate_theta(goal_x_yellow,goal_y_yellow);
                 goal_x_blue = cameraSerial.read();
-                ((goal_x_blue == 0) ? goal_x_blue = 0 : goal_x_blue-60);
+                if(goal_x_blue == 0) {
+                    goal_x_blue = goal_x_blue;
+                } else {
+                    goal_x_blue -= 60;
+                }
                 goal_y_blue = cameraSerial.read();
-                ((goal_y_blue == 0) ? goal_y_blue = 0 : goal_y_blue-60);
+                if(goal_y_blue == 0) {
+                    goal_y_blue = goal_y_blue;
+                } else {
+                    goal_y_blue -= 60;
+                }
                 angle_to_goal_blue = calculate_theta(goal_y_blue,goal_x_blue);
             }
         }

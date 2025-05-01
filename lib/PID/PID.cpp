@@ -1,6 +1,6 @@
 #include "PID.h"
 
-PID::PID(double p, double i, double d, double absoluteMax) {
+PID::PID(float p, float i, float d, float absoluteMax) {
     kp = p;
     ki = i;
     kd = d;
@@ -10,18 +10,18 @@ PID::PID(double p, double i, double d, double absoluteMax) {
     lastTime = micros();
 }
 
-double PID::update(double input, double setpoint, double modulus) {
-    double derivative;
-    double error = setpoint - input;
+float PID::update(float input, float setpoint, float modulus) {
+    float derivative;
+    float error = setpoint - input;
 
     unsigned long currentTime = micros();
-    double elapsedTime = (currentTime - lastTime) / 1000000.0;
+    float elapsedTime = (currentTime - lastTime) / 1000000.0;
     lastTime = currentTime;
 
     integral += elapsedTime * error;
 
     if (modulus != 0.0) {
-        double difference = (input - lastInput);
+        float difference = (input - lastInput);
 
         if (difference < -modulus) {
             difference += modulus;
@@ -36,7 +36,7 @@ double PID::update(double input, double setpoint, double modulus) {
 
     lastInput = input;
 
-    double correction = kp * error + ki * integral - kd * derivative;
+    float correction = kp * error + ki * integral - kd * derivative;
 
     return absMax == 0 ? correction : constrain(correction, -absMax, absMax);
 }

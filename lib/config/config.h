@@ -36,11 +36,11 @@
 #define NUMBER_MUX 2
 
 //! @def PID_p @brief Proportional aspect of PID
-#define PID_p 0.9
+#define PID_p 0.9 //0.9
 //! @def PID_i @brief Intergral aspect of PID
 #define PID_i 0
 //! @def PID_d @brief Derivative aspect of PID
-#define PID_d 0.075 //0.06
+#define PID_d 0.075 //0.075
 //! @def PID_abs_max @brief Absoloute max of PID
 #define PID_abs_max 100
 
@@ -66,7 +66,7 @@
 
 #define DEBUG (DEBUG_MOTORS || DEBUG_IMU || DEBUG_TSSP_SENSOR_VAL || DEBUG_TSSP_IGNORE || TSSP_DEBUG_SPEC_SENSOR || DEBUG_TSSP);
 #define DEBUG_MOTORS false
-#define DEBUG_IMU false
+#define DEBUG_IMU true
 #define DEBUG_TSSP false
 #define DEBUG_TSSP_SENSOR_VAL false
 #define DEBUG_TSSP_IGNORE false
