@@ -74,7 +74,6 @@ void setup() {
 void loop() {
     compass.getEvent(&rotation); //(rotation.orientation.x)
     tssp.normalCalc();
-    // tssp.advancedCalc();
     batteryLevel.read();
     cam.read_camera();
     blueGoalTarget = floatMod(-1*cam.angle_to_goal_blue, 360) > 180 ? \
