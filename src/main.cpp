@@ -92,7 +92,7 @@ void loop() {
         heading = regularTrackingCorrection;
     #endif
     correction = -1*compass_correct.update(heading, 0);
-    #if DEBUG_IMU
+    #if DEBUG_IMU_CAM
         Serial.print(rotation.orientation.x);
         Serial.print("\t");
         Serial.print(regularTrackingCorrection);
@@ -124,10 +124,6 @@ void loop() {
         Serial.print(tssp.ballStr);
         Serial.print("\t");
         Serial.print(tssp.detectingBall);
-        Serial.print("\t");
-        Serial.print(moveSpeed);
-        Serial.print("\t");
-        Serial.print(attackerMoveDirection);
         Serial.print("\t");
         Serial.println(tssp.ballStr);
     #endif

@@ -245,7 +245,7 @@ double DirectionCalc::findMiddleAngle(double angle1, double angle2) {
  * @return Returns a speed value for the robot to move.
  */
 float DirectionCalc::calcSpeed(float ballStr) {
-    return max(min(pow(EULER, -0.02*(ballStr-(96.5*EULER))) + 20, 100), 30) / 100;
+    return max(min(pow(EULER, -0.02*(ballStr-(96.5*EULER))) + 20, 100), 30)/100;
 }
 
 /*!

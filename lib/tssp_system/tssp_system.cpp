@@ -16,6 +16,9 @@ void Tssp_system::init() {
     }
 }
 
+/*! 
+ * @brief Completes calculations for ballDir and ballStr by reading the Tssps
+ */
 void Tssp_system::update() {
     for(uint8_t i = 0; i < TSSPNUM; i++) {
         readTssp[i] = 0;
@@ -24,12 +27,21 @@ void Tssp_system::update() {
     largestReading = 0;
     highestTssp = 0;
     detectingBall = false;
+
     for(uint8_t i = 0; i < 255; i++) {
         for(uint8_t j = 0; j < TSSPNUM; j++) {
             readTssp[j] += 1 - digitalRead(tsspPins[j]);
         }
         delayMicroseconds(10);
     }
+
+    #if DEBUG_TSSP_SENSOR_VAL 
+        for(uint8_t i = 0; i < TSSPNUM; i++) {
+            Serial.print(readTssp[i]);
+            Serial.print("\t");
+        }
+        Serial.println();
+    #endif
 
     for(uint8_t i = 0; i < TSSPNUM; i++) {
         for(uint8_t j = 0; j < TSSPNUM; j++) {
@@ -67,5 +79,4 @@ void Tssp_system::update() {
 
     normalBallDir = (highestTssp)*(360.0/TSSPNUM);
     ballStr = ((3 * tsspSortedValuesNormal[0]) + (2 * tsspSortedValuesNormal[1]) + tsspSortedValuesNormal[2] + tsspSortedValuesNormal[3]) / 7;
-    // Serial.println(normalBallDir);
 }

@@ -124,6 +124,9 @@ float floatMod(float x, float m);
 //! advanced ball strength.
 #define FOURTH_HIGHEST_TSSP_STR_MULTIPLIER 2
 
+//! @def cameraSerial @brief Serial that the camera sends data over to
+#define cameraSerial Serial8
+
 //! @def BLUETOOTH_SERIAL @brief Serial used to transfer data from the
 //!                              bluetooth modules
 #define BLUETOOTH_SERIAL Serial1

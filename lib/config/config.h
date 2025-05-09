@@ -4,7 +4,7 @@
  * @mainpage This is a library that includes variables and defines that change 
  * the code's behaviour.
  * 
- * @date 30/04/25
+ * @date 09/05/25
  * 
  * @author S.Garg (Brisbane Boys' College)
  * @author T.McCabe (Brisbane Boys' College)
@@ -61,18 +61,17 @@
 //! @def BATTERY_CRITICAL @brief The battery level where the battery is critical
 #define BATTERY_CRITICAL 11.7
 
-//! @def cameraSerial @brief Serial that the camera sends data over to
-#define cameraSerial Serial8
-
-#define DEBUG (DEBUG_MOTORS || DEBUG_IMU || DEBUG_TSSP_SENSOR_VAL || DEBUG_TSSP_IGNORE || TSSP_DEBUG_SPEC_SENSOR || DEBUG_TSSP);
+//! @def DEBUG_MOTORS @brief Read what the motors are sending when true
 #define DEBUG_MOTORS false
-#define DEBUG_IMU false
+//! @def DEBUG_IMU @brief Prints various values for camera and BNO when true
+#define DEBUG_IMU_CAM false
+//! @def DEBUG_TSSP @brief Prints various values for tssp when true
 #define DEBUG_TSSP false
+//! @def DEBUG_TSSP_SENSOR_VAL @brief Prints tssp sensor values when true
 #define DEBUG_TSSP_SENSOR_VAL false
-#define DEBUG_TSSP_IGNORE false
-#define DEBUG_TSSP_TOP4TSSPS_NORMAL false
-#define TSSP_DEBUG_SPEC_SENSOR false
+//! @def DEBUG_READ_RAWVAL @brief Prints the raw analog value from bat
 #define BAT_READ_RAWVAL false
+//! @def BAT_READ_VOLTS @brief Reads the approx voltage value (2 d.p.) from bat
 #define BAT_READ_VOLTS false
 
 #endif
