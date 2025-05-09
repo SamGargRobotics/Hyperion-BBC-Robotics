@@ -15,8 +15,6 @@
 #include <camera.h>
 #include <Wire.h>
 
-float pid_d = PID_d;
-
 Drive_system motors;
 Bluetooth bluetooth;
 Tssp_system tssp;
@@ -24,7 +22,7 @@ LSystem ls;
 Camera cam;
 DirectionCalc dirCalc;
 bno::Adafruit_BNO055 compass = bno::Adafruit_BNO055(-1, 0x29, &Wire);
-PID compass_correct(PID_p, PID_i, pid_d);
+PID compass_correct(PID_p, PID_i, PID_d);
 sensors_event_t rotation;
 BatRead batteryLevel;
 
@@ -49,10 +47,9 @@ float moveSpeed = 0;
 float batteryCurrentLevel = 0;
 //! @brief Current battery level of the robot (volts)
 float currentBatteryLevelVolts = 0;
-//! @brief If the robot is in the front quadrant of the field
-bool robotFrontQuadrant = false;
 //! @brief If the motor switch is turned on
 bool motorOn = false;
+//! @brief The heading the robot needs to switch to
 float heading = 0;
 
 void setup() {
@@ -62,20 +59,21 @@ void setup() {
     motors.init();
     bluetooth.init();
     batteryLevel.init();
-    compass.begin();
+    while(!compass.begin()) {
+        Serial.println("bno ded ;(");
+    }
     compass.setExtCrystalUse(true);
     cam.init();
     pinMode(BAT_LED_PIN, OUTPUT);
-    // while(!compass.begin()) {
-    //     Serial.println("bno ded ;(");
-    // }
 }
 
 void loop() {
+// [Correction / Goal Tracking Calculations]
     compass.getEvent(&rotation); //(rotation.orientation.x)
-    tssp.normalCalc();
-    batteryLevel.read();
     cam.read_camera();
+    regularTrackingCorrection = rotation.orientation.x > 180 ? \
+                                rotation.orientation.x - 360 : \
+                                rotation.orientation.x;
     blueGoalTarget = floatMod(-1*cam.angle_to_goal_blue, 360) > 180 ? \
                      floatMod(-1*cam.angle_to_goal_blue, 360) - 360 : \
                      floatMod(-1*cam.angle_to_goal_blue, 360);
@@ -83,45 +81,43 @@ void loop() {
                        floatMod(-1*cam.angle_to_goal_yellow, 360) - 360 : \
                        floatMod(-1*cam.angle_to_goal_yellow, 360);
     goalTrackingCorrection = (attackingGoal) ? blueGoalTarget:yellowGoalTarget;
-    regularTrackingCorrection = rotation.orientation.x > 180 ? rotation.orientation.x - 360 : rotation.orientation.x;
     #if GOAL_TRACKING_TOGGLE
-        if(cam.goal_x_blue == 0 && cam.goal_y_blue == 0) {
+        if(attackingGoal?cam.goal_x_blue:cam.goal_x_yellow == 0 && \
+           attackingGoal?cam.goal_y_blue:cam.goal_y_yellow == 0) {
             heading = regularTrackingCorrection;
-            pid_d = 0.075;
         } else {
             heading = goalTrackingCorrection;
-            pid_d = 0.0375;
         }
     #else
         heading = regularTrackingCorrection;
     #endif
-
     correction = -1*compass_correct.update(heading, 0);
-
-    robotFrontQuadrant = (cam.goal_y_blue < cam.goal_y_yellow);
-    motors.attack = dirCalc.calculateStrategy(
-                    bluetooth.otherRobotBallLocation[1], dirCalc.ballDis);
-    attackerMoveDirection = dirCalc.exponentialOrbit(tssp.normalBallDir, 
-                                                    tssp.ballStr);
-    defenderMoveDirection = dirCalc.defenderMovement(0, 0, 
-                                                    tssp.normalBallDir);                      
-    moveSpeed = dirCalc.calcSpeed(tssp.ballStr)*SET_SPEED;
-    if(batteryLevel.volts <= BATTERY_CRITICAL) {
-        digitalWrite(BAT_LED_PIN, HIGH);
-    } else {
-        digitalWrite(BAT_LED_PIN, LOW);
-    }
-
     #if DEBUG_IMU
         Serial.print(rotation.orientation.x);
         Serial.print("\t");
-        Serial.print(heading);
+        Serial.print(regularTrackingCorrection);
         Serial.print("\t");
         Serial.print(goalTrackingCorrection);
         Serial.print("\t");
+        Serial.print(cam.goal_x_blue);
+        Serial.print("\t");
+        Serial.print(cam.goal_y_blue);
+        Serial.print("\t"); 
+        Serial.print(cam.angle_to_goal_blue);
+        Serial.print("\t");
+        Serial.print(cam.goal_x_yellow);
+        Serial.print("\t");
+        Serial.print(cam.goal_y_yellow);
+        Serial.print("\t"); 
+        Serial.print(cam.angle_to_goal_yellow);
+        Serial.print("\t"); 
+        Serial.print(heading);
+        Serial.print("\t");
         Serial.println(correction);
     #endif
-
+    
+// [Tssp Calculations]
+    tssp.update();
     #if DEBUG_TSSP
         Serial.print(tssp.normalBallDir);
         Serial.print("\t");
@@ -136,6 +132,13 @@ void loop() {
         Serial.println(tssp.ballStr);
     #endif
 
+// [Battery Level Calculations]
+    batteryLevel.read();
+    if(batteryLevel.volts <= BATTERY_CRITICAL) {
+        digitalWrite(BAT_LED_PIN, HIGH);
+    } else {
+        digitalWrite(BAT_LED_PIN, LOW);
+    }
     #if BAT_READ_VOLTS
         if(batteryLevel.motorOn) {
             Serial.print("MOTOR ON");
@@ -146,21 +149,17 @@ void loop() {
         Serial.println(batteryLevel.volts);
     #endif
     
-    #if DEBUG_GOAL_TRACKING
-        Serial.print(cam.goal_x_blue);
-        Serial.print("\t");
-        Serial.print(cam.goal_y_blue);
-        Serial.print("\t"); 
-        Serial.print(cam.angle_to_goal_blue);
-        Serial.print("\t");
-        Serial.print(cam.goal_x_yellow);
-        Serial.print("\t");
-        Serial.print(cam.goal_y_yellow);
-        Serial.print("\t"); 
-        Serial.println(cam.angle_to_goal_yellow);
-        Serial.print("\t"); 
-    #endif
+// [Strategy and Movement Calculation]
+    motors.attack = dirCalc.calculateStrategy(
+                                            bluetooth.otherRobotBallLocation[1],
+                                            tssp.normalBallDir);
+    attackerMoveDirection = dirCalc.exponentialOrbit(tssp.normalBallDir, 
+                                                    tssp.ballStr);
+    defenderMoveDirection = dirCalc.defenderMovement(0, 0, 
+                                                    tssp.normalBallDir);                      
+    moveSpeed = dirCalc.calcSpeed(tssp.ballStr)*SET_SPEED;
 
+// [Moving the Robot Final Calculations and Logic]
     #if CORRECTION_TEST
         motors.run(0, 0, correction);
     #elif BALL_FOLLOW_TEST
@@ -178,7 +177,6 @@ void loop() {
                 motors.run((tssp.detectingBall?moveSpeed:0), 
                           tssp.normalBallDir, correction);
             }
-
         }
     #endif
 }

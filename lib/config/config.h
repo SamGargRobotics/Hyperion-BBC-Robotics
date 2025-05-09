@@ -22,7 +22,7 @@
 //! @def BALL_FOLLOW_TEST @brief Testing Corretion + Ball Follow if true
 #define BALL_FOLLOW_TEST false
 //! @def SET_SPEED @brief Speed that is set for running
-#define SET_SPEED 75
+#define SET_SPEED 50
 
 //! @def MOTORNUM @brief Number of motors.
 #define MOTORNUM 4
@@ -56,7 +56,7 @@
 #define GOAL_SEMI_CIRCLE_RADIUS_CM 10
 //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot switches
 // strats for orbit
-#define ORBIT_STRENGTH_RADIUS 45
+#define ORBIT_STRENGTH_RADIUS 100
 
 //! @def BATTERY_CRITICAL @brief The battery level where the battery is critical
 #define BATTERY_CRITICAL 11.7
@@ -66,13 +66,13 @@
 
 #define DEBUG (DEBUG_MOTORS || DEBUG_IMU || DEBUG_TSSP_SENSOR_VAL || DEBUG_TSSP_IGNORE || TSSP_DEBUG_SPEC_SENSOR || DEBUG_TSSP);
 #define DEBUG_MOTORS false
-#define DEBUG_IMU true
+#define DEBUG_IMU false
 #define DEBUG_TSSP false
 #define DEBUG_TSSP_SENSOR_VAL false
 #define DEBUG_TSSP_IGNORE false
+#define DEBUG_TSSP_TOP4TSSPS_NORMAL false
 #define TSSP_DEBUG_SPEC_SENSOR false
 #define BAT_READ_RAWVAL false
 #define BAT_READ_VOLTS false
-#define DEBUG_GOAL_TRACKING false
 
 #endif

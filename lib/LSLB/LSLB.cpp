@@ -44,7 +44,7 @@ int LSystem::readOne(int sensor_num) {
     for(int i = 0; i < 4; i++) {
         digitalWrite(pinList[i], (sensor_num>>i)&0x01);
     }    
-    if((sensor_num>>4)&0x01 == 0) {
+    if(((sensor_num>>4)&0x01) == 0) {
         return analogRead(LIGHT_PIN);
     } else {
         return analogRead(LIGHT_PIN2);
@@ -93,18 +93,18 @@ void LSystem::calculateLineDirection() {
         }
         clusterCenter[c] = center;
     }
-    for(uint8_t k = 0; k < 4; k++) {
+    for(uint8_t k = 0; k < 3; k++) {
         if(clusterCenter[k] != 44) {
             loopTut += clusterCenter[k];
             loopCount += 1;
         }
     }
     lineDirection = round(loopTut/loopCount);
-    if(previousLineDirections[10] != 0) {
-        lineDirectionArray = 0;
-    }
-    previousLineDirections[lineDirectionArray] = lineDirection;
-    lineDirectionArray++;
+    //if(previousLineDirections[10] != 0) {
+        //lineDirectionArray = 0;
+    //}
+    // previousLineDirections[lineDirectionArray] = lineDirection;
+    // lineDirectionArray++;
 }
 
 /*!

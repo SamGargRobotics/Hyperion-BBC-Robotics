@@ -10,10 +10,17 @@
 #ifndef TSSP_SYSTEM_H
 #define TSSP_SYSTEM_H
 
-#include <Arduino.h>
 #include <config.h>
 #include <pins.h>
 #include <common.h>
+
+#define ARRAYSHIFTDOWN(a, lower, upper){          \
+	if (upper == (sizeof(a)/sizeof(a[0])) - 1){   \
+		for (int q = upper - 1; q >= lower; q--){ \
+			*(a + q + 1) = *(a + q); }            \
+	} else{                                       \
+		for (int q = upper; q >= lower; q--){     \
+			*(a + q + 1) = *(a + q); }}}
 
 /*!
  * @brief Class that stores state and functions for interacting with multiple 
@@ -25,18 +32,21 @@ public:
     void init();
     void normalCalc();
     void advancedCalc();
+    void update();
     bool detectingBall = true;
-    int ballStr = 0;
-    int normalBallDir = 0;
+    float ballStr = 0;
+    float normalBallDir = 0;
     float advancedBallStr = 0;
     float advancedBallDir = 0;
     int highestTssp = 0;
 private:
     void read();
+    void sortTssps(bool tsspSortToggle);
     bool deviationFunctionToggle = false;
-    int readTssp[TSSPNUM] = {0};
-    int top4Tssps[4] = {0};
-    int tsspPins[TSSPNUM] = {TSSP1, TSSP2, TSSP3, TSSP4, TSSP5, TSSP6, TSSP7,
+    uint8_t readTssp[TSSPNUM] = {0};
+    uint8_t tsspSortedValuesAdvanced[TSSPNUM] = {0};
+    uint8_t tsspSortedValuesNormal[TSSPNUM] = {0};
+    uint8_t tsspPins[TSSPNUM] = {TSSP1, TSSP2, TSSP3, TSSP4, TSSP5, TSSP6, TSSP7,
                             TSSP8, TSSP9, TSSP10, TSSP11, TSSP12, TSSP13, 
                             TSSP14, TSSP15, TSSP16};
     int readingTsspIgnores[TSSPNUM] = {0};
