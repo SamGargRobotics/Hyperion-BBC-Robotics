@@ -14,6 +14,7 @@
 #include <Arduino.h>
 #include <math.h>
 #include <config.h>
+#include <common.h>
  
 /*!
  * @brief Class that stores state and functions for reading what the camera is 

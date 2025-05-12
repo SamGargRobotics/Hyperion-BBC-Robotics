@@ -24,6 +24,7 @@ public:
     BatRead() {};
     void init();
     void read();
+    void toggleLED();
     float volts = 0;
     bool motorOn = false;
 private:

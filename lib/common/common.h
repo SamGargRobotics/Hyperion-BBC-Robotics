@@ -17,6 +17,25 @@
 
 float floatMod(float x, float m);
 
+#define ARRAYSHIFTDOWN(a, lower, upper){          \
+	if (upper == (sizeof(a)/sizeof(a[0])) - 1){   \
+		for (int q = upper - 1; q >= lower; q--){ \
+			*(a + q + 1) = *(a + q); }            \
+	} else{                                       \
+		for (int q = upper; q >= lower; q--){     \
+			*(a + q + 1) = *(a + q); }}}
+
+//! @def MOTORNUM @brief Number of motors.
+#define MOTORNUM 4
+
+//! @def TSSPNUM @brief Number of Tssps on the robot
+#define TSSPNUM 16
+
+//! @def NUM_LS @brief Number of light sensors
+#define NUM_LS 32
+//! @def NUMBER_MUX @brief Number of mux's
+#define NUMBER_MUX 2
+
 //! @def PI @brief π
 #define PI 3.1415926535897932384626433832795
 //! @def HALF_PI @brief π/2
@@ -133,7 +152,7 @@ float floatMod(float x, float m);
 //! @def BLUETOOTH_BAUD @brief Bluetooth communication baud rate.
 #define BLUETOOTH_BAUD 9600
 //! @def BLUETOOTH_PACKET_SIZE @brief Size of data being sent over.
-#define BLUETOOTH_PACKET_SIZE 5
+#define BLUETOOTH_PACKET_SIZE 4
 //! @def BLUETOOTH_START_BYTE @brief Byte start identifier.
 #define BLUETOOTH_START_BYTE 254
 //! @def BLUETOOTH_NO_DATA @brief If module has no data output.

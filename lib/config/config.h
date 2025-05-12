@@ -15,25 +15,15 @@
 #include <Arduino.h>
 //! @def attackingGoal @brief Blue = 1, Yelow = 0; Assigns which goal attacking
 #define attackingGoal true
-//! @def CORRECTION_TEST @brief Testing Correction Only if True
-#define CORRECTION_TEST false
 //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
 #define GOAL_TRACKING_TOGGLE 1
+//! @def SET_SPEED @brief Speed that is set for running
+#define SET_SPEED 150
+
+//! @def CORRECTION_TEST @brief Testing Correction Only if True
+#define CORRECTION_TEST false
 //! @def BALL_FOLLOW_TEST @brief Testing Corretion + Ball Follow if true
 #define BALL_FOLLOW_TEST false
-//! @def SET_SPEED @brief Speed that is set for running
-#define SET_SPEED 50
-
-//! @def MOTORNUM @brief Number of motors.
-#define MOTORNUM 4
-
-//! @def TSSPNUM @brief Number of Tssps on the robot
-#define TSSPNUM 16
-
-//! @def NUM_LS @brief Number of light sensors
-#define NUM_LS 32
-//! @def NUMBER_MUX @brief Number of mux's
-#define NUMBER_MUX 2
 
 //! @def PID_p @brief Proportional aspect of PID
 #define PID_p 0.9 //0.9
@@ -56,7 +46,11 @@
 #define GOAL_SEMI_CIRCLE_RADIUS_CM 10
 //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot switches
 // strats for orbit
-#define ORBIT_STRENGTH_RADIUS 100
+#define ORBIT_STRENGTH_RADIUS 93
+
+//! @def GOAL_TRACKING_DIS_THRESH @brief Distance away from the goal that the 
+//!                               robot starts goal tracking with the orbit
+#define GOAL_TRACKING_DIS_THRESH 48
 
 //! @def BATTERY_CRITICAL @brief The battery level where the battery is critical
 #define BATTERY_CRITICAL 11.7
@@ -73,5 +67,7 @@
 #define BAT_READ_RAWVAL false
 //! @def BAT_READ_VOLTS @brief Reads the approx voltage value (2 d.p.) from bat
 #define BAT_READ_VOLTS false
+//! @def DEBUG_ROBOT_STATE @brief Prints what the robot is currently doing
+#define DEBUG_ROBOT_STATE true
 
 #endif

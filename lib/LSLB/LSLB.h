@@ -11,6 +11,7 @@
  
 #include <Arduino.h>
 #include <config.h>
+#include <common.h>
 #include <pins.h>
 #include <math.h>
  

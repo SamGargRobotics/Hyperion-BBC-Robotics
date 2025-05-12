@@ -32,6 +32,7 @@ public:
     float defenderRotationOffset = 0;
     int defenderMovement(float goalDir, float goalDis, float ballDir);
     void defenderRotCalc(float goalDir);
+    bool attack = true;
 private:
     double findMiddleAngle(double angle1, double angle2);
     double ballStr_max = 0;
