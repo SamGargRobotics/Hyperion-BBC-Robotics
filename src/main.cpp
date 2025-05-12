@@ -82,7 +82,8 @@ void loop() {
     compass.getEvent(&rotation);
     rot = rotation.orientation.x;
     cam.read_camera();
-
+    
+    // Decide which goal is being tracked
     #if attackingGoal
         goal_y_val = cam.goal_y_blue;
         goal_x_val = cam.goal_x_blue;
@@ -90,14 +91,19 @@ void loop() {
         goal_y_val = cam.goal_y_yellow;
         goal_x_val = cam.goal_x_yellow;
     #endif
+    // Complete floatMod values to ensure that the heading is not constantly 
+    // changing when the robot faces the goal.
     blueGoalTarget = floatMod(-1*cam.angle_to_goal_blue, 360) > 180 ? \
                      floatMod(-1*cam.angle_to_goal_blue, 360) - 360 : \
                      floatMod(-1*cam.angle_to_goal_blue, 360);
     yellowGoalTarget = floatMod(-1*cam.angle_to_goal_yellow, 360) > 180 ? \
                        floatMod(-1*cam.angle_to_goal_yellow, 360) - 360 : \
                        floatMod(-1*cam.angle_to_goal_yellow, 360);
+    // Assign appropriate heading depending on assigned tracking goal
     goalTrackingCorrection = (attackingGoal) ? blueGoalTarget:yellowGoalTarget;
+    // Regular correction using the BNO/IMU/Compass
     regularTrackingCorrection = (rot>180)?(rot-360):rot;
+    // Heading logic to assign goal tracking or regular compass correct
     #if GOAL_TRACKING_TOGGLE
         if(goal_x_val == 0 && goal_y_val == 0) {
             heading = regularTrackingCorrection;
@@ -111,7 +117,7 @@ void loop() {
     #else
         heading = regularTrackingCorrection;
     #endif
-
+    // Assigns final correction value based on assigned heading in above logic
     correction = -1*compass_correct.update(heading, 0);
 
     #if DEBUG_IMU_CAM
@@ -186,21 +192,24 @@ void loop() {
                   tssp.ballDir, 0);
     #else
         if(ls.lineDirection != -1) {
-            // Line Avoidance
+            // If detecting line --> Line Avoidance
             robotState = "Line Avoidance";
             motors.run(moveSpeed, floatMod(ls.lineDirection + 180, 360), 0);
         } else {
             if(dirCalc.attack) {
-                // Attacker Logic
+                // If robot is attacking --> Attacker Logic
                 robotState = "Attacker Logic";
                 if(tssp.ballDir >= 350 || tssp.ballDir <= 10) {
+                    // If ball is generally straight then surge (capture zone)
                     motors.run((tssp.detectingBall?SET_SPEED:0), tssp.ballDir, 
                             correction);
                 } else {
                     if(tssp.ballStr > ORBIT_STRENGTH_RADIUS) {
+                        // If ball is close then orbit
                         motors.run((tssp.detectingBall?moveSpeed:0),
                                 attackerMoveDirection, correction);
                     } else {
+                        // If ball is far then ball follow
                         motors.run((tssp.detectingBall?moveSpeed:0), 
                                 tssp.ballDir, correction);
                     }
