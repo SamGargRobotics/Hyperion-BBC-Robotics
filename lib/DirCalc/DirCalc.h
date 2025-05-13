@@ -23,15 +23,12 @@
 class DirectionCalc {
 public:
     DirectionCalc() {};
-    bool defenderMoving = false;
-    bool calculateStrategy(float externalBallDis, float ballDis);
-    float trigOrbit(float ballStr, float ballDir);
     float exponentialOrbit(float ballDir, float ballStr);
     float calcSpeed(float ballStr);
     float ballDis = 0;
     float defenderRotationOffset = 0;
-    int defenderMovement(float goalDir, float goalDis, float ballDir);
-    void defenderRotCalc(float goalDir);
+    int defenderMovement(float goalDir, float goalDis, float goalx, float goaly, 
+                         float ballDir);
     bool attack = false;
 private:
     double findMiddleAngle(double angle1, double angle2);
@@ -40,12 +37,7 @@ private:
     double speed = 0;
     int StandardCases[8] = {0, 45, 90, 135, 180, 225, 270, 315};
     int standardCaseNum = 0;
-    int goalDisRelativeDirection = 0;
-    int ballRobotRelativeDirection = 0;
-    int goalDisCalculatedRelativeDirection = -1;
-    float decreaseVerticalDis(float verticalDis);
-    float increaseVerticalDis(float verDis);
-    float ballDisScale(float ballStr); 
+    float defenderMoveDir = 0;
     float mainAngle = 0;
     float moveAngle = 0;
     float secondaryAngle = 0;

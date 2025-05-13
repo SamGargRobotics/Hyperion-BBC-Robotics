@@ -24,8 +24,10 @@ LSystem ls;
 Camera cam;
 DirectionCalc dirCalc;
 bno::Adafruit_BNO055 compass = bno::Adafruit_BNO055(-1, 0x29, &Wire);
-PID attackingCorrection(PID_p_attack, PID_i_attack, PID_d_attack);
-PID defendingCorrection(PID_p_defend, PID_i_defend, PID_d_defend);
+PID attackingCorrection(PID_p_attack, PID_i_attack, PID_d_attack, PID_abs_max);
+PID defendingCorrection(PID_p_defend, PID_i_defend, PID_d_defend, PID_abs_max);
+PID defenderMovement(PID_p_defender_movement, PID_i_defender_movement, \
+                     PID_d_defender_movement, SET_SPEED);
 sensors_event_t rotation;
 BatRead batteryLevel;
 
@@ -35,14 +37,14 @@ BatRead batteryLevel;
 float correction = 0;
 //! @brief The amount the robot must correct to stay forward in terms of camera
 float goalTrackingCorrection = 0;
-//! @brief Goal tracking correction for blue goal
-float blueGoalTarget = 0;
-//! @brief Goal tracking correction for yellow goal
-float yellowGoalTarget = 0;
 //! @brief Y value of the chosen goal that is being tracked.
 uint8_t goal_y_val = 0;
 //! @brief X value of the chosen goal that is being tracked.
 uint8_t goal_x_val = 0;
+//! @brief Angle to goal of the chosen goal that is being tracked.
+float goal_angle = 0;
+//! @brief Distance of goal to robot (horizontal - pixels)
+float goal_dis = 0;
 //! @brief The amount the robot must correct to stay forward in terms of compass
 float regularTrackingCorrection = 0;
 //! @brief Current Compass Value
@@ -51,8 +53,10 @@ float rot = 0;
 float attackerMoveDirection = 0;
 //! @brief The orbit values of the defending function
 float defenderMoveDirection = 0;
-//! @brief The movement speed of the robot based on function
+//! @brief The movement speed of the robot based on function (attack)
 float moveSpeed = 0;
+//! @brief The movement speed of the robot based on PID (defend)
+float moveSpeedDefend = 0;
 //! @brief Current battery level of the robot (amps)
 float batteryCurrentLevel = 0;
 //! @brief Current battery level of the robot (volts)
@@ -88,26 +92,22 @@ void loop() {
     #if targetGoal
         goal_y_val = cam.goal_y_blue;
         goal_x_val = cam.goal_x_blue;
+        goal_angle = cam.angle_to_goal_blue;
     #else
         goal_y_val = cam.goal_y_yellow;
         goal_x_val = cam.goal_x_yellow;
+        goal_angle = cam.angle_to_goal_blue;
     #endif
     // Complete floatMod values to ensure that the heading is not constantly 
     // changing when the robot faces the goal.
     dirCalc.attack = false;
     if(dirCalc.attack) {
-        blueGoalTarget = floatMod(-1*cam.angle_to_goal_blue, 360) > 180 ? \
-                        floatMod(-1*cam.angle_to_goal_blue, 360) - 360 : \
-                        floatMod(-1*cam.angle_to_goal_blue, 360);
-        yellowGoalTarget = floatMod(-1*cam.angle_to_goal_yellow, 360) > 180 ? \
-                        floatMod(-1*cam.angle_to_goal_yellow, 360) - 360 : \
-                        floatMod(-1*cam.angle_to_goal_yellow, 360);
+        goalTrackingCorrection = floatMod(-1*goal_angle, 360) > 180 ? \
+                                 floatMod(-1*goal_angle, 360) - 360 : \
+                                 floatMod(-1*goal_angle, 360);
     } else {
-        blueGoalTarget = floatMod(-1*cam.angle_to_goal_blue, 360);
-        yellowGoalTarget = floatMod(-1*cam.angle_to_goal_blue, 360);    
+        goalTrackingCorrection = floatMod(-1*goal_angle, 360); 
     }
-    // Assign appropriate heading depending on assigned tracking goal
-    goalTrackingCorrection = (targetGoal) ? blueGoalTarget:yellowGoalTarget;
     // Regular correction using the BNO/IMU/Compass
     regularTrackingCorrection = (rot>180)?(rot-360):rot;
     // Heading logic to assign goal tracking or regular compass correct
@@ -136,6 +136,9 @@ void loop() {
     // and if you are attacking/defending
     correction = (dirCalc.attack)?(-1*attackingCorrection.update(heading, 0)): \
                  (-1*defendingCorrection.update(heading, 180));
+    
+    // Calculate distance of the goals away from the robot (pixels)
+    goal_dis = sqrt(pow(goal_x_val, 2) + pow(goal_y_val, 2));
 
     #if DEBUG_IMU_CAM
         Serial.print(rot);
@@ -189,15 +192,14 @@ void loop() {
 
 
 // [Strategy and Movement Calculation]
-    // dirCalc.attack = dirCalc.calculateStrategy(
-    //                                         bluetooth.otherRobotBallLocation[1],
-    //                                         tssp.ballDir);
     attackerMoveDirection = dirCalc.exponentialOrbit(tssp.ballDir, 
                                                     tssp.ballStr);
-    defenderMoveDirection = dirCalc.defenderMovement(0, 0, 
-                                                    tssp.ballDir);                      
+    defenderMoveDirection = dirCalc.defenderMovement(goal_angle, goal_dis,
+                                                     goal_x_val, goal_y_val, 
+                                                     tssp.ballDir);             
     moveSpeed = dirCalc.calcSpeed(tssp.ballStr)*SET_SPEED;
-
+    
+    moveSpeedDefend = defenderMovement.update(goal_dis, GOAL_SEMI_CIRCLE_RADIUS_CM);
 // [Bluetooth]
     bluetooth.update(batteryLevel.volts, tssp.ballDir, 0);
 
@@ -237,7 +239,12 @@ void loop() {
             } else {
                 // Defender Logic
                 robotState = "Defender Logic";
-                motors.run(0, 0, correction);
+                #if CORRECTION_TEST
+                    motors.run(0, 0, correction);
+                #else
+                    motors.run(defenderMoveDirection, moveSpeedDefend, 
+                               correction);
+                #endif
             }
         }
     #endif

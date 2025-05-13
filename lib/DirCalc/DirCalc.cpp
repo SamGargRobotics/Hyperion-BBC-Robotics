@@ -3,112 +3,6 @@
  */
 #include "DirCalc.h"
 
-/*! 
- * @brief Uses trigonometry to find the movement angle using associated params.
- * 
- * @param ballStr Distance of ball away from the robot.
- * @param ballDir Direction of ball relative to front of robot. (degrees)
- * 
- * @return Robot movement angle.
- */
-float DirectionCalc::trigOrbit(float ballStr, float ballDir) {
-    // Check for any exceptions to the orbit (that wont work with the regular 
-    // calculations)
-    if(ballDir >= 1 && ballDir <= 44) {
-        // Calculating for the case that the ball is between 1 to 44 degrees 
-        // relative to the robot (in direction)
-        mainAngle = ballDir;
-        lateralMoveDis = ballDis*sinf(mainAngle);
-        verticalMoveDis = ballDis*cosf(mainAngle);
-        secondaryAngle = atanf(decreaseVerticalDis(
-            verticalMoveDis)/lateralMoveDis);
-        moveAngle = 180 - (90+secondaryAngle);
-    } else if(ballDir >= 46 && ballDir <= 89) {
-        // Calculating for the case that the ball is between 46 to 89 degrees 
-        // relative to the robot (in direction)
-        mainAngle = 90 - ballDir;
-        lateralMoveDis = ballDis*cosf(mainAngle);
-        verticalMoveDis = ballDis*sinf(mainAngle);
-        secondaryAngle = atanf(decreaseVerticalDis(
-            verticalMoveDis)/lateralMoveDis);
-        moveAngle = 90 - secondaryAngle;
-    } else if(ballDir >= 91 && ballDir <= 134) {
-        // Calculating for the case that the ball is between 91 to 134 degrees 
-        // relative to the robot (in direction)
-        mainAngle = ballDir - 90; //!! Make more efficient way of calculating
-        lateralMoveDis = ballDis*cosf(mainAngle);
-        verticalMoveDis = ballDis*sinf(mainAngle);
-        secondaryAngle = atanf(increaseVerticalDis(
-            verticalMoveDis)/lateralMoveDis);
-        moveAngle = secondaryAngle + 90;
-    } else if(ballDir >= 136 && ballDir <= 179) {
-        // Calculating for the case that the ball is between 136 to 179 degrees 
-        // relative to the robot (in direction)
-        mainAngle = 180 - ballDir;
-        lateralMoveDis = ballDis*sinf(mainAngle);
-        verticalMoveDis = ballDis*cosf(mainAngle);
-        secondaryAngle = atanf(increaseVerticalDis(
-            verticalMoveDis) / lateralMoveDis);
-        moveAngle = 180 - secondaryAngle;
-    } else if(ballDir >= 181 && ballDir <= 214) {
-        // Calculating for the case that the ball is between 181 to 214 degrees 
-        // relative to the robot (in direction)
-        mainAngle = ballDir - 180;
-        lateralMoveDis = ballDis*sinf(mainAngle);
-        verticalMoveDis = ballDis*cosf(mainAngle);
-        secondaryAngle = atanf(increaseVerticalDis(
-            verticalMoveDis)/lateralMoveDis);
-        moveAngle = secondaryAngle + 180;
-    } else if(ballDir >= 216 && ballDir <= 269) {
-        // Calculating for the case that the ball is between 216 to 269 degrees 
-        // relative to the robot (in direction)
-        mainAngle = 270 - ballDir;
-        lateralMoveDis = ballDis*cosf(mainAngle);
-        verticalMoveDis = ballDis*sinf(mainAngle);
-        secondaryAngle = atanf(increaseVerticalDis(
-            verticalMoveDis)/lateralMoveDis);
-        moveAngle = 270 - secondaryAngle;
-    } else if(ballDir >= 271 && ballDir <= 314) {
-        // Calculating for the case that the ball is between 271 to 314 degrees 
-        // relative to the robot (in direction)
-        mainAngle = ballDir - 270;
-        lateralMoveDis = ballDis*cosf(mainAngle);
-        verticalMoveDis = ballDis*sinf(mainAngle);
-        secondaryAngle = atanf(decreaseVerticalDis(
-            verticalMoveDis)/lateralMoveDis);
-        moveAngle = secondaryAngle + 270;
-    } else if(ballDir >= 316 && ballDir <= 359) {
-        // Calculating for the case that the ball is between 316 to 359 degrees 
-        // relative to the robot (in direction)
-        mainAngle = 360 - ballDir;
-        lateralMoveDis = ballDis*sinf(mainAngle);
-        verticalMoveDis = ballDir*cosf(mainAngle);
-        secondaryAngle = atanf(decreaseVerticalDis(
-            verticalMoveDis)/lateralMoveDis);
-        moveAngle = 360 - secondaryAngle;
-    } else {
-        // If the direction of the ball did not meet any of the above cases 
-        // (0, 45, 90, 135, 180, 225, 270, 315) then they are covered below.
-        for(uint8_t i = 0; i < 8; i++) {
-            if(ballDir == StandardCases[i]) {
-                standardCaseNum = i;
-                if(ballDir <= 135) {
-                    moveAngle = StandardCases[standardCaseNum] + 10;
-                } else if(ballDir >= 215) {
-                    moveAngle = StandardCases[standardCaseNum] - 10;
-                } else {
-                    if(moveAngle <= 180) {
-                        moveAngle = 135;
-                    } else {
-                        moveAngle = 215;
-                    }
-                }
-            }
-        }
-    }
-    return moveAngle;
-}
-
 /*!
  * @brief Calculates movement direction using an exponential equation.
  * 
@@ -142,57 +36,21 @@ float DirectionCalc::exponentialOrbit(float ballDir, float ballStr) {
  * 
  * @return Robot movement angle.
  */
-int DirectionCalc::defenderMovement(float goalDir, float goalDis, float ballDir)
-{
+int DirectionCalc::defenderMovement(float goalDir, float goalDis, float goalx, 
+                                    float goal, float ballDir) {
     // Determine forward or backward movement relative to the semi-circle
-    if (goalDis > GOAL_SEMI_CIRCLE_RADIUS_CM) {
-        goalDisRelativeDirection = -1;
-        goalDisCalculatedRelativeDirection = 180; // Move Backwards
-    } else if (goalDis < GOAL_SEMI_CIRCLE_RADIUS_CM) {
-        goalDisRelativeDirection = 1;
-        goalDisCalculatedRelativeDirection = 0;  // Move Forwards
+    if(goalDis > GOAL_SEMI_CIRCLE_RADIUS_CM) {
+        defenderMoveDir = 180;
+    } else if(goalDis < GOAL_SEMI_CIRCLE_RADIUS_CM) {
+        defenderMoveDir = 0;
     } else {
-        goalDisRelativeDirection = 0; // Stay Still
+        defenderMoveDir = -1;
     }
-
-    // Determine if the defender should move
-    defenderMoving = (goalDisRelativeDirection == 0 && \
-                     ballRobotRelativeDirection == 0);
-    
     // Return movement angle based on direction
-    if(goalDisCalculatedRelativeDirection != -1) {
-        defenderMoving = true;
-        return findMiddleAngle(ballDir, goalDisCalculatedRelativeDirection);
+    if(defenderMoveDir != -1) {
+        return findMiddleAngle(ballDir, defenderMoveDir);
     } else {
-        defenderMoving = false;
-        return -1;
-    }
-}
-
-/*!
- * @brief Calculates the rotation of the defender in accordance to the ball 
- *        direction
- * 
- * @param goalDir Current direction of the goal.
- */
-void DirectionCalc::defenderRotCalc(float goalDir) {
-    defenderRotationOffset = 90 - goalDir;
-    defenderRotationOffset = constrain(defenderRotationOffset, -90, 90);
-}
-
-/*!
- * @brief Calculates whether local robot is attacking or defending.
- * 
- * @param externalBallDis The ball distance away from the other robot.
- * @param ballDis The ball distance away from the local robot.
- * 
- * @return True if attack, false if defense.
- */
-bool DirectionCalc::calculateStrategy(float externalBallDis, float ballDis) {
-    if(ballDis < externalBallDis) {
-        return true;
-    } else {
-        return false;
+        return defenderMoveDir;
     }
 }
 
@@ -241,37 +99,4 @@ double DirectionCalc::findMiddleAngle(double angle1, double angle2) {
  */
 float DirectionCalc::calcSpeed(float ballStr) {
     return max(min(pow(EULER, -0.02*(ballStr-(90.5*EULER))) + 20, ((3*SET_SPEED)/4)), 30)/((3*SET_SPEED)/4);
-}
-
-/*!
- * @brief Calculates the ball distance using a constant and ball strength.
- * 
- * @param ballStr Distance away from the ball.
- * 
- * @return Ball Distance away from the ball (cm).
- */
-float DirectionCalc::ballDisScale(float ballStr) { 
-    return ballStr*BALL_DIS_MULTIPLIER; //TUNE THE MULTIPLCATION BY THE CONSTANT
-}
-
-/*!
- * @brief Scale for the trigonometry orbit. (Decreasing factor)
- * 
- * @param verticalDis Vertical distance of the ball away from the ball.
- * 
- * @return Scaled vertical distance away from the ball in terms of robot.
- */
-float DirectionCalc::decreaseVerticalDis(float verticalDis) {
-    return (1 * verticalDis + 0); //LINEAR FUNCTION - NEEDS TUNING
-}
-
-/*!
- * @brief Scale for the trigonmetry orbit. (Increasing factor)
- * 
- * @param verDis Vertical distance of the ball away from the ball.
- * 
- * @return Scaled vertical distance away from the bal in terms of robot.
- */
-float DirectionCalc::increaseVerticalDis(float verDis) {
-    return (1 * verDis + 0);  //LINEAR FUNCTION - NEEDS TUNING
 }

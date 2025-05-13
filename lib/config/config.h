@@ -43,6 +43,13 @@
 //! @def PID_abs_max @brief Absoloute max of PID
 #define PID_abs_max 100
 
+//! @def PID_p_defender_movement @brief Proportional aspect of PID
+#define PID_p_defender_movement SET_SPEED*1
+//! @def PID_i_defender_movement @brief Intergral aspect of PID
+#define PID_i_defender_movement 0
+//! @def PID_d_defender_movement @brief Derivative aspect of PID
+#define PID_d_defender_movement 0
+
 //! @def BAT_MOTOROFF_THRESH @brief Thresh to determine if motor switch off
 #define BAT_MOTOROFF_THRESH 0.5
 
@@ -52,7 +59,7 @@
 #define ORBIT_MULTIPLIER 2.71828182846
 
 //! @def GOAL_SEMI_CIRCLE_RADIUS_CM @brief The defender's arc orbit around goal
-#define GOAL_SEMI_CIRCLE_RADIUS_CM 10
+#define GOAL_SEMI_CIRCLE_RADIUS_CM 20
 //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot switches
 // strats for orbit
 #define ORBIT_STRENGTH_RADIUS 93
@@ -69,7 +76,7 @@
 //! @def DEBUG_MOTORS @brief Read what the motors are sending when true
 #define DEBUG_MOTORS false
 //! @def DEBUG_IMU @brief Prints various values for camera and BNO when true
-#define DEBUG_IMU_CAM true
+#define DEBUG_IMU_CAM false
 //! @def DEBUG_TSSP @brief Prints various values for tssp when true
 #define DEBUG_TSSP false
 //! @def DEBUG_TSSP_SENSOR_VAL @brief Prints tssp sensor values when true
