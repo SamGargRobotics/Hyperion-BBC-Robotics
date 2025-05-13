@@ -13,8 +13,9 @@
 #define CONFIG_H
 
 #include <Arduino.h>
-//! @def attackingGoal @brief Blue = 1, Yelow = 0; Assigns which goal attacking
-#define attackingGoal true
+//! @def targetGoal @brief Blue = 1, Yelow = 0; Assigns which goal is the target
+//!                        for either attacking or defending
+#define targetGoal true
 //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
 #define GOAL_TRACKING_TOGGLE 1
 //! @def SET_SPEED @brief Speed that is set for running
@@ -25,12 +26,20 @@
 //! @def BALL_FOLLOW_TEST @brief Testing Corretion + Ball Follow if true
 #define BALL_FOLLOW_TEST false
 
-//! @def PID_p @brief Proportional aspect of PID
-#define PID_p 0.9 //0.9
-//! @def PID_i @brief Intergral aspect of PID
-#define PID_i 0
-//! @def PID_d @brief Derivative aspect of PID
-#define PID_d 0.075 //0.075
+//! @def PID_p_attack @brief Proportional aspect of PID
+#define PID_p_attack 0.9
+//! @def PID_i_attack @brief Intergral aspect of PID
+#define PID_i_attack 0
+//! @def PID_d_attack @brief Derivative aspect of PID
+#define PID_d_attack 0.075
+
+//! @def PID_p_defend @brief Proportional aspect of PID
+#define PID_p_defend 0.65
+//! @def PID_i_defend @brief Intergral aspect of PID
+#define PID_i_defend 0
+//! @def PID_d_defend @brief Derivative aspect of PID
+#define PID_d_defend 0.02
+
 //! @def PID_abs_max @brief Absoloute max of PID
 #define PID_abs_max 100
 
@@ -38,7 +47,7 @@
 #define BAT_MOTOROFF_THRESH 0.5
 
 //! @def EXPO_MIN_VAL @brief Minimum value of the exponential orbit
-#define EXPO_MIN_VAL 75
+#define EXPO_MIN_VAL 60
 //! @def ORBIT_MULTIPLIER @brief Multiplier for the exponential orbit
 #define ORBIT_MULTIPLIER 2.71828182846
 
@@ -47,6 +56,8 @@
 //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot switches
 // strats for orbit
 #define ORBIT_STRENGTH_RADIUS 93
+//! @def SURGE_STR_VALUE @brief Min Strength value that allows the robot to surge
+#define SURGE_STR_VALUE 113
 
 //! @def GOAL_TRACKING_DIS_THRESH @brief Distance away from the goal that the 
 //!                               robot starts goal tracking with the orbit
@@ -58,7 +69,7 @@
 //! @def DEBUG_MOTORS @brief Read what the motors are sending when true
 #define DEBUG_MOTORS false
 //! @def DEBUG_IMU @brief Prints various values for camera and BNO when true
-#define DEBUG_IMU_CAM false
+#define DEBUG_IMU_CAM true
 //! @def DEBUG_TSSP @brief Prints various values for tssp when true
 #define DEBUG_TSSP false
 //! @def DEBUG_TSSP_SENSOR_VAL @brief Prints tssp sensor values when true
@@ -68,6 +79,6 @@
 //! @def BAT_READ_VOLTS @brief Reads the approx voltage value (2 d.p.) from bat
 #define BAT_READ_VOLTS false
 //! @def DEBUG_ROBOT_STATE @brief Prints what the robot is currently doing
-#define DEBUG_ROBOT_STATE true
+#define DEBUG_ROBOT_STATE false
 
 #endif

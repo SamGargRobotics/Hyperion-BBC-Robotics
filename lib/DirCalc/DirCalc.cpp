@@ -124,16 +124,11 @@ float DirectionCalc::exponentialOrbit(float ballDir, float ballStr) {
     // https://www.desmos.com/calculator/mjjqu8ujy0
     if(ballDir > 180) {
         modBallDir = ballDir-360;
-        // return ballDir - min(0.04*pow(ORBIT_MULTIPLIER, 4.5*ballDir), 
-        //                     EXPO_MIN_VAL);
-
-        return ballDir + (-1*min(0.04*(pow(EULER, -4.5*modBallDir) - 1), 60));
+        return ballDir + (-1*min(0.04*(pow(EULER, -4.5*modBallDir) - 1), \
+                                 EXPO_MIN_VAL));
 
     } else {
-        // return ballDir + min(0.04*pow(ORBIT_MULTIPLIER, 4.5*ballDir), 
-        //                     EXPO_MIN_VAL);
-
-        return ballDir + (min(0.04*(pow(EULER, 4.5*ballDir) - 1), 60));
+        return ballDir + (min(0.04*(pow(EULER, 4.5*ballDir) - 1), EXPO_MIN_VAL));
     }
 }
 
@@ -245,7 +240,7 @@ double DirectionCalc::findMiddleAngle(double angle1, double angle2) {
  * @return Returns a speed value for the robot to move.
  */
 float DirectionCalc::calcSpeed(float ballStr) {
-    return max(min(pow(EULER, -0.02*(ballStr-(96.5*EULER))) + 20, 100), 30)/100;
+    return max(min(pow(EULER, -0.02*(ballStr-(90.5*EULER))) + 20, ((3*SET_SPEED)/4)), 30)/((3*SET_SPEED)/4);
 }
 
 /*!

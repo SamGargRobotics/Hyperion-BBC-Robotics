@@ -24,7 +24,8 @@ LSystem ls;
 Camera cam;
 DirectionCalc dirCalc;
 bno::Adafruit_BNO055 compass = bno::Adafruit_BNO055(-1, 0x29, &Wire);
-PID compass_correct(PID_p, PID_i, PID_d);
+PID attackingCorrection(PID_p_attack, PID_i_attack, PID_d_attack);
+PID defendingCorrection(PID_p_defend, PID_i_defend, PID_d_defend);
 sensors_event_t rotation;
 BatRead batteryLevel;
 
@@ -84,7 +85,7 @@ void loop() {
     cam.read_camera();
     
     // Decide which goal is being tracked
-    #if attackingGoal
+    #if targetGoal
         goal_y_val = cam.goal_y_blue;
         goal_x_val = cam.goal_x_blue;
     #else
@@ -93,32 +94,48 @@ void loop() {
     #endif
     // Complete floatMod values to ensure that the heading is not constantly 
     // changing when the robot faces the goal.
-    blueGoalTarget = floatMod(-1*cam.angle_to_goal_blue, 360) > 180 ? \
-                     floatMod(-1*cam.angle_to_goal_blue, 360) - 360 : \
-                     floatMod(-1*cam.angle_to_goal_blue, 360);
-    yellowGoalTarget = floatMod(-1*cam.angle_to_goal_yellow, 360) > 180 ? \
-                       floatMod(-1*cam.angle_to_goal_yellow, 360) - 360 : \
-                       floatMod(-1*cam.angle_to_goal_yellow, 360);
+    dirCalc.attack = false;
+    if(dirCalc.attack) {
+        blueGoalTarget = floatMod(-1*cam.angle_to_goal_blue, 360) > 180 ? \
+                        floatMod(-1*cam.angle_to_goal_blue, 360) - 360 : \
+                        floatMod(-1*cam.angle_to_goal_blue, 360);
+        yellowGoalTarget = floatMod(-1*cam.angle_to_goal_yellow, 360) > 180 ? \
+                        floatMod(-1*cam.angle_to_goal_yellow, 360) - 360 : \
+                        floatMod(-1*cam.angle_to_goal_yellow, 360);
+    } else {
+        blueGoalTarget = floatMod(-1*cam.angle_to_goal_blue, 360);
+        yellowGoalTarget = floatMod(-1*cam.angle_to_goal_blue, 360);    
+    }
     // Assign appropriate heading depending on assigned tracking goal
-    goalTrackingCorrection = (attackingGoal) ? blueGoalTarget:yellowGoalTarget;
+    goalTrackingCorrection = (targetGoal) ? blueGoalTarget:yellowGoalTarget;
     // Regular correction using the BNO/IMU/Compass
     regularTrackingCorrection = (rot>180)?(rot-360):rot;
     // Heading logic to assign goal tracking or regular compass correct
     #if GOAL_TRACKING_TOGGLE
         if(goal_x_val == 0 && goal_y_val == 0) {
+            // If not seeing goal
             heading = regularTrackingCorrection;
         } else {
-            if(goal_y_val <= GOAL_TRACKING_DIS_THRESH) {
-                heading = goalTrackingCorrection;
+            // If seeing goal
+            if(dirCalc.attack) {
+                // If Attacking
+                if(goal_y_val <= GOAL_TRACKING_DIS_THRESH) {
+                    heading = goalTrackingCorrection;
+                } else {
+                    heading = regularTrackingCorrection;
+                }
             } else {
-                heading = regularTrackingCorrection;
+                // If Defending
+                heading = goalTrackingCorrection;
             }
         }
     #else
         heading = regularTrackingCorrection;
     #endif
     // Assigns final correction value based on assigned heading in above logic
-    correction = -1*compass_correct.update(heading, 0);
+    // and if you are attacking/defending
+    correction = (dirCalc.attack)?(-1*attackingCorrection.update(heading, 0)): \
+                 (-1*defendingCorrection.update(heading, 180));
 
     #if DEBUG_IMU_CAM
         Serial.print(rot);
@@ -199,10 +216,13 @@ void loop() {
             if(dirCalc.attack) {
                 // If robot is attacking --> Attacker Logic
                 robotState = "Attacker Logic";
-                if(tssp.ballDir >= 350 || tssp.ballDir <= 10) {
+                if((tssp.ballDir >= 350 || tssp.ballDir <= 10) && \
+                   tssp.ballStr >= SURGE_STR_VALUE) {
                     // If ball is generally straight then surge (capture zone)
+                    // motors.run((tssp.detectingBall?moveSpeed:0), tssp.ballDir, 
+                    //         correction);
                     motors.run((tssp.detectingBall?SET_SPEED:0), tssp.ballDir, 
-                            correction);
+                                correction);
                 } else {
                     if(tssp.ballStr > ORBIT_STRENGTH_RADIUS) {
                         // If ball is close then orbit
@@ -217,6 +237,7 @@ void loop() {
             } else {
                 // Defender Logic
                 robotState = "Defender Logic";
+                motors.run(0, 0, correction);
             }
         }
     #endif
