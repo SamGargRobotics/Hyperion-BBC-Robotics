@@ -32,22 +32,22 @@ sensors_event_t rotation;
 BatRead batteryLevel;
 
 // [Main Global Vars]
+//! @brief Y value of the chosen goal that is being tracked.
+uint8_t goal_y_val = 0;
+//! @brief X value of the chosen goal that is being tracked.
+uint8_t goal_x_val = 0;
 //! @brief Amount needed to turn (degs) to ensure that you are goal tracking/
 //!        staying forward depending on case.
 float correction = 0;
 //! @brief The amount the robot must correct to stay forward in terms of camera
 float goalTrackingCorrection = 0;
-//! @brief Y value of the chosen goal that is being tracked.
-uint8_t goal_y_val = 0;
-//! @brief X value of the chosen goal that is being tracked.
-uint8_t goal_x_val = 0;
 //! @brief Angle to goal of the chosen goal that is being tracked.
 float goal_angle = 0;
 //! @brief Distance of goal to robot (horizontal - pixels)
 float goal_dis = 0;
 //! @brief The amount the robot must correct to stay forward in terms of compass
 float regularTrackingCorrection = 0;
-//! @brief Current Compass Value
+//! @brief Current Compass Value (rotation)
 float rot = 0;
 //! @brief The orbit values of the attacking function
 float attackerMoveDirection = 0;
@@ -55,8 +55,6 @@ float attackerMoveDirection = 0;
 float defenderMoveDirection = 0;
 //! @brief The movement speed of the robot based on function (attack)
 float moveSpeed = 0;
-//! @brief The movement speed of the robot based on PID (defend)
-float moveSpeedDefend = 0;
 //! @brief Current battery level of the robot (amps)
 float batteryCurrentLevel = 0;
 //! @brief Current battery level of the robot (volts)
@@ -75,8 +73,8 @@ void setup() {
     motors.init();
     bluetooth.init();
     batteryLevel.init();
-    compass.setExtCrystalUse(true);
     cam.init();
+    compass.setExtCrystalUse(true);
     while(!compass.begin()) {
         Serial.println("bno ded ;(");
     }
@@ -101,13 +99,11 @@ void loop() {
     // Complete floatMod values to ensure that the heading is not constantly 
     // changing when the robot faces the goal.
     dirCalc.attack = false;
-    if(dirCalc.attack) {
-        goalTrackingCorrection = floatMod(-1*goal_angle, 360) > 180 ? \
-                                 floatMod(-1*goal_angle, 360) - 360 : \
-                                 floatMod(-1*goal_angle, 360);
-    } else {
-        goalTrackingCorrection = floatMod(-1*goal_angle, 360); 
-    }
+    goalTrackingCorrection = (dirCalc.attack)?
+                                        (floatMod(-1*goal_angle, 360) > 180 ? \
+                                        floatMod(-1*goal_angle, 360) - 360 : \
+                                        floatMod(-1*goal_angle, 360)) : \
+                                        floatMod(-1*goal_angle, 360);
     // Regular correction using the BNO/IMU/Compass
     regularTrackingCorrection = (rot>180)?(rot-360):rot;
     // Heading logic to assign goal tracking or regular compass correct
@@ -119,11 +115,8 @@ void loop() {
             // If seeing goal
             if(dirCalc.attack) {
                 // If Attacking
-                if(goal_y_val <= GOAL_TRACKING_DIS_THRESH) {
-                    heading = goalTrackingCorrection;
-                } else {
-                    heading = regularTrackingCorrection;
-                }
+                heading = (goal_y_val <= GOAL_TRACKING_DIS_THRESH)? \
+                           goalTrackingCorrection:regularTrackingCorrection;
             } else {
                 // If Defending
                 heading = goalTrackingCorrection;
@@ -196,10 +189,9 @@ void loop() {
                                                     tssp.ballStr);
     defenderMoveDirection = dirCalc.defenderMovement(goal_angle, goal_dis,
                                                      goal_x_val, goal_y_val, 
-                                                     tssp.ballDir);             
-    moveSpeed = dirCalc.calcSpeed(tssp.ballStr)*SET_SPEED;
-    
-    moveSpeedDefend = defenderMovement.update(goal_dis, GOAL_SEMI_CIRCLE_RADIUS_CM);
+                                                     tssp.ballDir);     
+    moveSpeed = (dirCalc.attack)?dirCalc.calcSpeed(tssp.ballStr)*SET_SPEED : \
+                defenderMovement.update(goal_dis, GOAL_SEMI_CIRCLE_RADIUS_CM);
 // [Bluetooth]
     bluetooth.update(batteryLevel.volts, tssp.ballDir, 0);
 
@@ -220,9 +212,7 @@ void loop() {
                 robotState = "Attacker Logic";
                 if((tssp.ballDir >= 350 || tssp.ballDir <= 10) && \
                    tssp.ballStr >= SURGE_STR_VALUE) {
-                    // If ball is generally straight then surge (capture zone)
-                    // motors.run((tssp.detectingBall?moveSpeed:0), tssp.ballDir, 
-                    //         correction);
+                    // If ball is generally straight and in capture --> surge
                     motors.run((tssp.detectingBall?SET_SPEED:0), tssp.ballDir, 
                                 correction);
                 } else {
@@ -242,8 +232,11 @@ void loop() {
                 #if CORRECTION_TEST
                     motors.run(0, 0, correction);
                 #else
-                    motors.run(defenderMoveDirection, moveSpeedDefend, 
-                               correction);
+                    if(defenderMoveDirection != -1) {
+                        motors.run(defenderMoveDirection, moveSpeed, correction);
+                    } else {
+                        motors.run(0, 0, correction);
+                    }
                 #endif
             }
         }
