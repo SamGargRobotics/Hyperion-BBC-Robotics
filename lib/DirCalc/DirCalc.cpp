@@ -90,13 +90,14 @@ double DirectionCalc::findMiddleAngle(double angle1, double angle2) {
  * @brief Calculate movement speed based on the distance of the ball. The
  *        further away the ball is, the faster the robot must move. The closer 
  *        the robot is, the slower it is. However, if the ball is directly
- *        infront of the robot, it will travel at full speed.
+ *        infront of the robot, it will travel at full speed (logic main)
+ *        https://www.desmos.com/calculator/irtx2usk2w
  * 
- * @param ballStr_ratio Normalized ball strenght (0.92-0.97)
- * @param voltage Battery voltage (11-12.6V)
+ * @param ballStr Strength of ball away from the robot
  * 
  * @return Returns a speed value for the robot to move.
  */
 float DirectionCalc::calcSpeed(float ballStr) {
-    return max(min(pow(EULER, -0.02*(ballStr-(90.5*EULER))) + 20, ((3*SET_SPEED)/4)), 30)/((3*SET_SPEED)/4);
+    return max(min(pow(EULER, -0.02*(ballStr-(90.5*EULER))) + 20, \
+           ((3*SET_SPEED)/4)), 30)/((3*SET_SPEED)/4);
 }

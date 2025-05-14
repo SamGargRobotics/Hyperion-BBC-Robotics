@@ -55,6 +55,8 @@ float attackerMoveDirection = 0;
 float defenderMoveDirection = 0;
 //! @brief The movement speed of the robot based on function (attack)
 float moveSpeed = 0;
+//! @brief The movement speed of the robot bsaed on PID (defend)
+float defenderMoveSpeed = 0;
 //! @brief Current battery level of the robot (amps)
 float batteryCurrentLevel = 0;
 //! @brief Current battery level of the robot (volts)
@@ -190,8 +192,9 @@ void loop() {
     defenderMoveDirection = dirCalc.defenderMovement(goal_angle, goal_dis,
                                                      goal_x_val, goal_y_val, 
                                                      tssp.ballDir);     
-    moveSpeed = (dirCalc.attack)?dirCalc.calcSpeed(tssp.ballStr)*SET_SPEED : \
-                defenderMovement.update(goal_dis, GOAL_SEMI_CIRCLE_RADIUS_CM);
+    moveSpeed = dirCalc.calcSpeed(tssp.ballStr)*SET_SPEED;
+    defenderMoveSpeed = defenderMovement.update(goal_dis, \
+                                                GOAL_SEMI_CIRCLE_RADIUS_CM);
 // [Bluetooth]
     bluetooth.update(batteryLevel.volts, tssp.ballDir, 0);
 
@@ -209,33 +212,47 @@ void loop() {
         } else {
             if(dirCalc.attack) {
                 // If robot is attacking --> Attacker Logic
-                robotState = "Attacker Logic";
                 if((tssp.ballDir >= 350 || tssp.ballDir <= 10) && \
                    tssp.ballStr >= SURGE_STR_VALUE) {
                     // If ball is generally straight and in capture --> surge
                     motors.run((tssp.detectingBall?SET_SPEED:0), tssp.ballDir, 
                                 correction);
+                    robotState = "Attacker Logic - Surge";
                 } else {
                     if(tssp.ballStr > ORBIT_STRENGTH_RADIUS) {
                         // If ball is close then orbit
                         motors.run((tssp.detectingBall?moveSpeed:0),
                                 attackerMoveDirection, correction);
+                        robotState = "Attacker Logic - Orbit";
                     } else {
                         // If ball is far then ball follow
                         motors.run((tssp.detectingBall?moveSpeed:0), 
                                 tssp.ballDir, correction);
+                        robotState = "Attacker Logic - Ball Follow";
                     }
                 }
             } else {
                 // Defender Logic
-                robotState = "Defender Logic";
                 #if CORRECTION_TEST
                     motors.run(0, 0, correction);
                 #else
-                    if(defenderMoveDirection != -1) {
-                        motors.run(defenderMoveDirection, moveSpeed, correction);
+                    if((tssp.ballDir >= 350 || tssp.ballDir <= 10) && \
+                        tssp.ballStr >= SURGE_STR_VALUE) {
+                        // If ball in capture then surge.
+                            motors.run(moveSpeed, tssp.ballDir, correction);
+                            robotState = "Defender Logic - Surge";
                     } else {
-                        motors.run(0, 0, correction);
+                        // If ball not in capture
+                        if(defenderMoveDirection != -1) {
+                            // If defender not on target line
+                            motors.run(defenderMoveSpeed, defenderMoveDirection, 
+                                       correction);
+                            robotState = "Defender Logic - Moving towards line";
+                        } else {
+                            // If defender on target line.
+                            motors.run(0, 0, correction);
+                            robotState = "Defender Logic - Set Position";
+                        }
                     }
                 #endif
             }

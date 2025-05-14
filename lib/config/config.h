@@ -34,11 +34,11 @@
 #define PID_d_attack 0.075
 
 //! @def PID_p_defend @brief Proportional aspect of PID
-#define PID_p_defend 0.65
+#define PID_p_defend 0.1
 //! @def PID_i_defend @brief Intergral aspect of PID
 #define PID_i_defend 0
 //! @def PID_d_defend @brief Derivative aspect of PID
-#define PID_d_defend 0.02
+#define PID_d_defend 0
 
 //! @def PID_abs_max @brief Absoloute max of PID
 #define PID_abs_max 100

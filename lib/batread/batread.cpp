@@ -46,9 +46,11 @@ void BatRead::calcSwitchStatus(float V) {
  * @brief Toggles the LED pin based on if the battery level is critical
  */
 void BatRead::toggleLED() {
-    if(volts <= BATTERY_CRITICAL) {
-        digitalWrite(BAT_LED_PIN, HIGH);
-    } else {
-        digitalWrite(BAT_LED_PIN, LOW);
+    if(motorOn) {
+        if(volts <= BATTERY_CRITICAL) {
+            digitalWrite(BAT_LED_PIN, HIGH);
+        } else {
+            digitalWrite(BAT_LED_PIN, LOW);
+        }
     }
 }
