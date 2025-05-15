@@ -55,20 +55,18 @@ int LSystem::readOne(int sensor_num) {
  * @brief calculates the direction of the white line to detect outs
  */
 void LSystem::calculateLineDirection() {
-    int senorValues[NUM_LS] = {0};
-    int senorIsWhite[NUM_LS] = {0};
     for(int i = 0; i < NUM_LS; i++) {
-        senorValues[i] = readOne(i);
-        if(senorValues[i] >= whiteThreshold) {
-            senorIsWhite[i] = 1;
+    sensorValues[i] = readOne(i);
+        if(sensorValues[i] >= whiteThreshold) {
+            sensorIsWhite[i] = 1;
         }
     }
     for(int j = 0; j < NUM_LS; j++) {
-        if(senorIsWhite[j] == 1) {
-            if(senorIsWhite[loopReadClamp(j-1,0,NUM_LS)] == 0) { 
+        if(sensorIsWhite[j] == 1) {
+            if(sensorIsWhite[loopReadClamp(j-1,0,NUM_LS)] == 0) { 
                 //loopReadClamp(j-1,0,NUM_LS)
                 minIndex = j;
-            } else if(senorIsWhite[loopReadClamp(j-1,0,NUM_LS)] == 0) { 
+            } else if(sensorIsWhite[loopReadClamp(j-1,0,NUM_LS)] == 0) { 
                 //loopReadClamp(j-1,0,NUM_LS)
                 maxIndex = j;
                 clustersList[clusterAmount][0] = minIndex;
@@ -100,11 +98,6 @@ void LSystem::calculateLineDirection() {
         }
     }
     lineDirection = round(loopTut/loopCount);
-    //if(previousLineDirections[10] != 0) {
-        //lineDirectionArray = 0;
-    //}
-    // previousLineDirections[lineDirectionArray] = lineDirection;
-    // lineDirectionArray++;
 }
 
 /*!

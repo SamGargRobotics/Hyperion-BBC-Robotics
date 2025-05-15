@@ -236,8 +236,9 @@ void loop() {
                 #if CORRECTION_TEST
                     motors.run(0, 0, correction);
                 #else
-                    if((tssp.ballDir >= 350 || tssp.ballDir <= 10) && \
-                        tssp.ballStr >= SURGE_STR_VALUE) {
+                    if(((tssp.ballDir >= 350 || tssp.ballDir <= 10) && \
+                        (tssp.ballStr >= SURGE_STR_VALUE)) && \
+                        (goal_angle <= 10 && goal_angle >= -10)) {
                         // If ball in capture then surge.
                             motors.run(moveSpeed, tssp.ballDir, correction);
                             robotState = "Defender Logic - Surge";

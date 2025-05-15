@@ -34,6 +34,8 @@ private:
     const int whiteThreshold = 20;
     int pinList[4] = {LIGHT_PIN_DIGI_0, LIGHT_PIN_DIGI_1, LIGHT_PIN_DIGI_2, 
                      LIGHT_PIN_DIGI_3};
+    int sensorValues[NUM_LS] = {0};
+    int sensorIsWhite[NUM_LS] = {0};
     int maxIndex = 44;
     int minIndex = 44;
     int clustersList[3][2];

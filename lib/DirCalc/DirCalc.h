@@ -14,6 +14,7 @@
 #include <Arduino.h>
 #include <common.h>
 #include <config.h>
+#include <common.h>
 #include <math.h>
 
 /*!
