@@ -64,8 +64,6 @@ float batteryCurrentLevel = 0;
 float currentBatteryLevelVolts = 0;
 //! @brief If the motor switch is turned on
 bool motorOn = false;
-//! @brief The heading the robot needs to switch to
-float heading = 0;
 //! @brief Current logic state of the robot
 String robotState = "default";
 
@@ -78,12 +76,16 @@ void setup() {
     batteryLevel.init();
     cam.init();
     compass.setExtCrystalUse(true);
+    pinMode(LOGIC_PIN, INPUT);
     while(!compass.begin()) {
         Serial.println("bno ded ;(");
     }
 }
 
 void loop() {
+// [Logic Pin Calculations]
+    dirCalc.attack = digitalRead(LOGIC_PIN);
+
 // [Correction / Goal Tracking Calculations]
     compass.getEvent(&rotation);
     rot = rotation.orientation.x;
@@ -126,17 +128,12 @@ void loop() {
     #else
         correction = -1*regularCorrection.update(regularTrackingCorrection, 0);
     #endif
-    // Assigns final correction value based on assigned heading in above logic
-    // and if you are attacking/defending
-    // if(!regularCorrection) {
-    //     correction = (dirCalc.attack)?(-1*goalAttackingCorrection.update(heading, 0)): \
-    //                  (-1*(goalDefendingCorrection.update(heading, 180)));
-    // } else {
-    //     correction = -1*goalAttackingCorrection.update(heading, 0);
-    // }
     
     // Calculate distance of the goals away from the robot (pixels)
     goal_dis = (sqrt(pow(abs(goal_x_val), 2) + pow(abs(goal_y_val), 2)))/10;
+
+    // Hard coded offset value as the camera was reading different values on
+    // each side.
     goal_dis = (goalTrackingCorrection < 180)?(goal_dis - 10.1) : goal_dis;
 
     #if DEBUG_IMU_CAM
@@ -157,8 +154,6 @@ void loop() {
         Serial.print(cam.goal_y_yellow);
         Serial.print("\t"); 
         Serial.print(cam.angle_to_goal_yellow);
-        Serial.print("\t"); 
-        Serial.print(heading);
         Serial.print("\t");
         Serial.println(correction);
     #endif
@@ -241,9 +236,6 @@ void loop() {
                 #else
                     if(((tssp.ballDir >= 350 || tssp.ballDir <= 10) && \
                         (tssp.ballStr >= SURGE_STR_VALUE))) {
-                        // ((tssp.ballDir >= 350 || tssp.ballDir <= 10) && \
-                        // (tssp.ballStr >= SURGE_STR_VALUE)) && \
-                        // (goal_angle <= 10 && goal_angle >= -10)
                         // If ball in capture and infront of goal then surge.
                             motors.run(SET_SPEED, tssp.ballDir, correction);
                             robotState = "Defender Logic - Surge";
@@ -264,16 +256,17 @@ void loop() {
             }
         }
     #endif
-
-    Serial.print(defenderMoveDirection);
-    Serial.print("\t");
-    Serial.print(goalTrackingCorrection);
-    Serial.print("\t");
-    Serial.println(goal_dis);
-
+    
     #if DEBUG_ROBOT_STATE
         Serial.print(robotState);
         Serial.print("\t Detecting Ball?: ");
         Serial.println(tssp.detectingBall);
     #endif
+
+// [Manual Printing Space]
+    Serial.print(defenderMoveDirection);
+    Serial.print("\t");
+    Serial.print(goalTrackingCorrection);
+    Serial.print("\t");
+    Serial.println(goal_dis);
 }

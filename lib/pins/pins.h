@@ -87,4 +87,9 @@
 //! @def BAT_LED_PIN @brief LED pin for the battery warning critical battery
 #define BAT_LED_PIN 35
 
+//! @def LOGIC_PIN @brief The logic pin has various uses, it is connected to a
+//!                       switch which is connected to two different conditions
+//!                       depending on what is happening inside the code.
+#define LOGIC_PIN 32
+
 #endif
