@@ -37,3 +37,4 @@ while True:
     uart.writechar(int(TRI[0][1]))
     uart.writechar(int(TRI[1][0]))
     uart.writechar(int(TRI[1][1]))
+    print(TRI)

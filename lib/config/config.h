@@ -15,7 +15,7 @@
 #include <Arduino.h>
 //! @def targetGoal @brief Blue = 1, Yelow = 0; Assigns which goal is the target
 //!                        for either attacking or defending
-#define targetGoal true
+#define targetGoal true    
 //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
 #define GOAL_TRACKING_TOGGLE 1
 //! @def SET_SPEED @brief Speed that is set for running
@@ -59,7 +59,7 @@
 #define ORBIT_MULTIPLIER 2.71828182846
 
 //! @def GOAL_SEMI_CIRCLE_RADIUS_CM @brief The defender's arc orbit around goal
-#define GOAL_SEMI_CIRCLE_RADIUS_CM 20
+#define GOAL_SEMI_CIRCLE_RADIUS_CM 35
 //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot switches
 // strats for orbit
 #define ORBIT_STRENGTH_RADIUS 93

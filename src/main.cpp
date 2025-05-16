@@ -100,7 +100,6 @@ void loop() {
     #endif
     // Complete floatMod values to ensure that the heading is not constantly 
     // changing when the robot faces the goal.
-    dirCalc.attack = false;
     goalTrackingCorrection = (dirCalc.attack)?
                                         (floatMod(-1*goal_angle, 360) > 180 ? \
                                         floatMod(-1*goal_angle, 360) - 360 : \
@@ -130,10 +129,10 @@ void loop() {
     // Assigns final correction value based on assigned heading in above logic
     // and if you are attacking/defending
     correction = (dirCalc.attack)?(-1*attackingCorrection.update(heading, 0)): \
-                 (-1*defendingCorrection.update(heading, 180));
+                 (defendingCorrection.update(heading, 180));
     
     // Calculate distance of the goals away from the robot (pixels)
-    goal_dis = sqrt(pow(goal_x_val, 2) + pow(goal_y_val, 2));
+    goal_dis = sqrt(pow(abs(goal_x_val), 2) + pow(abs(goal_y_val), 2));
 
     #if DEBUG_IMU_CAM
         Serial.print(rot);
@@ -189,8 +188,7 @@ void loop() {
 // [Strategy and Movement Calculation]
     attackerMoveDirection = dirCalc.exponentialOrbit(tssp.ballDir, 
                                                     tssp.ballStr);
-    defenderMoveDirection = dirCalc.defenderMovement(goal_angle, goal_dis,
-                                                     goal_x_val, goal_y_val, 
+    defenderMoveDirection = dirCalc.defenderMovement(goal_angle, goal_dis, 
                                                      tssp.ballDir);     
     moveSpeed = dirCalc.calcSpeed(tssp.ballStr)*SET_SPEED;
     defenderMoveSpeed = defenderMovement.update(goal_dis, \
@@ -203,7 +201,7 @@ void loop() {
         motors.run(0, 0, correction);
     #elif BALL_FOLLOW_TEST
         motors.run((tssp.detectingBall?moveSpeed:0), 
-                  tssp.ballDir, 0);
+                  tssp.ballDir, 0); 
     #else
         if(ls.lineDirection != -1) {
             // If detecting line --> Line Avoidance
@@ -239,7 +237,7 @@ void loop() {
                     if(((tssp.ballDir >= 350 || tssp.ballDir <= 10) && \
                         (tssp.ballStr >= SURGE_STR_VALUE)) && \
                         (goal_angle <= 10 && goal_angle >= -10)) {
-                        // If ball in capture then surge.
+                        // If ball in capture and infront of goal then surge.
                             motors.run(moveSpeed, tssp.ballDir, correction);
                             robotState = "Defender Logic - Surge";
                     } else {
@@ -252,7 +250,7 @@ void loop() {
                         } else {
                             // If defender on target line.
                             motors.run(0, 0, correction);
-                            robotState = "Defender Logic - Set Position";
+                            robotState = "Defender Logic - In Set Position";
                         }
                     }
                 #endif
@@ -261,6 +259,8 @@ void loop() {
     #endif
 
     #if DEBUG_ROBOT_STATE
-        Serial.println(robotState);
+        Serial.print(robotState);
+        Serial.print("\t Detecting Ball?: ");
+        Serial.println(tssp.detectingBall);
     #endif
 }

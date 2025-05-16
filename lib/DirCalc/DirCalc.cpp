@@ -36,8 +36,8 @@ float DirectionCalc::exponentialOrbit(float ballDir, float ballStr) {
  * 
  * @return Robot movement angle.
  */
-int DirectionCalc::defenderMovement(float goalDir, float goalDis, float goalx, 
-                                    float goal, float ballDir) {
+int DirectionCalc::defenderMovement(float goalDir, float goalDis, float ballDir) 
+    {
     // Determine forward or backward movement relative to the semi-circle
     if(goalDis > GOAL_SEMI_CIRCLE_RADIUS_CM) {
         defenderMoveDir = 180;
@@ -48,7 +48,7 @@ int DirectionCalc::defenderMovement(float goalDir, float goalDis, float goalx,
     }
     // Return movement angle based on direction
     if(defenderMoveDir != -1) {
-        return findMiddleAngle(ballDir, defenderMoveDir);
+        return abs(ballDir - defenderMoveDir);
     } else {
         return defenderMoveDir;
     }
