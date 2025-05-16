@@ -34,17 +34,17 @@
 #define PID_d_attack 0.075
 
 //! @def PID_p_defend @brief Proportional aspect of PID
-#define PID_p_defend 0.1
+#define PID_p_defend 0.65
 //! @def PID_i_defend @brief Intergral aspect of PID
 #define PID_i_defend 0
 //! @def PID_d_defend @brief Derivative aspect of PID
-#define PID_d_defend 0
+#define PID_d_defend 0.02
 
 //! @def PID_abs_max @brief Absoloute max of PID
 #define PID_abs_max 100
 
 //! @def PID_p_defender_movement @brief Proportional aspect of PID
-#define PID_p_defender_movement SET_SPEED*1
+#define PID_p_defender_movement SET_SPEED*0.1
 //! @def PID_i_defender_movement @brief Intergral aspect of PID
 #define PID_i_defender_movement 0
 //! @def PID_d_defender_movement @brief Derivative aspect of PID
@@ -59,7 +59,7 @@
 #define ORBIT_MULTIPLIER 2.71828182846
 
 //! @def GOAL_SEMI_CIRCLE_RADIUS_CM @brief The defender's arc orbit around goal
-#define GOAL_SEMI_CIRCLE_RADIUS_CM 35
+#define GOAL_SEMI_CIRCLE_RADIUS_CM 24
 //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot switches
 // strats for orbit
 #define ORBIT_STRENGTH_RADIUS 93

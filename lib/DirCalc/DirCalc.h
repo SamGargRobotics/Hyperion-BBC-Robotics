@@ -28,8 +28,8 @@ public:
     float calcSpeed(float ballStr);
     float ballDis = 0;
     float defenderRotationOffset = 0;
-    int defenderMovement(float goalDir, float goalDis, float ballDir);
-    bool attack = true;
+    int defenderMovement(float goalDir, float goalDis, float ballDir, float ballStr);
+    bool attack = false;
 private:
     double findMiddleAngle(double angle1, double angle2);
     double ballStr_max = 0;

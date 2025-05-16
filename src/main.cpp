@@ -24,8 +24,9 @@ LSystem ls;
 Camera cam;
 DirectionCalc dirCalc;
 bno::Adafruit_BNO055 compass = bno::Adafruit_BNO055(-1, 0x29, &Wire);
-PID attackingCorrection(PID_p_attack, PID_i_attack, PID_d_attack, PID_abs_max);
-PID defendingCorrection(PID_p_defend, PID_i_defend, PID_d_defend, PID_abs_max);
+PID regularCorrection(PID_p_attack, PID_i_attack, PID_d_attack, PID_abs_max);
+PID goalAttackingCorrection(PID_p_attack, PID_i_attack, PID_d_attack, PID_abs_max);
+PID goalDefendingCorrection(PID_p_defend, PID_i_defend, PID_d_defend, PID_abs_max);
 PID defenderMovement(PID_p_defender_movement, PID_i_defender_movement, \
                      PID_d_defender_movement, SET_SPEED);
 sensors_event_t rotation;
@@ -109,30 +110,34 @@ void loop() {
     regularTrackingCorrection = (rot>180)?(rot-360):rot;
     // Heading logic to assign goal tracking or regular compass correct
     #if GOAL_TRACKING_TOGGLE
-        if(goal_x_val == 0 && goal_y_val == 0) {
-            // If not seeing goal
-            heading = regularTrackingCorrection;
+        if(goal_x_val == 0 || goal_y_val == 0) {
+            // If not seeing goal --> Regular Correction
+            correction = -1*regularCorrection.update(regularTrackingCorrection, 0);
         } else {
             // If seeing goal
             if(dirCalc.attack) {
                 // If Attacking
-                heading = (goal_y_val <= GOAL_TRACKING_DIS_THRESH)? \
-                           goalTrackingCorrection:regularTrackingCorrection;
+                correction = -1*goalAttackingCorrection.update(goalTrackingCorrection, 0);
             } else {
                 // If Defending
-                heading = goalTrackingCorrection;
+                correction = -1*goalDefendingCorrection.update(goalTrackingCorrection, 180);
             }
         }
     #else
-        heading = regularTrackingCorrection;
+        correction = -1*regularCorrection.update(regularTrackingCorrection, 0);
     #endif
     // Assigns final correction value based on assigned heading in above logic
     // and if you are attacking/defending
-    correction = (dirCalc.attack)?(-1*attackingCorrection.update(heading, 0)): \
-                 (defendingCorrection.update(heading, 180));
+    // if(!regularCorrection) {
+    //     correction = (dirCalc.attack)?(-1*goalAttackingCorrection.update(heading, 0)): \
+    //                  (-1*(goalDefendingCorrection.update(heading, 180)));
+    // } else {
+    //     correction = -1*goalAttackingCorrection.update(heading, 0);
+    // }
     
     // Calculate distance of the goals away from the robot (pixels)
-    goal_dis = sqrt(pow(abs(goal_x_val), 2) + pow(abs(goal_y_val), 2));
+    goal_dis = (sqrt(pow(abs(goal_x_val), 2) + pow(abs(goal_y_val), 2)))/10;
+    goal_dis = (goalTrackingCorrection < 180)?(goal_dis - 10.1) : goal_dis;
 
     #if DEBUG_IMU_CAM
         Serial.print(rot);
@@ -189,7 +194,7 @@ void loop() {
     attackerMoveDirection = dirCalc.exponentialOrbit(tssp.ballDir, 
                                                     tssp.ballStr);
     defenderMoveDirection = dirCalc.defenderMovement(goal_angle, goal_dis, 
-                                                     tssp.ballDir);     
+                                                     tssp.ballDir, tssp.ballStr);     
     moveSpeed = dirCalc.calcSpeed(tssp.ballStr)*SET_SPEED;
     defenderMoveSpeed = defenderMovement.update(goal_dis, \
                                                 GOAL_SEMI_CIRCLE_RADIUS_CM);
@@ -235,16 +240,18 @@ void loop() {
                     motors.run(0, 0, correction);
                 #else
                     if(((tssp.ballDir >= 350 || tssp.ballDir <= 10) && \
-                        (tssp.ballStr >= SURGE_STR_VALUE)) && \
-                        (goal_angle <= 10 && goal_angle >= -10)) {
+                        (tssp.ballStr >= SURGE_STR_VALUE))) {
+                        // ((tssp.ballDir >= 350 || tssp.ballDir <= 10) && \
+                        // (tssp.ballStr >= SURGE_STR_VALUE)) && \
+                        // (goal_angle <= 10 && goal_angle >= -10)
                         // If ball in capture and infront of goal then surge.
-                            motors.run(moveSpeed, tssp.ballDir, correction);
+                            motors.run(SET_SPEED, tssp.ballDir, correction);
                             robotState = "Defender Logic - Surge";
                     } else {
                         // If ball not in capture
                         if(defenderMoveDirection != -1) {
                             // If defender not on target line
-                            motors.run(defenderMoveSpeed, defenderMoveDirection, 
+                            motors.run(35, defenderMoveDirection, 
                                        correction);
                             robotState = "Defender Logic - Moving towards line";
                         } else {
@@ -257,6 +264,12 @@ void loop() {
             }
         }
     #endif
+
+    Serial.print(defenderMoveDirection);
+    Serial.print("\t");
+    Serial.print(goalTrackingCorrection);
+    Serial.print("\t");
+    Serial.println(goal_dis);
 
     #if DEBUG_ROBOT_STATE
         Serial.print(robotState);
