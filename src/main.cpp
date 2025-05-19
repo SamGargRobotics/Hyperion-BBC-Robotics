@@ -84,7 +84,7 @@ void setup() {
 
 void loop() {
 // [Logic Pin Calculations]
-    dirCalc.attack = digitalRead(LOGIC_PIN);
+    // dirCalc.attack = digitalRead(LOGIC_PIN);
 
 // [Correction / Goal Tracking Calculations]
     compass.getEvent(&rotation);
@@ -191,7 +191,7 @@ void loop() {
     defenderMoveDirection = dirCalc.defenderMovement(goal_angle, goal_dis, 
                                                      tssp.ballDir, tssp.ballStr);     
     moveSpeed = dirCalc.calcSpeed(tssp.ballStr)*SET_SPEED;
-    defenderMoveSpeed = defenderMovement.update(goal_dis, \
+    defenderMoveSpeed = defenderMovement.update(abs(goal_dis), \
                                                 GOAL_SEMI_CIRCLE_RADIUS_CM);
 // [Bluetooth]
     bluetooth.update(batteryLevel.volts, tssp.ballDir, 0);
@@ -265,6 +265,8 @@ void loop() {
 
 // [Manual Printing Space]
     Serial.print(defenderMoveDirection);
+    Serial.print("\t");
+    Serial.print(defenderMoveSpeed);
     Serial.print("\t");
     Serial.print(goalTrackingCorrection);
     Serial.print("\t");

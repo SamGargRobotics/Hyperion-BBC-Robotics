@@ -5,7 +5,7 @@ uart = UART(3, 115200, timeout_char=100)
 uart.init(115200, bits=8, timeout_char=10)
 YellowIsAttack = True
 thresholds = [(80,100,-40,-5,30,95)] # Yellow
-thresholds2 = [(0, 100, -128, 127, -128, -16)] # Blue
+thresholds2 = [(11, 34, -2, -128, -128, -12)] # Blue
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QQVGA)
