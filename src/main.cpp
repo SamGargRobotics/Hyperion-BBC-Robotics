@@ -129,11 +129,10 @@ void loop() {
     #endif
     // Complete floatMod values to ensure that the heading is not constantly 
     // changing when the robot faces the goal.
-    goalHeading = (dirCalc.attack)?
-                                        (floatMod(-1*goal_angle, 360) > 180 ? \
-                                        floatMod(-1*goal_angle, 360) - 360 : \
-                                        floatMod(-1*goal_angle, 360)) : \
-                                        floatMod(-1*goal_angle, 360);
+    goalHeading = (dirCalc.attack)? (floatMod(-goal_angle, 360) > 180 ? \
+                                    floatMod(-goal_angle, 360) - 360 : \
+                                    floatMod(-goal_angle, 360)) : \
+                                    floatMod(-goal_angle, 360);
     // Regular correction using the BNO/IMU/Compass
     bnoHeading = (rot>180)?(rot-360):rot;
     // Calculate distance of the goals away from the robot (pixels)
@@ -142,9 +141,9 @@ void loop() {
     // each side.
     goal_dis = (goalHeading < 180)?(goal_dis - 10.1) : goal_dis;
     // Assign PID's variables
-    bnoCorrection = -1*regularCorrection.update(bnoHeading, 0);
+    bnoCorrection = -regularCorrection.update(bnoHeading, 0);
     cameraAttackCorrection = 1*goalAttackingCorrection.update(goalHeading, 0);
-    cameraDefenceCorrection = -1*goalDefendingCorrection.update(goalHeading, \
+    cameraDefenceCorrection = -goalDefendingCorrection.update(goalHeading, \
                                                                 180);
     // Heading logic to assign goal tracking or regular compass correct
     #if GOAL_TRACKING_TOGGLE

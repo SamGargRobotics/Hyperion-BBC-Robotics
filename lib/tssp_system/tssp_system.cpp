@@ -73,4 +73,9 @@ void Tssp_system::update() {
     ballDir = (highestTssp)*(360.0/TSSPNUM);
     ballStr = ((3 * tsspSortedValues[0]) + (2 * tsspSortedValues[1]) + tsspSortedValues[2] + tsspSortedValues[3]) / 7;
     detectingBall = (ballStr != 0);
+
+    for(int i = 10; i > 0; i--) {
+        previousBallDir[i] = previousBallDir[i-1];
+        previousBallStr[i] = previousBallStr[i-1];
+    }
 }
