@@ -27,10 +27,10 @@ bno::Adafruit_BNO055 compass = bno::Adafruit_BNO055(-1, 0x29, &Wire);
 PID regularCorrection(PID_p_attack, PID_i_attack, PID_d_attack, PID_abs_max);
 PID goalAttackingCorrection(PID_p_attack, PID_i_attack, PID_d_attack, PID_abs_max);
 PID goalDefendingCorrection(PID_p_defend, PID_i_defend, PID_d_defend, PID_abs_max);
-PID defenderMovement(PID_p_defender_movement, PID_i_defender_movement, \
-                     PID_d_defender_movement, SET_SPEED);
-PID defenderMovementHozt(PID_p_defender_movement_vert, PID_i_defender_movement_vert, \
+PID defenderMovementVert(PID_p_defender_movement_vert, PID_i_defender_movement_vert, \
                      PID_d_defender_movement_vert, SET_SPEED);
+PID defenderMovementHozt(PID_p_defender_movement_hozt, PID_i_defender_movement_hozt, \
+                     PID_d_defender_movement_hozt, SET_SPEED);
 sensors_event_t rotation;
 BatRead batteryLevel;
 
@@ -74,6 +74,8 @@ float netDefendSpeed = 0;
 float batteryCurrentLevel = 0;
 //! @brief Current battery level of the robot (volts)
 float currentBatteryLevelVolts = 0;
+//! @brief Move Angle in relevancy to the ls.lineDirection
+float lsMoveAngle = 0;
 //! @brief If the motor switch is turned on
 bool motorOn = false;
 //! @brief Current logic state of the robot
@@ -108,7 +110,7 @@ void loop() {
     #endif
 
 // [Logic Pin Calculations]
-    // dirCalc.attack = digitalRead(LOGIC_PIN);
+    dirCalc.attack = digitalRead(LOGIC_PIN);
 
 // [Correction / Goal Tracking Calculations]
     compass.getEvent(&rotation);
@@ -206,12 +208,16 @@ void loop() {
         Serial.println(batteryLevel.volts);
     #endif
 
+// [Light Sensors]
+    ls.calculateLineDirection();
+    lsMoveAngle = (ls.lineDirection == -1)? -1 : 
+                                        floatMod(ls.lineDirection + 180, 360);
 
 // [Strategy and Movement Calculation]
     attackerMoveDirection = dirCalc.exponentialOrbit(tssp.ballDir, 
                                                     tssp.ballStr);  
     attackerMoveSpeed = dirCalc.calcSpeed(tssp.ballStr)*SET_SPEED;
-    verticalDefenderMovement = -defenderMovement.update(abs(goal_dis), \
+    verticalDefenderMovement = -defenderMovementVert.update(abs(goal_dis), \
                                                 GOAL_SEMI_CIRCLE_RADIUS_CM);
     horizontalDefenderMovement = -defenderMovementHozt.update(\
                 (tssp.ballDir > 180) ? (tssp.ballDir - 360) : tssp.ballDir, 0);
@@ -230,11 +236,10 @@ void loop() {
         motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
                   tssp.ballDir, 0); 
     #else
-        if(ls.lineDirection != -1) {
+        if(lsMoveAngle != -1) {
             // If detecting line --> Line Avoidance
+            motors.run(SET_SPEED, lsMoveAngle, 0);
             robotState = "Line Avoidance";
-            motors.run(attackerMoveSpeed, floatMod(ls.lineDirection + 180, 360),
-                       0);
         } else {
             if(dirCalc.attack) {
                 // If robot is attacking --> Attacker Logic

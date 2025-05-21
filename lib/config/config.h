@@ -44,18 +44,18 @@
 #define PID_abs_max SET_SPEED
 
 //! @def PID_p_defender_movement @brief Proportional aspect of PID
-#define PID_p_defender_movement 20
-//! @def PID_i_defender_movement @brief Intergral aspect of PID
-#define PID_i_defender_movement 0
-//! @def PID_d_defender_movement @brief Derivative aspect of PID
-#define PID_d_defender_movement 0
-
-//! @def PID_p_defender_movement @brief Proportional aspect of PID
-#define PID_p_defender_movement_vert 1
+#define PID_p_defender_movement_vert 20
 //! @def PID_i_defender_movement @brief Intergral aspect of PID
 #define PID_i_defender_movement_vert 0
 //! @def PID_d_defender_movement @brief Derivative aspect of PID
 #define PID_d_defender_movement_vert 0
+
+//! @def PID_p_defender_movement @brief Proportional aspect of PID
+#define PID_p_defender_movement_hozt 1
+//! @def PID_i_defender_movement @brief Intergral aspect of PID
+#define PID_i_defender_movement_hozt 0
+//! @def PID_d_defender_movement @brief Derivative aspect of PID
+#define PID_d_defender_movement_hozt 0
 
 //! @def BAT_MOTOROFF_THRESH @brief Thresh to determine if motor switch off
 #define BAT_MOTOROFF_THRESH 0.5
