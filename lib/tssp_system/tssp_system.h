@@ -26,9 +26,15 @@ public:
     bool detectingBall = true;
     float ballStr = 0;
     float ballDir = 0;
+    float smoothedBallDir = 0;
+    float smoothedBallStr = 0;
     float previousBallStr[10] = {0};
     float previousBallDir[10] = {0};
+    const float alpha = 0.2; 
+    // higher alpha --> less smooth, more responsive
+    // lower alpha --> more smooth, less responsive
 private:
+    bool firstUpdate = true;
     uint8_t readTssp[TSSPNUM] = {0};
     uint8_t tsspSortedValues[TSSPNUM] = {0};
     uint8_t tsspSortedIndex[TSSPNUM] = {0};

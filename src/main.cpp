@@ -24,15 +24,19 @@ LSystem ls;
 Camera cam;
 DirectionCalc dirCalc;
 bno::Adafruit_BNO055 compass = bno::Adafruit_BNO055(-1, 0x29, &Wire);
-PID regularCorrection(PID_p_attack, PID_i_attack, PID_d_attack, PID_abs_max);
-PID goalAttackingCorrection(PID_p_attack, PID_i_attack, PID_d_attack, PID_abs_max);
-PID goalDefendingCorrection(PID_p_defend, PID_i_defend, PID_d_defend, PID_abs_max);
-PID defenderMovementVert(PID_p_defender_movement_vert, PID_i_defender_movement_vert, \
-                     PID_d_defender_movement_vert, SET_SPEED);
-PID defenderMovementHozt(PID_p_defender_movement_hozt, PID_i_defender_movement_hozt, \
-                     PID_d_defender_movement_hozt, SET_SPEED);
 sensors_event_t rotation;
 BatRead batteryLevel;
+PID regularCorrection(PID_p_attack, PID_i_attack, PID_d_attack, PID_abs_max);
+PID goalAttackingCorrection(PID_p_attack, PID_i_attack, PID_d_attack, \
+                            PID_abs_max);
+PID goalDefendingCorrection(PID_p_defend, PID_i_defend, PID_d_defend, \
+                            PID_abs_max);
+PID defenderMovementVert(PID_p_defender_movement_vert, \
+                         PID_i_defender_movement_vert, \
+                         PID_d_defender_movement_vert, PID_abs_max);
+PID defenderMovementHozt(PID_p_defender_movement_hozt, \
+                         PID_i_defender_movement_hozt, \
+                         PID_d_defender_movement_hozt, PID_abs_max);
 
 // [Main Global Vars]
 //! @brief Y value of the chosen goal that is being tracked.
@@ -139,12 +143,11 @@ void loop() {
     goal_dis = (sqrt(pow(abs(goal_x_val), 2) + pow(abs(goal_y_val), 2)))/10;
     // Hard coded offset value as the camera was reading different values on
     // each side.
-    goal_dis = (goalHeading < 180)?(goal_dis - 10.1) : goal_dis;
+    goal_dis = (goalHeading < 180)?(goal_dis + GOAL_DIS_OFFSET) : goal_dis;
     // Assign PID's variables
     bnoCorrection = -regularCorrection.update(bnoHeading, 0);
-    cameraAttackCorrection = 1*goalAttackingCorrection.update(goalHeading, 0);
-    cameraDefenceCorrection = -goalDefendingCorrection.update(goalHeading, \
-                                                                180);
+    cameraAttackCorrection = -goalAttackingCorrection.update(goalHeading, 0);
+    cameraDefenceCorrection = -goalDefendingCorrection.update(goalHeading, 180);
     // Heading logic to assign goal tracking or regular compass correct
     #if GOAL_TRACKING_TOGGLE
         if(goal_x_val == 0 || goal_y_val == 0) {
@@ -237,7 +240,7 @@ void loop() {
     #else
         if(lsMoveAngle != -1) {
             // If detecting line --> Line Avoidance
-            motors.run(SET_SPEED, lsMoveAngle, 0);
+            motors.run(SET_SPEED, lsMoveAngle, correction);
             robotState = "Line Avoidance";
         } else {
             if(dirCalc.attack) {
@@ -246,13 +249,14 @@ void loop() {
                    tssp.ballStr >= SURGE_STR_VALUE) {
                     // If ball is generally straight and in capture --> surge
                     motors.run((tssp.detectingBall?SET_SPEED:0), tssp.ballDir, 
-                                correction);
+                                cameraAttackCorrection);
                     robotState = "Attacker Logic - Surge";
                 } else {
                     if(tssp.ballStr > ORBIT_STRENGTH_RADIUS) {
                         // If ball is close then orbit
                         motors.run((tssp.detectingBall?attackerMoveSpeed:0),
-                                attackerMoveDirection, correction);
+                                attackerMoveDirection, bnoCorrection);
+                        correctionState = "Regular";
                         robotState = "Attacker Logic - Orbit";
                     } else {
                         // If ball is far then ball follow

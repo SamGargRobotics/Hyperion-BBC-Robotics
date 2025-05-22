@@ -13,18 +13,13 @@
 #define CONFIG_H
 
 #include <Arduino.h>
+#include <common.h>
+
 //! @def targetGoal @brief Blue = 1, Yelow = 0; Assigns which goal is the target
 //!                        for either attacking or defending
 #define targetGoal 1
-//! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
-#define GOAL_TRACKING_TOGGLE 1
 //! @def SET_SPEED @brief Speed that is set for running
 #define SET_SPEED 150
-
-//! @def CORRECTION_TEST @brief Testing Correction Only if True
-#define CORRECTION_TEST false
-//! @def BALL_FOLLOW_TEST @brief Testing Corretion + Ball Follow if true
-#define BALL_FOLLOW_TEST false
 
 //! @def PID_p_attack @brief Proportional aspect of PID
 #define PID_p_attack 0.9
@@ -32,50 +27,52 @@
 #define PID_i_attack 0
 //! @def PID_d_attack @brief Derivative aspect of PID
 #define PID_d_attack 0.055
-
 //! @def PID_p_defend @brief Proportional aspect of PID
 #define PID_p_defend 0.65
 //! @def PID_i_defend @brief Intergral aspect of PID
 #define PID_i_defend 0
 //! @def PID_d_defend @brief Derivative aspect of PID
 #define PID_d_defend 0.03
-
-//! @def PID_abs_max @brief Absoloute max of PID
-#define PID_abs_max SET_SPEED
-
 //! @def PID_p_defender_movement @brief Proportional aspect of PID
 #define PID_p_defender_movement_vert 20
 //! @def PID_i_defender_movement @brief Intergral aspect of PID
 #define PID_i_defender_movement_vert 0
 //! @def PID_d_defender_movement @brief Derivative aspect of PID
 #define PID_d_defender_movement_vert 0
-
 //! @def PID_p_defender_movement @brief Proportional aspect of PID
 #define PID_p_defender_movement_hozt 1
 //! @def PID_i_defender_movement @brief Intergral aspect of PID
 #define PID_i_defender_movement_hozt 0
 //! @def PID_d_defender_movement @brief Derivative aspect of PID
 #define PID_d_defender_movement_hozt 0
+//! @def PID_abs_max @brief Absoloute max of PID
+#define PID_abs_max SET_SPEED
 
-//! @def BAT_MOTOROFF_THRESH @brief Thresh to determine if motor switch off
-#define BAT_MOTOROFF_THRESH 0.5
+//! @def CORRECTION_TEST @brief Testing Correction Only if True
+#define CORRECTION_TEST false
+//! @def BALL_FOLLOW_TEST @brief Testing Corretion + Ball Follow if true
+#define BALL_FOLLOW_TEST false
+//! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
+#define GOAL_TRACKING_TOGGLE 1
 
-//! @def EXPO_MIN_VAL @brief Minimum value of the exponential orbit
-#define EXPO_MIN_VAL 60
-//! @def ORBIT_MULTIPLIER @brief Multiplier for the exponential orbit
-#define ORBIT_MULTIPLIER 2.71828182846
-
-//! @def GOAL_SEMI_CIRCLE_RADIUS_CM @brief The defender's arc orbit around goal
-#define GOAL_SEMI_CIRCLE_RADIUS_CM 24.5
 //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot switches
 // strats for orbit
 #define ORBIT_STRENGTH_RADIUS 90
 //! @def SURGE_STR_VALUE @brief Min Strength value that allows the robot to surge
 #define SURGE_STR_VALUE 113
-
 //! @def GOAL_TRACKING_DIS_THRESH @brief Distance away from the goal that the 
 //!                               robot starts goal tracking with the orbit
 #define GOAL_TRACKING_DIS_THRESH 60
+
+//! @def BAT_MOTOROFF_THRESH @brief Thresh to determine if motor switch off
+#define BAT_MOTOROFF_THRESH 0.5
+
+#define GOAL_DIS_OFFSET -10.1
+
+//! @def GOAL_SEMI_CIRCLE_RADIUS_CM @brief The defender's arc orbit around goal
+#define GOAL_SEMI_CIRCLE_RADIUS_CM 24.5
+//! @def EXPO_MIN_VAL @brief Minimum value of the exponential orbit
+#define EXPO_MIN_VAL 60
 
 //! @def BATTERY_CRITICAL @brief The battery level where the battery is critical
 #define BATTERY_CRITICAL 11.7

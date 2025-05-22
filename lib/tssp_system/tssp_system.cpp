@@ -74,6 +74,16 @@ void Tssp_system::update() {
     ballStr = ((3 * tsspSortedValues[0]) + (2 * tsspSortedValues[1]) + tsspSortedValues[2] + tsspSortedValues[3]) / 7;
     detectingBall = (ballStr != 0);
 
+
+    if(firstUpdate) {
+        smoothedBallDir = ballDir;
+        smoothedBallStr = ballStr;
+        firstUpdate = false;
+    } else {
+        // Exponential Moving Average Calc to avoid jumping values - TEST
+        smoothedBallDir = alpha * ballDir + (1 - alpha) * smoothedBallDir;
+        smoothedBallStr = alpha * ballStr + (1 - alpha) * smoothedBallStr;
+    }
     for(int i = 10; i > 0; i--) {
         previousBallDir[i] = previousBallDir[i-1];
         previousBallStr[i] = previousBallStr[i-1];
