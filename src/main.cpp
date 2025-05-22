@@ -211,7 +211,7 @@ void loop() {
     #endif
 
 // [Light Sensors]
-    ls.calculateLineDirection();
+    // ls.calculateLineDirection();
     lsMoveAngle = (ls.lineDirection == -1)? -1 : 
                                         floatMod(ls.lineDirection + 180, 360);
 
@@ -238,7 +238,7 @@ void loop() {
         motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
                   tssp.ballDir, 0); 
     #else
-        if(lsMoveAngle != -1) {
+        if(ls.lineDirection != -1) {
             // If detecting line --> Line Avoidance
             motors.run(SET_SPEED, lsMoveAngle, correction);
             robotState = "Line Avoidance";
@@ -271,12 +271,17 @@ void loop() {
                     (tssp.ballStr >= SURGE_STR_VALUE)) && \
                     (goal_angle <= 190 && goal_angle >= 170)) {
                     // If ball in capture and goal is behind robot --> surge
-                        motors.run(SET_SPEED, tssp.ballDir, correction);
+                        // motors.run(SET_SPEED, tssp.ballDir, correction);
+                        motors.run(netDefendSpeed, netDefendMovementAngle, correction);
                         robotState = "Defender Logic - Surge";
                 } else {
                     // If ball not in capture
-                    motors.run(netDefendSpeed, netDefendMovementAngle, 
+                    if(tssp.ballDir >= 90 && tssp.ballDir <= 270) {
+                        motors.run(attackerMoveSpeed, attackerMoveDirection, bnoCorrection);
+                    } else {
+                        motors.run(netDefendSpeed, netDefendMovementAngle, 
                                 correction);
+                    }
                     robotState = "Defender Logic - Reg Position";
                 }
             }

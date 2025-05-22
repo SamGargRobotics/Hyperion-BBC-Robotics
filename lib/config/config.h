@@ -34,13 +34,13 @@
 //! @def PID_d_defend @brief Derivative aspect of PID
 #define PID_d_defend 0.03
 //! @def PID_p_defender_movement @brief Proportional aspect of PID
-#define PID_p_defender_movement_vert 20
+#define PID_p_defender_movement_vert 30
 //! @def PID_i_defender_movement @brief Intergral aspect of PID
 #define PID_i_defender_movement_vert 0
 //! @def PID_d_defender_movement @brief Derivative aspect of PID
 #define PID_d_defender_movement_vert 0
 //! @def PID_p_defender_movement @brief Proportional aspect of PID
-#define PID_p_defender_movement_hozt 1
+#define PID_p_defender_movement_hozt 1.5
 //! @def PID_i_defender_movement @brief Intergral aspect of PID
 #define PID_i_defender_movement_hozt 0
 //! @def PID_d_defender_movement @brief Derivative aspect of PID
@@ -70,7 +70,7 @@
 #define GOAL_DIS_OFFSET -10.1
 
 //! @def GOAL_SEMI_CIRCLE_RADIUS_CM @brief The defender's arc orbit around goal
-#define GOAL_SEMI_CIRCLE_RADIUS_CM 24.5
+#define GOAL_SEMI_CIRCLE_RADIUS_CM 23.5
 //! @def EXPO_MIN_VAL @brief Minimum value of the exponential orbit
 #define EXPO_MIN_VAL 60
 
@@ -90,6 +90,6 @@
 //! @def BAT_READ_VOLTS @brief Reads the approx voltage value (2 d.p.) from bat
 #define BAT_READ_VOLTS false
 //! @def DEBUG_ROBOT_STATE @brief Prints what the robot is currently doing
-#define DEBUG_ROBOT_STATE false
+#define DEBUG_ROBOT_STATE true
 
 #endif
