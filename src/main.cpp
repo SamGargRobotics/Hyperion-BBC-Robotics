@@ -272,17 +272,32 @@ void loop() {
                     (goal_angle <= 190 && goal_angle >= 170)) {
                     // If ball in capture and goal is behind robot --> surge
                         // motors.run(SET_SPEED, tssp.ballDir, correction);
-                        motors.run(netDefendSpeed, netDefendMovementAngle, correction);
+                        motors.run(SET_SPEED, tssp.ballDir, 
+                                   cameraAttackCorrection);
+                        correctionState = "Goal";
                         robotState = "Defender Logic - Surge";
                 } else {
                     // If ball not in capture
-                    if(tssp.ballDir >= 90 && tssp.ballDir <= 270) {
-                        motors.run(attackerMoveSpeed, attackerMoveDirection, bnoCorrection);
+                    if(goal_x_val != 0 && goal_y_val != 0) {
+                        // If can see goal
+                        if(tssp.ballDir >= 90 && tssp.ballDir <= 270) {
+                            // If ball is behind robot --> orbit
+                            motors.run(attackerMoveSpeed, attackerMoveDirection,
+                                       bnoCorrection);
+                            correctionState = "Regular";
+                            robotState = "Defender Logic - Ball Behind";
+                        } else {
+                            motors.run(netDefendSpeed, netDefendMovementAngle, 
+                                    correction);
+                            robotState = "Defender Logic - Regular";
+                        }
                     } else {
-                        motors.run(netDefendSpeed, netDefendMovementAngle, 
-                                correction);
+                        // If cannot see goal --> Orbit
+                        motors.run(attackerMoveSpeed, attackerMoveDirection, 
+                                   bnoCorrection);
+                        correctionState = "Regular";
+                        robotState = "Defender Logic - Cannot see goal";
                     }
-                    robotState = "Defender Logic - Reg Position";
                 }
             }
         }
