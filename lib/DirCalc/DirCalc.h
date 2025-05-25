@@ -30,7 +30,6 @@ public:
     float defenderRotationOffset = 0;
     bool attack = false;
 private:
-    double findMiddleAngle(double angle1, double angle2);
     double ballStr_max = 0;
     double ballStr_actual = 0;
     double speed = 0;

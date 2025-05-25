@@ -66,7 +66,7 @@ void Tssp_system::update() {
         }
     }
 
-    for(uint8_t i = 0; i < TSSPNUM; i++){
+    for(uint8_t i = 0; i < TSSPNUM; i++) {
         readTssp[i] = (readTssp[i] == 255 || readTssp[i] == -1) ? (readTssp[i+1] + readTssp[i-1])/2 : readTssp[i];
     }
 

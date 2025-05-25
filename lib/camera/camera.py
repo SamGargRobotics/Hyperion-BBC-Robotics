@@ -18,8 +18,8 @@ uart.init(115200, bits=8, timeout_char=10)
 
 # Vars
 YellowIsAttack = True
-thresholds = [(52, 100, -76, 127, 19, 127)]
-thresholds2 = [(0, 100, -128, 127, -128, -14)]
+thresholds = [(43, 100, -25, 2, 22, 78)]
+thresholds2 = [(0, 67, -128, -7, -128, -15)]
 
 sensor.reset()  # Reset and initialize the sensor.
 sensor.set_pixformat(sensor.RGB565)

@@ -37,6 +37,7 @@ PID defenderMovementVert(PID_p_defender_movement_vert, \
 PID defenderMovementHozt(PID_p_defender_movement_hozt, \
                          PID_i_defender_movement_hozt, \
                          PID_d_defender_movement_hozt, PID_abs_max);
+surgeState surgestates;
 
 // [Main Global Vars]
 //! @brief Y value of the chosen goal that is being tracked.
@@ -114,7 +115,7 @@ void loop() {
     #endif
 
 // [Logic Pin Calculations]
-    dirCalc.attack = digitalRead(LOGIC_PIN);
+    // dirCalc.attack = digitalRead(LOGIC_PIN);
 
 // [Correction / Goal Tracking Calculations]
     compass.getEvent(&rotation);
@@ -140,7 +141,7 @@ void loop() {
     // Regular correction using the BNO/IMU/Compass
     bnoHeading = (rot>180)?(rot-360):rot;
     // Calculate distance of the goals away from the robot (pixels)
-    goal_dis = (sqrt(pow(abs(goal_x_val), 2) + pow(abs(goal_y_val), 2)))/10;
+    goal_dis = (sqrt(pow(abs(goal_x_val), 2) + pow(abs(goal_y_val), 2)));
     // Hard coded offset value as the camera was reading different values on
     // each side.
     goal_dis = (goalHeading < 180)?(goal_dis + GOAL_DIS_OFFSET) : goal_dis;
@@ -158,7 +159,7 @@ void loop() {
             // If seeing goal
             if(dirCalc.attack) {
                 // If Attacking
-                if(tssp.ballDir <= 30 || tssp.ballDir >= 330) {
+                if(goal_y_val <= 60) {
                     correction = cameraAttackCorrection;
                     correctionState = "Goal";
                 } else {
@@ -227,7 +228,14 @@ void loop() {
                              verticalDefenderMovement)*RAD_TO_DEG, 360);
     netDefendSpeed = sqrt(pow(verticalDefenderMovement, 2) + \
                          pow(horizontalDefenderMovement, 2));
-
+    if ((tssp.ballDir >= 350 || tssp.ballDir <= 10) && \
+        (tssp.ballStr >= DEFENCE_SURGE_STR_VALUE) && !surgestates.surgeQ) {
+            surgestates.surgeQ = true;
+            surgestates.startMillis = micros();
+        }
+    if((tssp.ballStr <= 60) || (surgestates.startMillis+5000000) <= micros() || (tssp.ballDir != 0)) {
+        surgestates.surgeQ = false;
+    }
 // [Bluetooth]
     bluetooth.update(batteryLevel.volts, tssp.ballDir, 0);
 
@@ -267,15 +275,11 @@ void loop() {
                 }
             } else {
                 // Defender Logic
-                if(((tssp.ballDir >= 350 || tssp.ballDir <= 10) && \
-                    (tssp.ballStr >= SURGE_STR_VALUE)) && \
-                    (goal_angle <= 190 && goal_angle >= 170)) {
-                    // If ball in capture and goal is behind robot --> surge
-                        // motors.run(SET_SPEED, tssp.ballDir, correction);
-                        motors.run(SET_SPEED, tssp.ballDir, 
-                                   cameraAttackCorrection);
-                        correctionState = "Goal";
-                        robotState = "Defender Logic - Surge";
+                if(surgestates.surgeQ) {
+                    motors.run(SET_SPEED, tssp.ballDir, 
+                                bnoCorrection);
+                    correctionState = "Goal";
+                    robotState = "Defender Logic - Surge";
                 } else {
                     // If ball not in capture
                     if(goal_x_val != 0 && goal_y_val != 0) {
@@ -293,7 +297,7 @@ void loop() {
                         }
                     } else {
                         // If cannot see goal --> Orbit
-                        motors.run(attackerMoveSpeed, attackerMoveDirection, 
+                        motors.run(attackerMoveSpeed, tssp.ballDir, 
                                    bnoCorrection);
                         correctionState = "Regular";
                         robotState = "Defender Logic - Cannot see goal";
@@ -312,15 +316,20 @@ void loop() {
     #endif
 
 // [Manual Printing Space]
-    Serial.print(goal_dis);
-    Serial.print("\t");
-    Serial.print(goalHeading);
-    Serial.print("\t");
-    Serial.print(verticalDefenderMovement);
-    Serial.print("\t");
-    Serial.print(horizontalDefenderMovement);
-    Serial.print("\t");
-    Serial.print(netDefendMovementAngle);
-    Serial.print("\t");
-    Serial.println(netDefendSpeed);
+    // Serial.print(goal_dis);
+    // Serial.print("\t");
+    // Serial.print(goalHeading);
+    // Serial.print("\t");
+    // Serial.print(verticalDefenderMovement);
+    // Serial.print("\t");
+    // Serial.print(horizontalDefenderMovement);
+    // Serial.print("\t");
+    // Serial.print(netDefendMovementAngle);
+    // Serial.print("\t");
+    // Serial.print(tssp.ballStr);
+    // Serial.print("\t");
+    // Serial.println(netDefendSpeed);
+    // Serial.println(goal_angle);
+    // Serial.println(tssp.ballStr);
+    Serial.println(goal_y_val);
 }
