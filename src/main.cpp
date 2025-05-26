@@ -150,30 +150,14 @@ void loop() {
     cameraAttackCorrection = -goalAttackingCorrection.update(goalHeading, 0);
     cameraDefenceCorrection = -goalDefendingCorrection.update(goalHeading, 180);
     // Heading logic to assign goal tracking or regular compass correct
-    #if GOAL_TRACKING_TOGGLE
-        if(goal_x_val == 0 || goal_y_val == 0) {
-            // If not seeing goal --> Regular Correction
-            correction = bnoCorrection;
-            correctionState = "No data";
-        } else {
-            // If seeing goal
-            if(dirCalc.attack) {
-                // If Attacking
-                if(goal_y_val <= 60) {
-                    correction = cameraAttackCorrection;
-                    correctionState = "Goal";
-                } else {
-                    correction = bnoCorrection;
-                    correctionState = "Regular";
-                }
-            } else {
-                // If Defending
-                correction = cameraDefenceCorrection;
-                correctionState = "Defence";
-            }
-        }
-    #else
-        correction = bnoCorrection;
+    cameraAttackCorrection = ((goal_y_val == 0 || goal_x_val == 0) || \
+                             (goal_y_val >= GOAL_TRACKING_DIS_THRESH)) ? \
+                              bnoCorrection:cameraAttackCorrection;
+    cameraDefenceCorrection = (goal_y_val == 0 || goal_x_val == 0)? \
+                              bnoCorrection:cameraDefenceCorrection;
+    #if not GOAL_TRACKING_TOGGLE
+        cameraAttackCorrection = bnoCorrection;
+        cameraDefenceCorrection = bnoCorrection;
     #endif
     #if DEBUG_IMU_CAM
         Serial.print(rot);
@@ -233,7 +217,8 @@ void loop() {
             surgestates.surgeQ = true;
             surgestates.startMillis = micros();
         }
-    if((tssp.ballStr <= 60) || (surgestates.startMillis+5000000) <= micros() || (tssp.ballDir != 0)) {
+    if((tssp.ballStr <= 60) || (surgestates.startMillis+5000000) <= micros() || \
+        (tssp.ballDir >= 90 && tssp.ballDir <= 270)) {
         surgestates.surgeQ = false;
     }
 // [Bluetooth]
@@ -241,7 +226,7 @@ void loop() {
 
 // [Moving the Robot Final Calculations and Logic]
     #if CORRECTION_TEST
-        motors.run(0, 0, correction);
+        motors.run(0, 0, bnoCorrection);
     #elif BALL_FOLLOW_TEST
         motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
                   tssp.ballDir, 0); 
@@ -269,7 +254,7 @@ void loop() {
                     } else {
                         // If ball is far then ball follow
                         motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
-                                tssp.ballDir, correction);
+                                tssp.ballDir, cameraAttackCorrection);
                         robotState = "Attacker Logic - Ball Follow";
                     }
                 }
@@ -277,7 +262,7 @@ void loop() {
                 // Defender Logic
                 if(surgestates.surgeQ) {
                     motors.run(SET_SPEED, tssp.ballDir, 
-                                bnoCorrection);
+                                cameraAttackCorrection);
                     correctionState = "Goal";
                     robotState = "Defender Logic - Surge";
                 } else {
@@ -292,12 +277,14 @@ void loop() {
                             robotState = "Defender Logic - Ball Behind";
                         } else {
                             motors.run(netDefendSpeed, netDefendMovementAngle, 
-                                    correction);
+                                    cameraDefenceCorrection);
                             robotState = "Defender Logic - Regular";
                         }
                     } else {
                         // If cannot see goal --> Orbit
-                        motors.run(attackerMoveSpeed, tssp.ballDir, 
+                        motors.run(attackerMoveSpeed, 
+                                  (cam.previousVals[0] <= DEF_GOAL_Y_THRESH)\
+                                    ?180:tssp.ballDir, 
                                    bnoCorrection);
                         correctionState = "Regular";
                         robotState = "Defender Logic - Cannot see goal";
@@ -330,6 +317,5 @@ void loop() {
     // Serial.print("\t");
     // Serial.println(netDefendSpeed);
     // Serial.println(goal_angle);
-    // Serial.println(tssp.ballStr);
-    Serial.println(goal_y_val);
+    Serial.println(tssp.ballStr);
 }

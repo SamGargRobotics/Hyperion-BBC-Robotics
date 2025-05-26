@@ -45,7 +45,7 @@ struct surgeState {
     //! @def PID_d_defend @brief Derivative aspect of PID
     #define PID_d_defend 0.03
     //! @def PID_p_defender_movement_vert @brief Proportional aspect of PID
-    #define PID_p_defender_movement_vert 3
+    #define PID_p_defender_movement_vert 3.3
     //! @def PID_i_defender_movement_vert @brief Intergral aspect of PID
     #define PID_i_defender_movement_vert 0
     //! @def PID_d_defender_movement_vert @brief Derivative aspect of PID
@@ -112,7 +112,7 @@ struct surgeState {
     #define GOAL_SEMI_CIRCLE_RADIUS_CM 243
     //! @def DEFENCE_SURGE_STR_VALUE @brief Min strength value that allows robot to 
     //!                                     surge (Defence)
-    #define DEFENCE_SURGE_STR_VALUE 85
+    #define DEFENCE_SURGE_STR_VALUE 130
 #else
     //! @def GOAL_SEMI_CIRCLE_RADIUS_CM @brief The defender's arc orbit around goal
     #define GOAL_SEMI_CIRCLE_RADIUS_CM 243
@@ -129,6 +129,9 @@ struct surgeState {
     //! @def GOAL_DIS_OFFSET @brief Offset value when calculating the goal distance
     //!                             on one side
     #define GOAL_DIS_OFFSET -101
+    //! @def DEF_GOAL_Y_THRESH @brief Thresh to determine if the robot goes
+    //                            for or back if it does not see goal (Defence)
+    #define DEF_GOAL_Y_THRESH -40
 #else
     //! @def GOAL_TRACKING_DIS_THRESH @brief Distance away from the goal that the 
     //!                               robot starts goal tracking with the orbit
@@ -136,6 +139,9 @@ struct surgeState {
     //! @def GOAL_DIS_OFFSET @brief Offset value when calculating the goal distance
     //!                             on one side
     #define GOAL_DIS_OFFSET -101
+    //! @def DEF_GOAL_Y_THRESH @brief Thresh to determine if the robot goes
+    //                            for or back if it does not see goal (Defence)
+    #define DEF_GOAL_Y_THRESH -40
 #endif
 
 // --[BATTERY TRACKING Values]--

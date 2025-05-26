@@ -52,6 +52,12 @@ void Camera::read_camera(){
             }
         }
     }
+    if(goal_y_blue != 0) {
+        previousVals[0] = goal_y_blue;
+        previousVals[1] = goal_x_blue;
+        previousVals[2] = goal_y_yellow;
+        previousVals[3] = goal_x_yellow;
+    }
 }
  
 /*!

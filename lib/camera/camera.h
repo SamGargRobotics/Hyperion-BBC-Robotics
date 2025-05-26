@@ -28,6 +28,7 @@ public:
     int goal_x_blue;
     int goal_y_yellow;
     int goal_y_blue;
+    int previousVals[4] = {-1};
     float angle_to_goal_yellow;
     float angle_to_goal_blue;
 private:
