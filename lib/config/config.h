@@ -112,7 +112,7 @@ struct surgeState {
     #define GOAL_SEMI_CIRCLE_RADIUS_CM 243
     //! @def DEFENCE_SURGE_STR_VALUE @brief Min strength value that allows robot to 
     //!                                     surge (Defence)
-    #define DEFENCE_SURGE_STR_VALUE 130
+    #define DEFENCE_SURGE_STR_VALUE 135
 #else
     //! @def GOAL_SEMI_CIRCLE_RADIUS_CM @brief The defender's arc orbit around goal
     #define GOAL_SEMI_CIRCLE_RADIUS_CM 243

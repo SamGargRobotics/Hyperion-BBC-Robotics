@@ -80,7 +80,7 @@ float batteryCurrentLevel = 0;
 //! @brief Current battery level of the robot (volts)
 float currentBatteryLevelVolts = 0;
 //! @brief Move Angle in relevancy to the ls.lineDirection
-float lsMoveAngle = 0;
+float lsMoveAngle = -1;
 //! @brief If the motor switch is turned on
 bool motorOn = false;
 //! @brief Current logic state of the robot
@@ -218,7 +218,7 @@ void loop() {
             surgestates.startMillis = micros();
         }
     if((tssp.ballStr <= 60) || (surgestates.startMillis+5000000) <= micros() || \
-        (tssp.ballDir >= 90 && tssp.ballDir <= 270)) {
+        ((tssp.ballDir >= 90 && tssp.ballDir <= 270) || goal_dis <= 230)) {
         surgestates.surgeQ = false;
     }
 // [Bluetooth]
@@ -231,7 +231,7 @@ void loop() {
         motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
                   tssp.ballDir, 0); 
     #else
-        if(ls.lineDirection != -1) {
+        if(lsMoveAngle != -1) {
             // If detecting line --> Line Avoidance
             motors.run(SET_SPEED, lsMoveAngle, correction);
             robotState = "Line Avoidance";
@@ -281,7 +281,8 @@ void loop() {
                             robotState = "Defender Logic - Regular";
                         }
                     } else {
-                        // If cannot see goal --> Orbit
+                        // If cannot see goal --> Forward or Backward depending
+                        // on last seen goal_y_val
                         motors.run(attackerMoveSpeed, 
                                   (cam.previousVals[0] <= DEF_GOAL_Y_THRESH)\
                                     ?180:tssp.ballDir, 
@@ -316,6 +317,5 @@ void loop() {
     // Serial.print(tssp.ballStr);
     // Serial.print("\t");
     // Serial.println(netDefendSpeed);
-    // Serial.println(goal_angle);
-    Serial.println(tssp.ballStr);
+    Serial.println(goal_dis);
 }

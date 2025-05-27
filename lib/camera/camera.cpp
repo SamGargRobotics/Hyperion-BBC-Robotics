@@ -18,7 +18,7 @@ void Camera::init(){
  *         goal_index (colour), angle_to_goal]
  */
 void Camera::read_camera(){
-    if (cameraSerial.available() >= 6) {
+    if (cameraSerial.available() >= 8) {
         // read the incoming stuff
         if(cameraSerial.read() == 200){
             if(cameraSerial.peek() == 122){
@@ -48,6 +48,8 @@ void Camera::read_camera(){
                 } else {
                     goal_y_blue -= 60;
                 }
+                distYel = cameraSerial.read();
+                distBlue = cameraSerial.read();
                 angle_to_goal_blue = calculate_theta(goal_y_blue,goal_x_blue);
             }
         }

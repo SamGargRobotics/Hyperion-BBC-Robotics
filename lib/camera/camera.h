@@ -31,6 +31,8 @@ public:
     int previousVals[4] = {-1};
     float angle_to_goal_yellow;
     float angle_to_goal_blue;
+    float distYel;
+    float distBlue;
 private:
     float calculate_hypot(float x, float y);
     float calculate_theta(float o, float h);

@@ -18,8 +18,9 @@ uart.init(115200, bits=8, timeout_char=10)
 
 # Vars
 YellowIsAttack = True
-thresholds = [(43, 100, -25, 2, 22, 78)]
-thresholds2 = [(0, 67, -128, -7, -128, -15)]
+thresholds = [(52, 100, -76, 127, 19, 127)]
+thresholds2 = [(34, 69, -21, 127, -36, -15)]
+Both = [(52, 100, -76, 127, 19, 127),(34, 69, -21, 127, -36, -15)]
 
 sensor.reset()  # Reset and initialize the sensor.
 sensor.set_pixformat(sensor.RGB565)
@@ -39,14 +40,15 @@ def GoalFind():
     Blob.code() : int
     List : [XDIST, YDIST, blob.code()]
     """
-    Temp1 = [0,0]
-    Temp2 = [0,0]
-    for blob in img.find_blobs(thresholds, pixels_threshold=35, area_threshold=35, merge=True):
-        img.draw_rectangle(blob.rect(),color=(0,255,0))
-        Temp1 = [blob.cx(),blob.cy()]
-    for blob in img.find_blobs(thresholds2, pixels_threshold=35, area_threshold=35, merge=True):
-        img.draw_rectangle(blob.rect(),color=(0,255,0))
-        Temp2 = [blob.cx(),blob.cy()]
+    Temp1 = [0,0,0]
+    Temp2 = [0,0,0]
+    for blob in img.find_blobs(Both, pixels_threshold=35, area_threshold=35, merge=True, x_stride = 4, y_stride = 2):
+        if(blob.code() == 1):
+            img.draw_rectangle(blob.rect(),color=(255,255,0))
+            Temp1 = [blob.cx(),blob.cy(),blob.area()]
+        elif(blob.code() == 2):
+            img.draw_rectangle(blob.rect(),color=(0,0,255))
+            Temp2 = [blob.cx(),blob.cy(),blob.area()]
     return [Temp1,Temp2]
 
 while True:
@@ -60,5 +62,5 @@ while True:
     uart.writechar(int(TRI[0][1]))
     uart.writechar(int(TRI[1][0]))
     uart.writechar(int(TRI[1][1]))
-
-    print(TRI)
+    uart.writechar(int(TRI[0][2]))
+    uart.writechar(int(TRI[1][2]))
