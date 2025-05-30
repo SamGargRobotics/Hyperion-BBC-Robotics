@@ -34,9 +34,9 @@ private:
     uint8_t readTssp[TSSPNUM] = {0};
     uint8_t tsspSortedValues[TSSPNUM] = {0};
     uint8_t tsspSortedIndex[TSSPNUM] = {0}; 
-    uint8_t tsspPins[TSSPNUM] = {TSSP1, TSSP2, TSSP3, TSSP4, TSSP5, TSSP6, TSSP7,
-                            TSSP8, TSSP9, TSSP10, TSSP11, TSSP12, TSSP13, 
-                            TSSP14, TSSP15, TSSP16};
+    uint8_t tsspPins[TSSPNUM] = {TSSP1, TSSP2, TSSP3, TSSP4, TSSP5, TSSP6, 
+                                 TSSP7, TSSP8, TSSP9, TSSP10, TSSP11, TSSP12,
+                                 TSSP13, TSSP14, TSSP15, TSSP16};
     float tsspX[TSSPNUM] = {0};
     float tsspY[TSSPNUM] = {0};
     int readingTsspIgnores[TSSPNUM] = {0};

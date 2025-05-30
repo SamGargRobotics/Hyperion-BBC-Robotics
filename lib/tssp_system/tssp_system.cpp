@@ -71,16 +71,25 @@ void Tssp_system::update() {
     }
 
     for(uint8_t i = 0; i < TSSPNUM; i++) {
-        readTssp[i] = (readTssp[i] == 255 || readTssp[i] == -1) ? (readTssp[i+1] + readTssp[i-1])/2 : readTssp[i];
+        readTssp[i] = (readTssp[i] == 255 || readTssp[i] == -1) ? \
+                                (readTssp[i+1] + readTssp[i-1])/2 : readTssp[i];
     }
 
     ballDir = (highestTssp)*(360.0/TSSPNUM);
-    ballStr = ((3 * tsspSortedValues[0]) + (2 * tsspSortedValues[1]) + tsspSortedValues[2] + tsspSortedValues[3]) / 7;
+    ballStr = ((3 * tsspSortedValues[0]) + (2 * tsspSortedValues[1]) + \ 
+              tsspSortedValues[2] + tsspSortedValues[3]) / 7;
     detectingBall = (ballStr != 0);
 
-    float x = ((tsspSortedValues[0] * tsspX[tsspSortedIndex[0]]) + (tsspSortedValues[1] * tsspX[tsspSortedIndex[1]]) + (tsspSortedValues[2] * tsspX[tsspSortedIndex[2]]) + (tsspSortedValues[3] * tsspX[tsspSortedIndex[3]])) / 4;
-    float y = ((tsspSortedValues[0] * tsspY[tsspSortedIndex[0]]) + (tsspSortedValues[1] * tsspY[tsspSortedIndex[1]]) + (tsspSortedValues[2] * tsspY[tsspSortedIndex[2]]) + (tsspSortedValues[3] * tsspY[tsspSortedIndex[3]])) / 4;
-    ballDir = detectingBall ? 360 - floatMod((RAD_TO_DEG * (atan2f(y, x)))-90, 360) : 0;
+    float x = ((tsspSortedValues[0] * tsspX[tsspSortedIndex[0]]) + \
+              (tsspSortedValues[1] * tsspX[tsspSortedIndex[1]]) + \
+              (tsspSortedValues[2] * tsspX[tsspSortedIndex[2]]) + \
+              (tsspSortedValues[3] * tsspX[tsspSortedIndex[3]])) / 4;
+    float y = ((tsspSortedValues[0] * tsspY[tsspSortedIndex[0]]) + \
+              (tsspSortedValues[1] * tsspY[tsspSortedIndex[1]]) + \
+              (tsspSortedValues[2] * tsspY[tsspSortedIndex[2]]) + \
+              (tsspSortedValues[3] * tsspY[tsspSortedIndex[3]])) / 4;
+    ballDir = detectingBall ? 360 - \
+                            floatMod((RAD_TO_DEG * (atan2f(y, x)))-90, 360) : 0;
     Serial.println(ballDir);
 
     for(int i = 10; i > 0; i--) {
