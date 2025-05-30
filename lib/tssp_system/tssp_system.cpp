@@ -21,6 +21,10 @@ void Tssp_system::init() {
  */
 void Tssp_system::update() {
     for(uint8_t i = 0; i < TSSPNUM; i++) {
+        tsspX[i] = sin(i*22.5*DEG_TO_RAD); 
+        tsspY[i] = cos(i*22.5*DEG_TO_RAD);
+    }
+    for(uint8_t i = 0; i < TSSPNUM; i++) {
         readTssp[i] = 0;
         tsspSortedValues[i] = 0;
     }
@@ -74,16 +78,11 @@ void Tssp_system::update() {
     ballStr = ((3 * tsspSortedValues[0]) + (2 * tsspSortedValues[1]) + tsspSortedValues[2] + tsspSortedValues[3]) / 7;
     detectingBall = (ballStr != 0);
 
+    float x = ((tsspSortedValues[0] * tsspX[tsspSortedIndex[0]]) + (tsspSortedValues[1] * tsspX[tsspSortedIndex[1]]) + (tsspSortedValues[2] * tsspX[tsspSortedIndex[2]]) + (tsspSortedValues[3] * tsspX[tsspSortedIndex[3]])) / 4;
+    float y = ((tsspSortedValues[0] * tsspY[tsspSortedIndex[0]]) + (tsspSortedValues[1] * tsspY[tsspSortedIndex[1]]) + (tsspSortedValues[2] * tsspY[tsspSortedIndex[2]]) + (tsspSortedValues[3] * tsspY[tsspSortedIndex[3]])) / 4;
+    ballDir = detectingBall ? 360 - floatMod((RAD_TO_DEG * (atan2f(y, x)))-90, 360) : 0;
+    Serial.println(ballDir);
 
-    if(firstUpdate) {
-        smoothedBallDir = ballDir;
-        smoothedBallStr = ballStr;
-        firstUpdate = false;
-    } else {
-        // Exponential Moving Average Calc to avoid jumping values - TEST
-        smoothedBallDir = alpha * ballDir + (1 - alpha) * smoothedBallDir;
-        smoothedBallStr = alpha * ballStr + (1 - alpha) * smoothedBallStr;
-    }
     for(int i = 10; i > 0; i--) {
         previousBallDir[i] = previousBallDir[i-1];
         previousBallStr[i] = previousBallStr[i-1];

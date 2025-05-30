@@ -218,7 +218,7 @@ void loop() {
             surgestates.startMillis = micros();
         }
     if((tssp.ballStr <= 60) || (surgestates.startMillis+5000000) <= micros() || \
-        ((tssp.ballDir >= 90 && tssp.ballDir <= 270) || goal_dis <= 230)) {
+        ((tssp.ballDir >= 10 && tssp.ballDir <= 350) || goal_dis <= 225)) {
         surgestates.surgeQ = false;
     }
 // [Bluetooth]
@@ -248,13 +248,13 @@ void loop() {
                     if(tssp.ballStr > ORBIT_STRENGTH_RADIUS) {
                         // If ball is close then orbit
                         motors.run((tssp.detectingBall?attackerMoveSpeed:0),
-                                attackerMoveDirection, bnoCorrection);
+                                attackerMoveDirection, cameraAttackCorrection);
                         correctionState = "Regular";
                         robotState = "Attacker Logic - Orbit";
                     } else {
                         // If ball is far then ball follow
                         motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
-                                tssp.ballDir, cameraAttackCorrection);
+                                tssp.ballDir, bnoCorrection);
                         robotState = "Attacker Logic - Ball Follow";
                     }
                 }
@@ -317,5 +317,5 @@ void loop() {
     // Serial.print(tssp.ballStr);
     // Serial.print("\t");
     // Serial.println(netDefendSpeed);
-    Serial.println(goal_dis);
+    // Serial.println(goal_dis);
 }
