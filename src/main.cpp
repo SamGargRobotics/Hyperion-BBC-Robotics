@@ -254,7 +254,7 @@ void loop() {
                     } else {
                         // If ball is far then ball follow
                         motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
-                                tssp.ballDir, bnoCorrection);
+                                tssp.ballDir, cameraAttackCorrection);
                         robotState = "Attacker Logic - Ball Follow";
                     }
                 }
@@ -269,8 +269,8 @@ void loop() {
                     // If ball not in capture
                     if(goal_x_val != 0 && goal_y_val != 0) {
                         // If can see goal
-                        if(tssp.ballDir >= 90 && tssp.ballDir <= 270) {
-                            // If ball is behind robot --> orbit
+                        if(tssp.ballDir >= 110 && tssp.ballDir <= 290) {
+                            // If ball is in threshold robot --> orbit
                             motors.run(attackerMoveSpeed, attackerMoveDirection,
                                        bnoCorrection);
                             correctionState = "Regular";
@@ -304,18 +304,4 @@ void loop() {
     #endif
 
 // [Manual Printing Space]
-    // Serial.print(goal_dis);
-    // Serial.print("\t");
-    // Serial.print(goalHeading);
-    // Serial.print("\t");
-    // Serial.print(verticalDefenderMovement);
-    // Serial.print("\t");
-    // Serial.print(horizontalDefenderMovement);
-    // Serial.print("\t");
-    // Serial.print(netDefendMovementAngle);
-    // Serial.print("\t");
-    // Serial.print(tssp.ballStr);
-    // Serial.print("\t");
-    // Serial.println(netDefendSpeed);
-    // Serial.println(goal_dis);
 }

@@ -18,7 +18,7 @@
 // --[MASTER Values]--
     //! @def targetGoal @brief Blue = 1, Yelow = 0; Assigns which goal is the target
     //!                        for either attacking or defending
-    #define targetGoal 0
+    #define targetGoal 1
     //! @def SET_SPEED @brief Speed that is set for running
     #define SET_SPEED 180
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being tuned
@@ -45,7 +45,7 @@ struct surgeState {
     //! @def PID_d_defend @brief Derivative aspect of PID
     #define PID_d_defend 0.03
     //! @def PID_p_defender_movement_vert @brief Proportional aspect of PID
-    #define PID_p_defender_movement_vert 4.5
+    #define PID_p_defender_movement_vert 8
     //! @def PID_i_defender_movement_vert @brief Intergral aspect of PID
     #define PID_i_defender_movement_vert 0
     //! @def PID_d_defender_movement_vert @brief Derivative aspect of PID

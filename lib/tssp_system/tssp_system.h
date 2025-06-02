@@ -26,12 +26,9 @@ public:
     bool detectingBall = true;
     float ballStr = 0;
     float ballDir = 0;
-    float advBallDir = 0;
-    float previousBallStr[10] = {0};
-    float previousBallDir[10] = {0};
 private:
     bool firstUpdate = true;
-    uint8_t readTssp[TSSPNUM] = {0};
+    int readTssp[TSSPNUM] = {-1};
     uint8_t tsspSortedValues[TSSPNUM] = {0};
     uint8_t tsspSortedIndex[TSSPNUM] = {0}; 
     uint8_t tsspPins[TSSPNUM] = {TSSP1, TSSP2, TSSP3, TSSP4, TSSP5, TSSP6, 
@@ -39,9 +36,6 @@ private:
                                  TSSP13, TSSP14, TSSP15, TSSP16};
     float tsspX[TSSPNUM] = {0};
     float tsspY[TSSPNUM] = {0};
-    int readingTsspIgnores[TSSPNUM] = {0};
-    int largestReading = 0;
-    int highestTssp = 0;
 };
 
 #endif
