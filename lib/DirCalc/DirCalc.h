@@ -28,7 +28,7 @@ public:
     float calcSpeed(float ballStr);
     float ballDis = 0;
     float defenderRotationOffset = 0;
-    bool attack = false;
+    bool attack = true;
 private:
     double ballStr_max = 0;
     double ballStr_actual = 0;

@@ -61,6 +61,8 @@ float cameraDefenceCorrection = 0;
 float goal_angle = 0;
 //! @brief Distance of goal to robot (horizontal - pixels)
 float goal_dis = 0;
+//! @brief Goal pixel size.
+float goal_pixel = 0;
 //! @brief Current Compass Value (rotation)
 float rot = 0;
 //! @brief The orbit values of the attacking function
@@ -127,10 +129,12 @@ void loop() {
         goal_y_val = cam.goal_y_blue;
         goal_x_val = cam.goal_x_blue;
         goal_angle = cam.angle_to_goal_blue;
+        goal_pixel = cam.distBlue;
     #else
         goal_y_val = cam.goal_y_yellow;
         goal_x_val = cam.goal_x_yellow;
         goal_angle = cam.angle_to_goal_yellow;
+        goal_pixel = cam.distYel;
     #endif
     // Complete floatMod values to ensure that the heading is not constantly 
     // changing when the robot faces the goal.

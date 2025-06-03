@@ -18,11 +18,11 @@
 // --[MASTER Values]--
     //! @def targetGoal @brief Blue = 1, Yelow = 0; Assigns which goal is the target
     //!                        for either attacking or defending
-    #define targetGoal 1
+    #define targetGoal 0
     //! @def SET_SPEED @brief Speed that is set for running
-    #define SET_SPEED 180
+    #define SET_SPEED 150
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being tuned
-    #define SECOND_ROBOT 0
+    #define SECOND_ROBOT 1
 
 // --[SURGE STATE Values]--
 struct surgeState {
@@ -45,7 +45,7 @@ struct surgeState {
     //! @def PID_d_defend @brief Derivative aspect of PID
     #define PID_d_defend 0.03
     //! @def PID_p_defender_movement_vert @brief Proportional aspect of PID
-    #define PID_p_defender_movement_vert 8
+    #define PID_p_defender_movement_vert 5
     //! @def PID_i_defender_movement_vert @brief Intergral aspect of PID
     #define PID_i_defender_movement_vert 0
     //! @def PID_d_defender_movement_vert @brief Derivative aspect of PID
@@ -62,7 +62,7 @@ struct surgeState {
     //! @def PID_i_attack @brief Intergral aspect of PID
     #define PID_i_attack 0
     //! @def PID_d_attack @brief Derivative aspect of PID
-    #define PID_d_attack 0.055
+    #define PID_d_attack 0.0275
     //! @def PID_p_defend @brief Proportional aspect of PID
     #define PID_p_defend 0.65
     //! @def PID_i_defend @brief Intergral aspect of PID
@@ -98,10 +98,10 @@ struct surgeState {
 #else
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot switches
     // strats for orbit
-    #define ORBIT_STRENGTH_RADIUS 90
+    #define ORBIT_STRENGTH_RADIUS 100
     //! @def SURGE_STR_VALUE @brief Min Strength value that allows the robot to 
     //!                             surge (Attack)
-    #define SURGE_STR_VALUE 113
+    #define SURGE_STR_VALUE 129
     //! @def EXPO_MIN_VAL @brief Minimum value of the exponential orbit
     #define EXPO_MIN_VAL 60
 #endif
@@ -109,7 +109,7 @@ struct surgeState {
 // --[DEFENCE LOGIC Values]
 #if not SECOND_ROBOT
     //! @def GOAL_SEMI_CIRCLE_RADIUS_CM @brief The defender's arc orbit around goal
-    #define GOAL_SEMI_CIRCLE_RADIUS_CM 243
+    #define GOAL_SEMI_CIRCLE_RADIUS_CM 243 //243
     //! @def DEFENCE_SURGE_STR_VALUE @brief Min strength value that allows robot to 
     //!                                     surge (Defence)
     #define DEFENCE_SURGE_STR_VALUE 135
@@ -161,7 +161,7 @@ struct surgeState {
     //! @def BALL_FOLLOW_TEST @brief Testing Corretion + Ball Follow if true
     #define BALL_FOLLOW_TEST false
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
-    #define GOAL_TRACKING_TOGGLE 1
+    #define GOAL_TRACKING_TOGGLE true
 
 // --[DEBUG TOGGLES]--
     //! @def DEBUG_MOTORS @brief Read what the motors are sending when true
@@ -169,7 +169,7 @@ struct surgeState {
     //! @def DEBUG_IMU @brief Prints various values for camera and BNO when true
     #define DEBUG_IMU_CAM false
     //! @def DEBUG_TSSP @brief Prints various values for tssp when true
-    #define DEBUG_TSSP false
+    #define DEBUG_TSSP true
     //! @def DEBUG_TSSP_SENSOR_VAL @brief Prints tssp sensor values when true
     #define DEBUG_TSSP_SENSOR_VAL false
     //! @def DEBUG_READ_RAWVAL @brief Prints the raw analog value from bat

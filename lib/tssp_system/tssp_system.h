@@ -28,7 +28,7 @@ public:
     float ballDir = 0;
 private:
     bool firstUpdate = true;
-    int readTssp[TSSPNUM] = {-1};
+    int readTssp[TSSPNUM] = {0};
     uint8_t tsspSortedValues[TSSPNUM] = {0};
     uint8_t tsspSortedIndex[TSSPNUM] = {0}; 
     uint8_t tsspPins[TSSPNUM] = {TSSP1, TSSP2, TSSP3, TSSP4, TSSP5, TSSP6, 
