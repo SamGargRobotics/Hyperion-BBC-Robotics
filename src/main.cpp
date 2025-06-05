@@ -207,7 +207,7 @@ void loop() {
 // [Strategy and Movement Calculation]
     attackerMoveDirection = dirCalc.exponentialOrbit(tssp.ballDir, 
                                                     tssp.ballStr);  
-    attackerMoveSpeed = dirCalc.calcSpeed(tssp.ballStr)*SET_SPEED;
+    attackerMoveSpeed = dirCalc.calcSpeed(tssp.ballStr, tssp.ballDir)*SET_SPEED;
     verticalDefenderMovement = -defenderMovementVert.update(abs(goal_dis), \
                                                 GOAL_SEMI_CIRCLE_RADIUS_CM);
     horizontalDefenderMovement = -defenderMovementHozt.update(\
@@ -230,10 +230,10 @@ void loop() {
 
 // [Moving the Robot Final Calculations and Logic]
     #if CORRECTION_TEST
-        motors.run(0, 0, cameraAttackCorrection);
+        motors.run(0, 0, bnoCorrection);
     #elif BALL_FOLLOW_TEST
         motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
-                  tssp.ballDir, 0); 
+                  tssp.ballDir, bnoCorrection); 
     #else
         if(lsMoveAngle != -1) {
             // If detecting line --> Line Avoidance

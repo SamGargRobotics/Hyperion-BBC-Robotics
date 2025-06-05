@@ -22,7 +22,7 @@
     //! @def SET_SPEED @brief Speed that is set for running
     #define SET_SPEED 180
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being tuned
-    #define SECOND_ROBOT 0
+    #define SECOND_ROBOT 1
 
 // --[SURGE STATE Values]--
 struct surgeState {
@@ -101,7 +101,7 @@ struct surgeState {
     #define ORBIT_STRENGTH_RADIUS 100
     //! @def SURGE_STR_VALUE @brief Min Strength value that allows the robot to 
     //!                             surge (Attack)
-    #define SURGE_STR_VALUE 107
+    #define SURGE_STR_VALUE 110
     //! @def EXPO_MIN_VAL @brief Minimum value of the exponential orbit
     #define EXPO_MIN_VAL 60
 #endif

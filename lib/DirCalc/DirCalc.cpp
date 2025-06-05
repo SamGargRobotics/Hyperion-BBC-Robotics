@@ -37,7 +37,14 @@ float DirectionCalc::exponentialOrbit(float ballDir, float ballStr) {
  * 
  * @return Returns a speed value for the robot to move.
  */
-float DirectionCalc::calcSpeed(float ballStr) {
-    return max(min(pow(EULER, -0.02*(ballStr-(90.5*EULER))) + 20, \
-           ((3*SET_SPEED)/4)), 30)/((3*SET_SPEED)/4);
+float DirectionCalc::calcSpeed(float ballStr, float ballDir) {
+    multi = (5*SET_SPEED/8);
+    if(ballDir >= 90 && ballDir <= 270) {
+        return max(min(pow(EULER, -0.02*(ballStr-(97.5*EULER))) + 30, \
+            multi), 30)/ multi;  
+    } else {
+        return max(min(pow(EULER, -0.02*(ballStr-(97.5*EULER))) + 20 , \
+            multi), 30)/multi;
+    }
+
 }

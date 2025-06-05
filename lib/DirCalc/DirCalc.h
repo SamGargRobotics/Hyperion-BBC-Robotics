@@ -25,11 +25,12 @@ class DirectionCalc {
 public:
     DirectionCalc() {};
     float exponentialOrbit(float ballDir, float ballStr);
-    float calcSpeed(float ballStr);
+    float calcSpeed(float ballStr, float ballDir);
     float ballDis = 0;
     float defenderRotationOffset = 0;
-    bool attack = false;
+    bool attack = true;
 private:
+    float multi = 5;
     double ballStr_max = 0;
     double ballStr_actual = 0;
     double speed = 0;
