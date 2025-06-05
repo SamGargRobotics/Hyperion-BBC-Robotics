@@ -230,7 +230,7 @@ void loop() {
 
 // [Moving the Robot Final Calculations and Logic]
     #if CORRECTION_TEST
-        motors.run(0, 0, bnoCorrection);
+        motors.run(0, 0, cameraAttackCorrection);
     #elif BALL_FOLLOW_TEST
         motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
                   tssp.ballDir, 0); 
