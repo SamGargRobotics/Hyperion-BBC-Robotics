@@ -226,7 +226,8 @@ void loop() {
         surgestates.surgeQ = false;
     }
 // [Bluetooth]
-    bluetooth.update(batteryLevel.volts, tssp.ballDir, 0);
+    bluetooth.update(89, 43, 120);
+    Serial.println(batteryLevel.volts);
 
 // [Moving the Robot Final Calculations and Logic]
     #if CORRECTION_TEST
