@@ -21,10 +21,11 @@ class Bluetooth {
 public:
     Bluetooth() {};
     void init();
-    void update(float batLevel, float ballDir, float ballDis);
-    void send(float batLevel, float ballDir, float ballDis);
+    void update(bool logic, float ballDir, float ballDis);
+    void send(bool logic, float ballDir, float ballDis);
     float otherRobotBallLocation[2] = {0,0};
-    float otherRobotBatteryLevel = 0;
+    float prevBallStr = 0.00;
+    float otherRobotLogic = 0;
     bool connection;
 private:
     bool read();

@@ -15,19 +15,20 @@ void Bluetooth::init() {
 /*!
  * @brief Main controlling function, determines when the HC-05 interacts with 
  *        other modules.
- * @param batLevel Current Battery Level of Robot.
+ * @param logic Attack or defend state
  * @param ballDir Current Direction of Ball.
  * @param ballDis Current Distance of Ball away from robot (cm).
  */
-void Bluetooth::update(float batLevel, float ballDir, float ballDis) {
+void Bluetooth::update(bool logic, float ballDir, float ballDis) {
     unsigned long current_time = micros();
     if(current_time - last_sent_time > 250000) {
-        send(batLevel, ballDir, ballDis);
+        send(logic, ballDir, ballDis);
     }
     read_data = read();
     if(read_data) {
         last_received_time = micros();
     }
+    prevBallStr = otherRobotBallLocation[1];
     current_time = micros();
     connection = current_time - last_received_time > 2000000 ? false : true;
 }
@@ -53,7 +54,7 @@ bool Bluetooth::read() {
                                 BLUETOOTH_NO_DATA ? -1 : bluetoothBuffer[0]);
             otherRobotBallLocation[1] = (bluetoothBuffer[0] == \
                                 BLUETOOTH_NO_DATA ? -1 : bluetoothBuffer[1]);
-            otherRobotBatteryLevel = (bluetoothBuffer[2] == BLUETOOTH_NO_DATA \
+            otherRobotLogic = (bluetoothBuffer[2] == BLUETOOTH_NO_DATA \
                                 ? -1 : bluetoothBuffer[2]);
             // Returns true if the data from the serial was read.
             return true;
@@ -70,10 +71,10 @@ bool Bluetooth::read() {
  * @param ballDir Current direction of the ball.
  * @param ballDis Current distance of the ball away from the robot (cm).
  */
-void Bluetooth::send(float batLevel, float ballDir, float ballDis) {
+void Bluetooth::send(bool logic, float ballDir, float ballDis) {
     BLUETOOTH_SERIAL.write(BLUETOOTH_START_BYTE);
     BLUETOOTH_SERIAL.write(int(ballDir));
     BLUETOOTH_SERIAL.write(int(ballDis));
-    BLUETOOTH_SERIAL.write(int(batLevel));
+    BLUETOOTH_SERIAL.write(logic);
     last_sent_time = micros();
 }

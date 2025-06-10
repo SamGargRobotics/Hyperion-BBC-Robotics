@@ -226,8 +226,11 @@ void loop() {
         surgestates.surgeQ = false;
     }
 // [Bluetooth]
-    bluetooth.update(89, 43, 120);
-    Serial.println(batteryLevel.volts);
+    if(!dirCalc.attack) { 
+        dirCalc.attack = (tssp.ballStr > bluetooth.prevBallStr);
+    }
+    bluetooth.update(dirCalc.attack, tssp.ballDir, tssp.ballStr);   
+    Serial.println(bluetooth.prevBallStr);
 
 // [Moving the Robot Final Calculations and Logic]
     #if CORRECTION_TEST
@@ -295,6 +298,7 @@ void loop() {
                         correctionState = "Regular";
                         robotState = "Defender Logic - Cannot see goal";
                     }
+                    motors.run(0,0,10);
                 }
             }
         }
