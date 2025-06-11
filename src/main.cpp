@@ -119,6 +119,13 @@ void loop() {
 // [Logic Pin Calculations]
     // dirCalc.attack = digitalRead(LOGIC_PIN);
 
+// [Bluetooth]
+    if(!dirCalc.attack) { 
+        dirCalc.attack = (tssp.ballStr > bluetooth.prevBallStr);
+    }
+    dirCalc.attack = (tssp.ballStr > bluetooth.prevBallStr);
+    bluetooth.update(dirCalc.attack, tssp.ballDir, tssp.ballStr);
+
 // [Correction / Goal Tracking Calculations]
     compass.getEvent(&rotation);
     rot = rotation.orientation.x;
@@ -126,14 +133,16 @@ void loop() {
     
     // Decide which goal is being tracked
     #if targetGoal
-        goal_y_val = cam.goal_y_blue;
-        goal_x_val = cam.goal_x_blue;
-        goal_angle = cam.angle_to_goal_blue;
+        goal_y_val = (dirCalc.attack)? cam.goal_y_blue : cam.goal_y_yellow;
+        goal_x_val = (dirCalc.attack)? cam.goal_x_blue : cam.goal_x_yellow;
+        goal_angle = (dirCalc.attack)? cam.angle_to_goal_blue : \
+                                       cam.angle_to_goal_yellow;
         goal_pixel = cam.distBlue;
     #else
-        goal_y_val = cam.goal_y_yellow;
-        goal_x_val = cam.goal_x_yellow;
-        goal_angle = cam.angle_to_goal_yellow;
+        goal_y_val = (dirCalc.attack)? cam.goal_y_yellow : cam.goal_y_blue;
+        goal_x_val = (dirCalc.attack)? cam.goal_x_yellow : cam.goal_x_blue;
+        goal_angle = (dirCalc.attack)? cam.angle_to_goal_yellow : \
+                                       cam.angle_to_goal_blue;
         goal_pixel = cam.distYel;
     #endif
     // Complete floatMod values to ensure that the heading is not constantly 
@@ -225,12 +234,6 @@ void loop() {
         ((tssp.ballDir >= 10 && tssp.ballDir <= 350) || goal_dis <= 225)) {
         surgestates.surgeQ = false;
     }
-// [Bluetooth]
-    if(!dirCalc.attack) { 
-        dirCalc.attack = (tssp.ballStr > bluetooth.prevBallStr);
-    }
-    bluetooth.update(dirCalc.attack, tssp.ballDir, tssp.ballStr);   
-    Serial.println(bluetooth.prevBallStr);
 
 // [Moving the Robot Final Calculations and Logic]
     #if CORRECTION_TEST
@@ -298,12 +301,16 @@ void loop() {
                         correctionState = "Regular";
                         robotState = "Defender Logic - Cannot see goal";
                     }
-                    motors.run(0,0,10);
+                    #if SECOND_ROBOT
+                        motors.run(0,0,bnoCorrection);
+                    #endif
                 }
             }
         }
     #endif
-    
+    if(batteryLevel.volts <= BATTERY_CRITICAL) {
+        motors.run(0,0,20);
+    }
     #if DEBUG_ROBOT_STATE
         Serial.print(robotState);
         Serial.print("\t");

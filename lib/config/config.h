@@ -153,7 +153,7 @@ struct surgeState {
     #define BAT_MOTOROFF_THRESH 0.5
 #endif
     //! @def BATTERY_CRITICAL @brief The battery level where the battery is critical
-    #define BATTERY_CRITICAL 11.7
+    #define BATTERY_CRITICAL 11.1
 
 // --[PHYSICAL DEBUG TOGGLES]
     //! @def CORRECTION_TEST @brief Testing Correction Only if True
@@ -161,7 +161,7 @@ struct surgeState {
     //! @def BALL_FOLLOW_TEST @brief Testing Corretion + Ball Follow if true
     #define BALL_FOLLOW_TEST false
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
-    #define GOAL_TRACKING_TOGGLE false
+    #define GOAL_TRACKING_TOGGLE true
 
 // --[DEBUG TOGGLES]--
     //! @def DEBUG_MOTORS @brief Read what the motors are sending when true
@@ -169,7 +169,7 @@ struct surgeState {
     //! @def DEBUG_IMU @brief Prints various values for camera and BNO when true
     #define DEBUG_IMU_CAM false
     //! @def DEBUG_TSSP @brief Prints various values for tssp when true
-    #define DEBUG_TSSP false
+    #define DEBUG_TSSP true
     //! @def DEBUG_TSSP_SENSOR_VAL @brief Prints tssp sensor values when true
     #define DEBUG_TSSP_SENSOR_VAL false
     //! @def DEBUG_READ_RAWVAL @brief Prints the raw analog value from bat
