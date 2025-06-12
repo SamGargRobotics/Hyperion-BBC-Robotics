@@ -28,7 +28,7 @@ public:
     float calcSpeed(float ballStr, float ballDir);
     float ballDis = 0;
     float defenderRotationOffset = 0;
-    bool attack = false;
+    bool attack = true;
 private:
     float multi = 5;
     float steepness = 0;

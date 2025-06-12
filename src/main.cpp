@@ -116,14 +116,8 @@ void loop() {
         Serial.println(tssp.ballStr);
     #endif
 
-// [Logic Pin Calculations]
-    // dirCalc.attack = digitalRead(LOGIC_PIN);
-
 // [Bluetooth]
-    if(!dirCalc.attack) { 
-        dirCalc.attack = (tssp.ballStr > bluetooth.prevBallStr);
-    }
-    dirCalc.attack = (tssp.ballStr > bluetooth.prevBallStr);
+    dirCalc.attack = bluetooth.connection?(tssp.ballStr > bluetooth.prevBallStr):false;
     bluetooth.update(dirCalc.attack, tssp.ballDir, tssp.ballStr);
 
 // [Correction / Goal Tracking Calculations]
@@ -155,8 +149,8 @@ void loop() {
     bnoHeading = (rot>180)?(rot-360):rot;
     // Calculate distance of the goals away from the robot (pixels)
     goal_dis = (sqrt(pow(abs(goal_x_val), 2) + pow(abs(goal_y_val), 2)));
-    // Hard coded offset value as the camera was reading different values on
-    // each side.
+    // // Hard coded offset value as the camera was reading different values on
+    // // each side.
     goal_dis = (goalHeading < 180)?(goal_dis + GOAL_DIS_OFFSET) : goal_dis;
     // Assign PID's variables
     bnoCorrection = -regularCorrection.update(bnoHeading, 0);
@@ -191,7 +185,7 @@ void loop() {
         Serial.print("\t"); 
         Serial.print(cam.angle_to_goal_yellow);
         Serial.print("\t");
-        Serial.println(correction);
+        Serial.println(bnoCorrection);
     #endif
 
 // [Battery Level Calculations]
@@ -210,8 +204,8 @@ void loop() {
 
 // [Light Sensors]
     // ls.calculateLineDirection();
-    lsMoveAngle = (ls.lineDirection == -1)? -1 : 
-                                        floatMod(ls.lineDirection + 180, 360);
+    // lsMoveAngle = (ls.lineDirection == -1)? -1 : 
+    //                                     floatMod(ls.lineDirection + 180, 360);
 
 // [Strategy and Movement Calculation]
     attackerMoveDirection = dirCalc.exponentialOrbit(tssp.ballDir, 
@@ -234,10 +228,11 @@ void loop() {
         ((tssp.ballDir >= 10 && tssp.ballDir <= 350) || goal_dis <= 225)) {
         surgestates.surgeQ = false;
     }
+    Serial.println(lsMoveAngle);
 
 // [Moving the Robot Final Calculations and Logic]
     #if CORRECTION_TEST
-        motors.run(0, 0, bnoCorrection);
+        motors.run(30, tssp.ballDir, bnoCorrection);
     #elif BALL_FOLLOW_TEST
         motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
                   tssp.ballDir, bnoCorrection); 
@@ -308,9 +303,6 @@ void loop() {
             }
         }
     #endif
-    if(batteryLevel.volts <= BATTERY_CRITICAL) {
-        motors.run(0,0,20);
-    }
     #if DEBUG_ROBOT_STATE
         Serial.print(robotState);
         Serial.print("\t");
