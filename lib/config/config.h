@@ -169,7 +169,7 @@ struct surgeState {
     //! @def DEBUG_IMU @brief Prints various values for camera and BNO when true
     #define DEBUG_IMU_CAM false
     //! @def DEBUG_TSSP @brief Prints various values for tssp when true
-    #define DEBUG_TSSP true
+    #define DEBUG_TSSP false
     //! @def DEBUG_TSSP_SENSOR_VAL @brief Prints tssp sensor values when true
     #define DEBUG_TSSP_SENSOR_VAL false
     //! @def DEBUG_READ_RAWVAL @brief Prints the raw analog value from bat

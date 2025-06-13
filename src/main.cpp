@@ -117,7 +117,14 @@ void loop() {
     #endif
 
 // [Bluetooth]
-    dirCalc.attack = bluetooth.connection?(tssp.ballStr > bluetooth.prevBallStr):false;
+    #if SECOND_ROBOT
+        dirCalc.attack = bluetooth.connection?(tssp.ballStr > bluetooth.prevBallStr):false;
+    #else
+        dirCalc.attack = bluetooth.connection?!(bluetooth.otherRobotLogic):false;
+    #endif
+    Serial.print(bluetooth.otherRobotLogic);
+    Serial.print("\t");
+    Serial.println(dirCalc.attack);
     bluetooth.update(dirCalc.attack, tssp.ballDir, tssp.ballStr);
 
 // [Correction / Goal Tracking Calculations]
@@ -224,11 +231,12 @@ void loop() {
             surgestates.surgeQ = true;
             surgestates.startMillis = micros();
         }
-    if((tssp.ballStr <= 60) || (surgestates.startMillis+5000000) <= micros() || \
-        ((tssp.ballDir >= 10 && tssp.ballDir <= 350) || goal_dis <= 225)) {
+    if((((tssp.ballStr <= 60) || \
+        (surgestates.startMillis+5000000) <= micros() || \
+        ((tssp.ballDir >= 10 && tssp.ballDir <= 350) || goal_dis <= 225)) && \
+        !bluetooth.connection)) {
         surgestates.surgeQ = false;
-    }
-    Serial.println(lsMoveAngle);
+    }    
 
 // [Moving the Robot Final Calculations and Logic]
     #if CORRECTION_TEST
@@ -267,7 +275,7 @@ void loop() {
             } else {
                 // Defender Logic
                 if(surgestates.surgeQ) {
-                    motors.run(SET_SPEED, tssp.ballDir, 
+                    motors.run(tssp.detectingBall?SET_SPEED:0, tssp.ballDir, 
                                 cameraAttackCorrection);
                     correctionState = "Goal";
                     robotState = "Defender Logic - Surge";
@@ -277,7 +285,7 @@ void loop() {
                         // If can see goal
                         if(tssp.ballDir >= 110 && tssp.ballDir <= 290) {
                             // If ball is in threshold robot --> orbit
-                            motors.run(attackerMoveSpeed, attackerMoveDirection,
+                            motors.run(tssp.detectingBall?SET_SPEED:0, attackerMoveDirection,
                                        bnoCorrection);
                             correctionState = "Regular";
                             robotState = "Defender Logic - Ball Behind";
