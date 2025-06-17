@@ -18,7 +18,7 @@ uart.init(115200, bits=8, timeout_char=10)
 
 # Vars
 YellowIsAttack = True
-thresholds = [(78, 90, -20, -7, 25, 127)]
+thresholds = [(30, 95, -19, -3, 37, 57)]
 thresholds2 = [(47, 57, -19, -8, -28, -15)]
 Both = [(52, 100, -76, 127, 19, 127),(34, 69, -21, 127, -36, -15)]
 

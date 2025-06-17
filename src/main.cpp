@@ -15,6 +15,7 @@
 #include <bluetooth.h>
 #include <camera.h>
 #include <Wire.h>
+#include <Timer.h>
 
 // [Instances]
 Drive_system motors;
@@ -26,8 +27,9 @@ DirectionCalc dirCalc;
 bno::Adafruit_BNO055 compass = bno::Adafruit_BNO055(-1, 0x29, &Wire);
 sensors_event_t rotation;
 BatRead batteryLevel;
+Timer batteryTimer(5000000);
 PID regularCorrection(PID_p_attack, PID_i_attack, PID_d_attack, PID_abs_max);
-PID goalAttackingCorrection(PID_p_attack, PID_i_attack, PID_d_attack, \
+PID goalAttackingCorrection(PID_p_attack, PID_i_attack, 0, \
                             PID_abs_max);
 PID goalDefendingCorrection(PID_p_defend, PID_i_defend, PID_d_defend, \
                             PID_abs_max);
@@ -97,6 +99,7 @@ void setup() {
     motors.init();
     bluetooth.init();
     batteryLevel.init();
+    batteryTimer.resetTime();
     cam.init();
     compass.setExtCrystalUse(true);
     pinMode(LOGIC_PIN, INPUT);
@@ -117,14 +120,7 @@ void loop() {
     #endif
 
 // [Bluetooth]
-    #if SECOND_ROBOT
-        dirCalc.attack = bluetooth.connection?(tssp.ballStr > bluetooth.prevBallStr):false;
-    #else
-        dirCalc.attack = bluetooth.connection?!(bluetooth.otherRobotLogic):false;
-    #endif
-    Serial.print(bluetooth.otherRobotLogic);
-    Serial.print("\t");
-    Serial.println(dirCalc.attack);
+    dirCalc.attack = bluetooth.connection?(tssp.ballStr > bluetooth.prevBallStr):false;
     bluetooth.update(dirCalc.attack, tssp.ballDir, tssp.ballStr);
 
 // [Correction / Goal Tracking Calculations]
@@ -164,8 +160,8 @@ void loop() {
     cameraAttackCorrection = -goalAttackingCorrection.update(goalHeading, 0);
     cameraDefenceCorrection = -goalDefendingCorrection.update(goalHeading, 180);
     // Heading logic to assign goal tracking or regular compass correct
-    cameraAttackCorrection = ((goal_y_val == 0 || goal_x_val == 0) || \
-                             (goal_y_val >= GOAL_TRACKING_DIS_THRESH)) ? \
+    bool temp = ((tssp.ballDir <= 35 || tssp.ballDir >= 325) && tssp.detectingBall);
+    cameraAttackCorrection = ((goal_y_val == 0 || goal_x_val == 0) || !temp) ? \
                               bnoCorrection:cameraAttackCorrection;
     cameraDefenceCorrection = (goal_y_val == 0 || goal_x_val == 0)? \
                               bnoCorrection:cameraDefenceCorrection;
@@ -231,12 +227,10 @@ void loop() {
             surgestates.surgeQ = true;
             surgestates.startMillis = micros();
         }
-    if((((tssp.ballStr <= 60) || \
-        (surgestates.startMillis+5000000) <= micros() || \
-        ((tssp.ballDir >= 10 && tssp.ballDir <= 350) || goal_dis <= 225)) && \
-        !bluetooth.connection)) {
+    if((tssp.ballStr <= 60) || (surgestates.startMillis+5000000) <= micros() || \
+        ((tssp.ballDir >= 10 && tssp.ballDir <= 350) || goal_dis <= 225)) {
         surgestates.surgeQ = false;
-    }    
+    }
 
 // [Moving the Robot Final Calculations and Logic]
     #if CORRECTION_TEST
@@ -265,6 +259,8 @@ void loop() {
                                 attackerMoveDirection, cameraAttackCorrection);
                         correctionState = "Regular";
                         robotState = "Attacker Logic - Orbit";
+
+                        
                     } else {
                         // If ball is far then ball follow
                         motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
@@ -275,7 +271,7 @@ void loop() {
             } else {
                 // Defender Logic
                 if(surgestates.surgeQ) {
-                    motors.run(tssp.detectingBall?SET_SPEED:0, tssp.ballDir, 
+                    motors.run(SET_SPEED, tssp.ballDir, 
                                 cameraAttackCorrection);
                     correctionState = "Goal";
                     robotState = "Defender Logic - Surge";
@@ -285,7 +281,7 @@ void loop() {
                         // If can see goal
                         if(tssp.ballDir >= 110 && tssp.ballDir <= 290) {
                             // If ball is in threshold robot --> orbit
-                            motors.run(tssp.detectingBall?SET_SPEED:0, attackerMoveDirection,
+                            motors.run(attackerMoveSpeed, attackerMoveDirection,
                                        bnoCorrection);
                             correctionState = "Regular";
                             robotState = "Defender Logic - Ball Behind";
@@ -318,6 +314,15 @@ void loop() {
         Serial.print("\t Detecting Ball?: ");
         Serial.println(tssp.detectingBall);
     #endif
+
+    if(batteryLevel.volts <= BATTERY_CRITICAL) {
+        if(batteryTimer.timeHasPassedNoUpdate()) {
+            Serial.println("bat timer triggered");
+            motors.run(0,0,20);
+        }
+    } else {
+        batteryTimer.resetTime();
+    }
 
 // [Manual Printing Space]
 }

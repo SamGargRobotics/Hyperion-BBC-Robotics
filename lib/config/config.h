@@ -20,9 +20,9 @@
     //!                        for either attacking or defending
     #define targetGoal 0
     //! @def SET_SPEED @brief Speed that is set for running
-    #define SET_SPEED 125
+    #define SET_SPEED 180
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being tuned
-    #define SECOND_ROBOT 0
+    #define SECOND_ROBOT 0 // tracking toggled off rn
 
 // --[SURGE STATE Values]--
 struct surgeState {
@@ -125,7 +125,11 @@ struct surgeState {
 #if not SECOND_ROBOT
     //! @def GOAL_TRACKING_DIS_THRESH @brief Distance away from the goal that the 
     //!                               robot starts goal tracking with the orbit
-    #define GOAL_TRACKING_DIS_THRESH 60
+    #if targetGoal
+        #define GOAL_TRACKING_DIS_THRESH 60
+    #else
+        #define GOAL_TRACKING_DIS_THRESH 20
+    #endif
     //! @def GOAL_DIS_OFFSET @brief Offset value when calculating the goal distance
     //!                             on one side
     #define GOAL_DIS_OFFSET -101
@@ -150,10 +154,10 @@ struct surgeState {
     #define BAT_MOTOROFF_THRESH 0.5
 #else
     //! @def BAT_MOTOROFF_THRESH @brief Thresh to determine if motor switch off
-    #define BAT_MOTOROFF_THRESH 0.5
+    #define BAT_MOTOROFF_THRESH 3
 #endif
     //! @def BATTERY_CRITICAL @brief The battery level where the battery is critical
-    #define BATTERY_CRITICAL 10.1
+    #define BATTERY_CRITICAL 11.1
 
 // --[PHYSICAL DEBUG TOGGLES]
     //! @def CORRECTION_TEST @brief Testing Correction Only if True
@@ -175,7 +179,7 @@ struct surgeState {
     //! @def DEBUG_READ_RAWVAL @brief Prints the raw analog value from bat
     #define BAT_READ_RAWVAL false
     //! @def BAT_READ_VOLTS @brief Reads the approx voltage value (2 d.p.) from bat
-    #define BAT_READ_VOLTS false
+    #define BAT_READ_VOLTS true
     //! @def DEBUG_ROBOT_STATE @brief Prints what the robot is currently doing
     #define DEBUG_ROBOT_STATE false
 
