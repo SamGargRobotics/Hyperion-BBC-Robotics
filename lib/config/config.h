@@ -18,11 +18,13 @@
 // --[MASTER Values]--
     //! @def targetGoal @brief Blue = 1, Yelow = 0; Assigns which goal is the target
     //!                        for either attacking or defending
-    #define targetGoal 0
+    #define targetGoal false
     //! @def SET_SPEED @brief Speed that is set for running
-    #define SET_SPEED 180
+    #define SET_SPEED 125
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being tuned
-    #define SECOND_ROBOT 0 // tracking toggled off rn
+    #define SECOND_ROBOT true
+    //! @def COMPETITION_MODE @brief If the robot is or is not in competition
+    #define COMPETITION_MODE false
 
 // --[SURGE STATE Values]--
 struct surgeState {
@@ -70,13 +72,13 @@ struct surgeState {
     //! @def PID_d_defend @brief Derivative aspect of PID
     #define PID_d_defend 0.03
     //! @def PID_p_defender_movement_vert @brief Proportional aspect of PID
-    #define PID_p_defender_movement_vert 3
+    #define PID_p_defender_movement_vert 5
     //! @def PID_i_defender_movement_vert @brief Intergral aspect of PID
     #define PID_i_defender_movement_vert 0
     //! @def PID_d_defender_movement_vert @brief Derivative aspect of PID
     #define PID_d_defender_movement_vert 0
     //! @def PID_p_defender_movement_hozt @brief Proportional aspect of PID
-    #define PID_p_defender_movement_hozt 1.5
+    #define PID_p_defender_movement_hozt 1.2
     //! @def PID_i_defender_movement_hozt @brief Intergral aspect of PID
     #define PID_i_defender_movement_hozt 0
     //! @def PID_d_defender_movement_hozt @brief Derivative aspect of PID
@@ -133,9 +135,15 @@ struct surgeState {
     //! @def GOAL_DIS_OFFSET @brief Offset value when calculating the goal distance
     //!                             on one side
     #define GOAL_DIS_OFFSET -101
-    //! @def DEF_GOAL_Y_THRESH @brief Thresh to determine if the robot goes
-    //                            for or back if it does not see goal (Defence)
-    #define DEF_GOAL_Y_THRESH -40
+    #if targetGoal
+        //! @def DEF_GOAL_Y_THRESH @brief Thresh to determine if the robot goes
+        //                            for or back if it does not see goal (Defence)
+        #define DEF_GOAL_Y_THRESH -33
+    #else
+        //! @def DEF_GOAL_Y_THRESH @brief Thresh to determine if the robot goes
+        //                            for or back if it does not see goal (Defence)
+        #define DEF_GOAL_Y_THRESH -40
+    #endif
 #else
     //! @def GOAL_TRACKING_DIS_THRESH @brief Distance away from the goal that the 
     //!                               robot starts goal tracking with the orbit
@@ -160,10 +168,8 @@ struct surgeState {
     #define BATTERY_CRITICAL 11.1
 
 // --[PHYSICAL DEBUG TOGGLES]
-    //! @def CORRECTION_TEST @brief Testing Correction Only if True
-    #define CORRECTION_TEST false
-    //! @def BALL_FOLLOW_TEST @brief Testing Corretion + Ball Follow if true
-    #define BALL_FOLLOW_TEST false  
+    //! @def DEBUG_ROBOT @brief Testing space for individual items
+    #define DEBUG_ROBOT false
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
     #define GOAL_TRACKING_TOGGLE true
 
@@ -179,7 +185,7 @@ struct surgeState {
     //! @def DEBUG_READ_RAWVAL @brief Prints the raw analog value from bat
     #define BAT_READ_RAWVAL false
     //! @def BAT_READ_VOLTS @brief Reads the approx voltage value (2 d.p.) from bat
-    #define BAT_READ_VOLTS true
+    #define BAT_READ_VOLTS false
     //! @def DEBUG_ROBOT_STATE @brief Prints what the robot is currently doing
     #define DEBUG_ROBOT_STATE false
 

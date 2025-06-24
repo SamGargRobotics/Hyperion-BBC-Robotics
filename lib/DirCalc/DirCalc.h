@@ -24,10 +24,9 @@
 class DirectionCalc {
 public:
     DirectionCalc() {};
-    float exponentialOrbit(float ballDir, float ballStr);
+    float exponentialOrbit(float ballDir);
     float calcSpeed(float ballStr, float ballDir);
-    float ballDis = 0;
-    float defenderRotationOffset = 0;
+    //! @brief If the robot is attacking or defending.
     bool attack = true;
 private:
     float multi = 5;

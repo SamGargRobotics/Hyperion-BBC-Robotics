@@ -19,13 +19,11 @@
  * @brief Class that stores state and functions for calculating the direction
          relative to speed for 4 motors.
  */
-
 class Drive_system {
 public:
     Drive_system() {};
     void init();
     void run(float speed, float angle, float correction);
-    bool attack = true;
 private: 
     int motorInA[MOTORNUM] = {FRINA, FLINA, BLINA, BRINA};
     int motorInB[MOTORNUM] = {FRINB, FLINB, BLINB, BRINB};
@@ -33,9 +31,6 @@ private:
     int motorAngles[MOTORNUM] = {45, 135, 225, 315};
     float values[MOTORNUM] = {0};
     float largestSpeed = 0;
-    float constrainFactor = 0;
-    float scaleFactor = 0;
-    float moveCalcDir = -1;
 };
 
 #endif

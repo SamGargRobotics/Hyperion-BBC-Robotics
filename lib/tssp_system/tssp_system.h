@@ -23,8 +23,11 @@ public:
     Tssp_system() {};
     void init();
     void update();
+    //! @brief If the robot is detecting the ball or not
     bool detectingBall = true;
+    //! @brief How far away the ball in units
     float ballStr = 0;
+    //! @brief Direction of the ball
     float ballDir = 0;
 private:
     bool firstUpdate = true;

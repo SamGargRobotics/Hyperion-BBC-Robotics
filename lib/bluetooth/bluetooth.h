@@ -23,9 +23,16 @@ public:
     void init();
     void update(bool logic, float ballDir, float ballDis);
     void send(bool logic, float ballDir, float ballDis);
+    //! @brief Location of the ball for the connected robot. [1] is ballDir, [2]
+    //!        is ballStr
     float otherRobotBallLocation[2] = {0,0};
+    //! @brief Previous loop's other robot ball strength recorded.
     float prevBallStr = 0.00;
+    //! @brief Previous loop's other robot logic recorded.
+    bool prevAttacking = 0;
+    //! @brief If the other robot is attacking or defending.
     float otherRobotLogic = 0;
+    //! @brief If the robot is connected to another bluetooth module
     bool connection;
 private:
     bool read();

@@ -24,13 +24,13 @@ public:
     BatRead() {};
     void init();
     void read();
-    void toggleLED();
+    //! @brief The amount of volts inside a battery on the robot
     float volts = 0;
+    //! @brief If the motor switch is on or not
     bool motorOn = false;
 private:
     void calcBat(float rawVal);
     void calcSwitchStatus(float V);
-    //! @brief Raw value read from the pin.
     float rawValue = 0;
 };
 

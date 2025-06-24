@@ -29,6 +29,7 @@ void Bluetooth::update(bool logic, float ballDir, float ballDis) {
         last_received_time = micros();
     }
     prevBallStr = otherRobotBallLocation[1];
+    prevAttacking = otherRobotLogic;
     current_time = micros();
     connection = current_time - last_received_time > 2000000 ? false : true;
 }

@@ -11,7 +11,7 @@
  * 
  * @return Robot movement angle.
  */
-float DirectionCalc::exponentialOrbit(float ballDir, float ballStr) {
+float DirectionCalc::exponentialOrbit(float ballDir) {
     // Standard exponential orbit, to be initially used for debugging and 
     // simpler versions of orbitting.
     // Find our exponential graph here: 

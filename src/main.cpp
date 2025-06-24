@@ -46,9 +46,6 @@ surgeState surgestates;
 uint8_t goal_y_val = 0;
 //! @brief X value of the chosen goal that is being tracked.
 uint8_t goal_x_val = 0;
-//! @brief Amount needed to turn (degs) to ensure that you are goal tracking/
-//!        staying forward depending on case.
-float correction = 0;
 //! @brief The amount the robot must correct to stay forward in terms of camera
 float goalHeading = 0;
 //! @brief The amount the robot must correct to stay forward in terms of compass
@@ -85,8 +82,6 @@ float batteryCurrentLevel = 0;
 float currentBatteryLevelVolts = 0;
 //! @brief Move Angle in relevancy to the ls.lineDirection
 float lsMoveAngle = -1;
-//! @brief If the motor switch is turned on
-bool motorOn = false;
 //! @brief Current logic state of the robot
 String robotState = "default";
 //! @brief State that the correction is in
@@ -120,7 +115,11 @@ void loop() {
     #endif
 
 // [Bluetooth]
-    dirCalc.attack = bluetooth.connection?(tssp.ballStr > bluetooth.prevBallStr):false;
+    dirCalc.attack = bluetooth.connection?
+                     (tssp.ballStr > bluetooth.prevBallStr):false;
+    if(tssp.ballStr == 0) {
+        dirCalc.attack = bluetooth.prevAttacking ? false : true;
+    }
     bluetooth.update(dirCalc.attack, tssp.ballDir, tssp.ballStr);
 
 // [Correction / Goal Tracking Calculations]
@@ -160,8 +159,8 @@ void loop() {
     cameraAttackCorrection = -goalAttackingCorrection.update(goalHeading, 0);
     cameraDefenceCorrection = -goalDefendingCorrection.update(goalHeading, 180);
     // Heading logic to assign goal tracking or regular compass correct
-    bool temp = ((tssp.ballDir <= 35 || tssp.ballDir >= 325) && tssp.detectingBall);
-    cameraAttackCorrection = ((goal_y_val == 0 || goal_x_val == 0) || !temp) ? \
+    cameraAttackCorrection = ((goal_y_val == 0 || goal_x_val == 0) || \
+    !((tssp.ballDir <= 35 || tssp.ballDir >= 325))) ? \
                               bnoCorrection:cameraAttackCorrection;
     cameraDefenceCorrection = (goal_y_val == 0 || goal_x_val == 0)? \
                               bnoCorrection:cameraDefenceCorrection;
@@ -193,7 +192,6 @@ void loop() {
 
 // [Battery Level Calculations]
     batteryLevel.read();
-    batteryLevel.toggleLED();
 
     #if BAT_READ_VOLTS
         if(batteryLevel.motorOn) {
@@ -211,13 +209,12 @@ void loop() {
     //                                     floatMod(ls.lineDirection + 180, 360);
 
 // [Strategy and Movement Calculation]
-    attackerMoveDirection = dirCalc.exponentialOrbit(tssp.ballDir, 
-                                                    tssp.ballStr);  
+    attackerMoveDirection = dirCalc.exponentialOrbit(tssp.ballDir);  
     attackerMoveSpeed = dirCalc.calcSpeed(tssp.ballStr, tssp.ballDir)*SET_SPEED;
+    float sigma = (tssp.detectingBall) ? ((tssp.ballDir > 180) ? (tssp.ballDir - 360) : tssp.ballDir) : -bnoHeading;
     verticalDefenderMovement = -defenderMovementVert.update(abs(goal_dis), \
                                                 GOAL_SEMI_CIRCLE_RADIUS_CM);
-    horizontalDefenderMovement = -defenderMovementHozt.update(\
-                (tssp.ballDir > 180) ? (tssp.ballDir - 360) : tssp.ballDir, 0);
+    horizontalDefenderMovement = -defenderMovementHozt.update(sigma, 0);
     netDefendMovementAngle = floatMod(atan2(horizontalDefenderMovement, \
                              verticalDefenderMovement)*RAD_TO_DEG, 360);
     netDefendSpeed = sqrt(pow(verticalDefenderMovement, 2) + \
@@ -233,15 +230,12 @@ void loop() {
     }
 
 // [Moving the Robot Final Calculations and Logic]
-    #if CORRECTION_TEST
+    #if DEBUG_ROBOT
         motors.run(30, tssp.ballDir, bnoCorrection);
-    #elif BALL_FOLLOW_TEST
-        motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
-                  tssp.ballDir, bnoCorrection); 
     #else
         if(lsMoveAngle != -1) {
             // If detecting line --> Line Avoidance
-            motors.run(SET_SPEED, lsMoveAngle, correction);
+            motors.run(SET_SPEED, lsMoveAngle, bnoCorrection);
             robotState = "Line Avoidance";
         } else {
             if(dirCalc.attack) {
@@ -259,8 +253,6 @@ void loop() {
                                 attackerMoveDirection, cameraAttackCorrection);
                         correctionState = "Regular";
                         robotState = "Attacker Logic - Orbit";
-
-                        
                     } else {
                         // If ball is far then ball follow
                         motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
@@ -293,6 +285,7 @@ void loop() {
                     } else {
                         // If cannot see goal --> Forward or Backward depending
                         // on last seen goal_y_val
+                        // int check = targetGoal?cam.goal_y_blue:cam.goal_y_yellow;
                         motors.run(attackerMoveSpeed, 
                                   (cam.previousVals[0] <= DEF_GOAL_Y_THRESH)\
                                     ?180:tssp.ballDir, 
@@ -300,9 +293,6 @@ void loop() {
                         correctionState = "Regular";
                         robotState = "Defender Logic - Cannot see goal";
                     }
-                    #if SECOND_ROBOT
-                        motors.run(0,0,bnoCorrection);
-                    #endif
                 }
             }
         }
@@ -315,14 +305,20 @@ void loop() {
         Serial.println(tssp.detectingBall);
     #endif
 
-    if(batteryLevel.volts <= BATTERY_CRITICAL) {
-        if(batteryTimer.timeHasPassedNoUpdate()) {
-            Serial.println("bat timer triggered");
-            motors.run(0,0,20);
+    // if battery level is less than battery critical level, spin in spot
+    #if not COMPETITION_MODE
+        if(batteryLevel.volts <= BATTERY_CRITICAL) {
+            if(batteryTimer.timeHasPassedNoUpdate()) {
+                motors.run(0,0,20);
+            }
+        } else {
+            batteryTimer.resetTime();
         }
-    } else {
-        batteryTimer.resetTime();
-    }
+    #endif
+    float mm_goal = 178.029*pow(1.10919, cam.goal_y_yellow);
 
 // [Manual Printing Space]
+    Serial.print(mm_goal);
+    Serial.print("\t");
+    Serial.println(cam.goal_y_yellow);
 }

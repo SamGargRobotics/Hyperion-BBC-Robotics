@@ -24,14 +24,23 @@ class Camera {
 public:
     void init();
     void read_camera();
+    //! @brief x value corresponding to the yellow goal
     int goal_x_yellow;
+    //! @brief x value corresponding to the blue goal
     int goal_x_blue;
+    //! @brief y value corresponding to the yellow goal
     int goal_y_yellow;
+    //! @brief y value corresponding to the blue goal
     int goal_y_blue;
+    //! @brief Previous y and x values for corresponding goals
     int previousVals[4] = {-1};
+    //! @brief Angle to the yellow goal
     float angle_to_goal_yellow;
+    //! @brief Angle to the blue goal
     float angle_to_goal_blue;
+    //! @brief Blob area of yellow goal
     float distYel;
+    //! @brief Blob area of blue goal
     float distBlue;
 private:
     float calculate_hypot(float x, float y);
