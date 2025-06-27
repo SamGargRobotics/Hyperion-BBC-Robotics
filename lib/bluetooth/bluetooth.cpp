@@ -19,19 +19,20 @@ void Bluetooth::init() {
  * @param ballDir Current Direction of Ball.
  * @param ballDis Current Distance of Ball away from robot (cm).
  */
-void Bluetooth::update(bool logic, float ballDir, float ballDis) {
+bool Bluetooth::update(bool logic, float ballDir, float ballDis) {
+    thisRobot = {logic, ballDir, ballDis};
     unsigned long current_time = micros();
     if(current_time - last_sent_time > 250000) {
         send(logic, ballDir, ballDis);
     }
-    read_data = read();
-    if(read_data) {
+    if(read()) {
         last_received_time = micros();
     }
-    prevBallStr = otherRobotBallLocation[1];
-    prevAttacking = otherRobotLogic;
-    current_time = micros();
-    connection = current_time - last_received_time > 2000000 ? false : true;
+    // prevBallStr = otherRobotBallLocation[1];
+    // prevPrevAttacking = prevAttacking;
+    // prevAttacking = otherRobotLogic;
+    connection = micros() - last_received_time > 2000000 ? false : true;
+    return switching();
 }
 
 /*!
@@ -58,6 +59,7 @@ bool Bluetooth::read() {
             otherRobotLogic = (bluetoothBuffer[2] == BLUETOOTH_NO_DATA \
                                 ? -1 : bluetoothBuffer[2]);
             // Returns true if the data from the serial was read.
+            otherRobot = {otherRobotLogic, otherRobotBallLocation[0], otherRobotBallLocation[1]};
             return true;
         }
     }
@@ -78,4 +80,25 @@ void Bluetooth::send(bool logic, float ballDir, float ballDis) {
     BLUETOOTH_SERIAL.write(int(ballDis));
     BLUETOOTH_SERIAL.write(logic);
     last_sent_time = micros();
+}
+
+bool Bluetooth::switching() {
+    bool switchCon;
+    if(!connection) {
+        return false;
+    } 
+    //only if timer allows
+    if(switchTimer.timeHasPassedNoUpdate()) {
+        switchCon = (thisRobot.ballDistance > otherRobot.ballDistance);
+        //start yo timer if switch con is not the same as this robot.role
+        if(switchCon == thisRobot.role) {
+            switchTimer.resetTime();
+        }
+        if(switchCon){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    return thisRobot.role;
 }

@@ -20,9 +20,9 @@
     //!                        for either attacking or defending
     #define targetGoal false
     //! @def SET_SPEED @brief Speed that is set for running
-    #define SET_SPEED 125
+    #define SET_SPEED 180
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being tuned
-    #define SECOND_ROBOT true
+    #define SECOND_ROBOT false
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
     #define COMPETITION_MODE false
 
@@ -36,6 +36,8 @@ struct surgeState {
 #if not SECOND_ROBOT
     //! @def PID_p_attack @brief Proportional aspect of PID
     #define PID_p_attack 0.9
+    //! @def PID_p_attack_goal @brief Proportional aspect of PID (goal attack)
+    #define PID_p_attack_goal 1.4
     //! @def PID_i_attack @brief Intergral aspect of PID
     #define PID_i_attack 0
     //! @def PID_d_attack @brief Derivative aspect of PID
@@ -61,6 +63,8 @@ struct surgeState {
 #else
     //! @def PID_p_attack @brief Proportional aspect of PID
     #define PID_p_attack 0.9
+    //! @def PID_p_attack_goal @brief Proportional aspect of PID (goal attack)
+    #define PID_p_attack_goal 0.9
     //! @def PID_i_attack @brief Intergral aspect of PID
     #define PID_i_attack 0
     //! @def PID_d_attack @brief Derivative aspect of PID

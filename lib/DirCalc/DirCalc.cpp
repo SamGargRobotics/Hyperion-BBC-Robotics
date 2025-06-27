@@ -43,11 +43,11 @@ float DirectionCalc::calcSpeed(float ballStr, float ballDir) {
         steepness = 97.5;
     #else
         multi = (3*SET_SPEED/4);
-        steepness = 96.5;
+        steepness = 98.5;
     #endif
     if(ballDir >= 90 && ballDir <= 270) {
         return max(min(pow(EULER, -0.02*(ballStr-(steepness*EULER))) + 30, \
-            multi), 30)/ multi;  
+            multi), 30)/ multi;
     } else {
         return max(min(pow(EULER, -0.02*(ballStr-(steepness*EULER))) + 20 , \
             multi), 30)/multi;
