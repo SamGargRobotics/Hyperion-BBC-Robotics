@@ -239,72 +239,82 @@ void loop() {
         ((tssp.ballDir >= 10 && tssp.ballDir <= 350) || goal_dis <= 225)) {
         surgestates.surgeQ = false;
     }
+
+    float movSpeed = 0;
+    float moveAngl = 0;
+    float rotation = 0;
 // [Moving the Robot Final Calculations and Logic]
     #if DEBUG_ROBOT
         motors.run(0, 0, bnoCorrection);
     #else
-        if(lineAngle != -1) {
-            // If detecting line --> Line Avoidance
-            motors.run(ls.moveSpeed, lsMoveAngle, bnoCorrection);
-            robotState = "Line Avoidance";
-        } else {
-            if(dirCalc.attack) {
-                // If robot is attacking --> Attacker Logic
-                if((tssp.ballDir >= 347.5 || tssp.ballDir <= 12.5) && \
-                   tssp.ballStr >= SURGE_STR_VALUE) {
-                    // If ball is generally straight and in capture --> surge
-                    motors.run((tssp.detectingBall?SET_SPEED:0), 0, 
-                                cameraAttackCorrection);
-                    robotState = "Attacker Logic - Surge";
-                } else {
-                    if(tssp.ballStr > ORBIT_STRENGTH_RADIUS) {
-                        // If ball is close then orbit
-                        motors.run((tssp.detectingBall?attackerMoveSpeed:0),
-                                attackerMoveDirection, cameraAttackCorrection);
-                        correctionState = "Regular";
-                        robotState = "Attacker Logic - Orbit";
-                    } else {
-                        // If ball is far then ball follow
-                        motors.run((tssp.detectingBall?attackerMoveSpeed:0), 
-                                tssp.ballDir, cameraAttackCorrection);
-                        robotState = "Attacker Logic - Ball Follow";
-                    }
-                }
+        if(dirCalc.attack) {
+            // If robot is attacking --> Attacker Logic
+            if((tssp.ballDir >= 347.5 || tssp.ballDir <= 12.5) && \
+                tssp.ballStr >= SURGE_STR_VALUE) {
+                // If ball is generally straight and in capture --> surge
+                movSpeed = (tssp.detectingBall?SET_SPEED:0);
+                moveAngl = 0;
+                rotation = cameraAttackCorrection;
+                robotState = "Attacker Logic - Surge";
             } else {
-                // Defender Logic
-                if(surgestates.surgeQ) {
-                    motors.run(SET_SPEED, tssp.ballDir, 
-                                cameraAttackCorrection);
-                    correctionState = "Goal";
-                    robotState = "Defender Logic - Surge";
+                if(tssp.ballStr > ORBIT_STRENGTH_RADIUS) {
+                    // If ball is close then orbit
+                    movSpeed = (tssp.detectingBall?attackerMoveSpeed:0);
+                    moveAngl = attackerMoveDirection;
+                    rotation = cameraAttackCorrection;
+                    correctionState = "Regular";
+                    robotState = "Attacker Logic - Orbit";
                 } else {
-                    // If ball not in capture
-                    if(goal_x_val != 0 && goal_y_val != 0) {
-                        // If can see goal
-                        if(tssp.ballDir >= 110 && tssp.ballDir <= 290) {
-                            // If ball is in threshold robot --> orbit
-                            motors.run(attackerMoveSpeed, attackerMoveDirection,
-                                       bnoCorrection);
-                            correctionState = "Regular";
-                            robotState = "Defender Logic - Ball Behind";
-                        } else {
-                            motors.run(netDefendSpeed, netDefendMovementAngle, 
-                                    cameraDefenceCorrection);
-                            robotState = "Defender Logic - Regular";
-                        }
-                    } else {
-                        // If cannot see goal --> Forward or Backward depending
-                        // on last seen goal_y_val
-                        motors.run(attackerMoveSpeed, 
-                                  (cam.previousVals[0] <= DEF_GOAL_Y_THRESH)\
-                                    ?180:tssp.ballDir, 
-                                   bnoCorrection);
+                    // If ball is far then ball follow
+                    movSpeed = (tssp.detectingBall?attackerMoveSpeed:0);
+                    moveAngl = tssp.ballDir;
+                    rotation = cameraAttackCorrection;
+                    robotState = "Attacker Logic - Ball Follow";
+                }
+            }
+        } else {
+            // Defender Logic
+            if(surgestates.surgeQ) {
+                movSpeed = SET_SPEED;
+                moveAngl = tssp.ballDir;
+                rotation = cameraAttackCorrection;
+                correctionState = "Goal";
+                robotState = "Defender Logic - Surge";
+            } else {
+                // If ball not in capture
+                if(goal_x_val != 0 && goal_y_val != 0) {
+                    // If can see goal
+                    if(tssp.ballDir >= 110 && tssp.ballDir <= 290) {
+                        // If ball is in threshold robot --> orbit
+                        movSpeed = attackerMoveSpeed;
+                        moveAngl = attackerMoveDirection;
+                        rotation = bnoCorrection;
                         correctionState = "Regular";
-                        robotState = "Defender Logic - Cannot see goal";
+                        robotState = "Defender Logic - Ball Behind";
+                    } else {
+                        movSpeed = netDefendSpeed;
+                        moveAngl = netDefendMovementAngle;
+                        rotation = cameraDefenceCorrection;
+                        robotState = "Defender Logic - Regular";
                     }
+                } else {
+                    // If cannot see goal --> Forward or Backward depending
+                    // on last seen goal_y_val
+                    movSpeed = attackerMoveSpeed;
+                    moveAngl = (cam.previousVals[0] <= DEF_GOAL_Y_THRESH)? 180: tssp.ballDir;
+                    rotation = bnoCorrection;
+                    correctionState = "Regular";
+                    robotState = "Defender Logic - Cannot see goal";
                 }
             }
         }
+        if(lineAngle != -1) {
+            // If detecting line --> Line Avoidance
+            movSpeed = ls.moveSpeed;
+            moveAngl = lsMoveAngle;
+            robotState = "Line Avoidance";
+        }
+        motors.run(movSpeed, moveAngl, rotation);
     #endif
     #if DEBUG_ROBOT_STATE
         Serial.print(robotState);
