@@ -197,9 +197,9 @@ void loop() {
 // [Light Sensors]
     float lineAngle = ls.calculateLineDirection(rot);
     lsMoveAngle = (lineAngle == -1)? -1 : floatMod(lineAngle + 180, 360);
-    Serial.print(rot);
-    Serial.print(" ");
-    Serial.println(lineAngle);
+    // Serial.print(rot);
+    // Serial.print(" ");
+    // Serial.println(lineAngle);
     #if DEBUG_LS
         Serial.print("ClusterAmt: ");
         Serial.print(ls.clusterAmount);

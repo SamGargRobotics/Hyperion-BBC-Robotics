@@ -166,17 +166,17 @@ float LSystem::calculateLineDirection(float rot) {
             small = (clusterCenter[0] > clusterCenter[1])? clusterCenter[1] : clusterCenter[0];
             big = (clusterCenter[1] > clusterCenter[0])? clusterCenter[1] : clusterCenter[0];
             dif = big - small;
-            differences[0] = (dif <= 180)?(360 - dif):dif;
+            differences[0] = (dif >= 180)?(360 - dif):dif;
             // Difference between cluster 2 and 3
             small = (clusterCenter[2] > clusterCenter[1])? clusterCenter[1] : clusterCenter[2];
             big = (clusterCenter[1] > clusterCenter[2])? clusterCenter[1] : clusterCenter[2];
             dif = big - small;
-            differences[1] = (dif <= 180)?(360 - dif):dif;
+            differences[1] = (dif >= 180)?(360 - dif):dif;
             // Difference between cluster 1 and 3
             small = (clusterCenter[2] > clusterCenter[0])? clusterCenter[0] : clusterCenter[2];
             big = (clusterCenter[0] > clusterCenter[2])? clusterCenter[0] : clusterCenter[2];
             dif = big - small;
-            differences[2] = (dif <= 180)?(360 - dif):dif;
+            differences[2] = (dif >= 180)?(360 - dif):dif;
 
             int largestDifIndex = 0;
             for(int i = 0; i < 3; i++) {
@@ -216,6 +216,8 @@ float LSystem::calculateLineDirection(float rot) {
             lineDirection = (dif <= 180)? ((big + small) / 2) : ((big + (small + 360)) / 2);
             break;
     }
+    Serial.print(lineDirection);
+    Serial.print(" ");
     calculateLineState(rot);
     // return lineDirection;
     switch(lineState) {
@@ -249,6 +251,8 @@ void LSystem::calculateLineState(float rot) {
     float lineAngle = imOnLine ? floatMod(lineDirection + rot, 360) : -1;
     Serial.print(lineAngle);
     Serial.print(" ");
+    Serial.print(previousLineDirections);
+    Serial.print(" ");
     insLineAngle = -1;
     if(lineState == 0) {
         #if DEBUG_LINE_STATE
@@ -273,7 +277,7 @@ void LSystem::calculateLineState(float rot) {
             #endif
             lineState = 0;
             insLineAngle = -1;
-        } else if(case2Check(previousLineDirections, rot)) { // SOMETHING IS WORNG; check
+        } else if((abs(previousLineDirections - lineAngle) > LS_FLIP_THRESH) && (abs(previousLineDirections - lineAngle) < (360 - LS_FLIP_THRESH))) {//case2Check(previousLineDirections, rot)) { // SOMETHING IS WORNG; check
             #if DEBUG_LINE_STATE
                 Serial.println("1 into 2, enter sent");
             #endif
@@ -285,6 +289,7 @@ void LSystem::calculateLineState(float rot) {
             #endif
             lineState = 1;
             insLineAngle = lineAngle;
+            previousLineDirections = lineAngle;
         }
     } else if(lineState == 2) {
         #if DEBUG_LINE_STATE
@@ -295,12 +300,13 @@ void LSystem::calculateLineState(float rot) {
                 Serial.println("2 to 3, enter sent");
             #endif
             lineState = 3;
-        } else if(!case2Check(previousLineDirections, rot)) { // SOMETHING IS WRONG; check
+        } else if((abs(previousLineDirections - lineAngle) <= LS_FLIP_THRESH) || (abs(previousLineDirections - lineAngle) >= (360 - LS_FLIP_THRESH))) {//!case2Check(previousLineDirections, rot)) { // SOMETHING IS WRONG; check
             #if DEBUG_LINE_STATE
                 Serial.println("2 to 1, enter sent");
             #endif
             lineState = 1;
             insLineAngle = lineAngle;
+            previousLineDirections = lineAngle;
         } else {
             #if DEBUG_LINE_STATE
                 Serial.println("2 stagnated");
@@ -350,11 +356,11 @@ void LSystem::calculateLineState(float rot) {
 // }
 
 bool LSystem::case2Check(float prevDir, float rot) {
-    Serial.print(lineState);
-    Serial.print(" ");
+    // Serial.print(lineState);
+    // Serial.print(" ");
     prevDir = floatMod(prevDir - rot, 360);
-    Serial.print(prevDir);
-    Serial.print(" ");  
+    // Serial.print(prevDir);
+    // Serial.print(" ");  
     if (prevDir > 180) {
         prevDir = prevDir - 360;
     }

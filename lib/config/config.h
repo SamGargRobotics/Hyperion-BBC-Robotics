@@ -160,6 +160,9 @@ struct surgeState {
     #define DEF_GOAL_Y_THRESH -40
 #endif
 
+// --[LIGHT SENSOR Values]--
+#define LS_FLIP_THRESH 110
+
 // --[BATTERY TRACKING Values]--
 #if not SECOND_ROBOT
     //! @def BAT_MOTOROFF_THRESH @brief Thresh to determine if motor switch off
@@ -193,10 +196,10 @@ struct surgeState {
     //! @def DEBUG_ROBOT_STATE @brief Prints what the robot is currently doing
     #define DEBUG_ROBOT_STATE false
     //! @def DEBUG_LS @brief Reads LS values
-    #define DEBUG_LS false
+    #define DEBUG_LS true
     //! @def DEBUG_LS_SENSOR @brief Reads individual LS values
-    #define DEBUG_LS_SENSOR true
+    #define DEBUG_LS_SENSOR false
     //! @def DEBUG_LINE_STATE @brief Reads individual LS values
-    #define DEBUG_LINE_STATE false
+    #define DEBUG_LINE_STATE true
 
 #endif
