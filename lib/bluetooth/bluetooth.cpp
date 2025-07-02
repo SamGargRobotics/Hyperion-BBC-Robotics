@@ -87,18 +87,14 @@ bool Bluetooth::switching() {
     if(!connection) {
         return false;
     } 
-    //only if timer allows
     if(switchTimer.timeHasPassedNoUpdate()) {
-        switchCon = (thisRobot.ballDistance > otherRobot.ballDistance);
-        //start yo timer if switch con is not the same as this robot.role
+        switchCon = (thisRobot.ballDistance > otherRobot.ballDistance) || \
+                    ((otherRobot.ballAngle > 90 && otherRobot.ballAngle < 270) \
+                    && thisRobot.ballDistance >= 95);
         if(switchCon == thisRobot.role) {
             switchTimer.resetTime();
         }
-        if(switchCon){
-            return true;
-        } else {
-            return false;
-        }
+        return switchCon;
     }
     return thisRobot.role;
 }

@@ -23,29 +23,38 @@ class LSystem {
 public:
     LSystem() {};
     void init();
-    void calculateLineDirection();
-    void calculateLineState();
-    int lineDirection = -1;
-    int lineState = 1;
-    int previousLineDirections[10] = {0};
-private:
+    float calculateLineDirection(float rot);
+    void calculateLineState(float rot);
     int readOne(int sensor_num);
+    bool case2Check(float prevDir, float rot);
+    int lineState = 0;
+    float previousLineDirections = -1;
+    bool imOnLine = 0;
+    int moveSpeed = 0;
+    int clusterAmount = 0;
+private:
     int loopReadClamp(int value,int min, int max);
-    const int whiteThreshold = 20;
-    int pinList[4] = {LIGHT_PIN_DIGI_0, LIGHT_PIN_DIGI_1, LIGHT_PIN_DIGI_2, 
+    float lineDirection = -1;
+    float insLineAngle = -1;
+    int whiteThreshold[NUM_LS] = {0};
+    int pinList[4] = {LIGHT_PIN_DIGI_0, LIGHT_PIN_DIGI_1, LIGHT_PIN_DIGI_2,
                      LIGHT_PIN_DIGI_3};
     int sensorValues[NUM_LS] = {0};
-    int sensorIsWhite[NUM_LS] = {0};
+    bool sensorIsWhite[NUM_LS] = {0};
     int maxIndex = 44;
     int minIndex = 44;
     int clustersList[3][2];
-    int clusterAmount = 0; //if three die
-    int clusterCenter[3] = {44, 44, 44};
-    int center;
-    int loopTut = 0;
+    float clusterCenter[3] = {44, 44, 44};
+    float center;
+    float loopTut = 0;
     int flaggedLineDirection = 0;
     int lineDirectionArray = 0;
-    uint8_t loopCount = 0;
+    int state3Counter = 0;
+    float loopCount = 0;
+    float small = 0;
+    float big = 0;
+    float dif = 0;
+    // 28 broken
 };
  
 #endif

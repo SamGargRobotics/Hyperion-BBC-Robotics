@@ -16,6 +16,7 @@
 #include <math.h>
 
 float floatMod(float x, float m);
+float angleDiff(float a, float b);
 
 #define ARRAYSHIFTDOWN(a, lower, upper){          \
 	if (upper == (sizeof(a)/sizeof(a[0])) - 1){   \

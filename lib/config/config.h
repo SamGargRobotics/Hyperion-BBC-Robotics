@@ -20,9 +20,9 @@
     //!                        for either attacking or defending
     #define targetGoal false
     //! @def SET_SPEED @brief Speed that is set for running
-    #define SET_SPEED 180
+    #define SET_SPEED 125
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being tuned
-    #define SECOND_ROBOT false
+    #define SECOND_ROBOT true
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
     #define COMPETITION_MODE false
 
@@ -64,7 +64,7 @@ struct surgeState {
     //! @def PID_p_attack @brief Proportional aspect of PID
     #define PID_p_attack 0.9
     //! @def PID_p_attack_goal @brief Proportional aspect of PID (goal attack)
-    #define PID_p_attack_goal 0.9
+    #define PID_p_attack_goal 0.8
     //! @def PID_i_attack @brief Intergral aspect of PID
     #define PID_i_attack 0
     //! @def PID_d_attack @brief Derivative aspect of PID
@@ -192,5 +192,11 @@ struct surgeState {
     #define BAT_READ_VOLTS false
     //! @def DEBUG_ROBOT_STATE @brief Prints what the robot is currently doing
     #define DEBUG_ROBOT_STATE false
+    //! @def DEBUG_LS @brief Reads LS values
+    #define DEBUG_LS false
+    //! @def DEBUG_LS_SENSOR @brief Reads individual LS values
+    #define DEBUG_LS_SENSOR true
+    //! @def DEBUG_LINE_STATE @brief Reads individual LS values
+    #define DEBUG_LINE_STATE false
 
 #endif

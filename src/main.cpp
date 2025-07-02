@@ -5,7 +5,7 @@
 #include <config.h>
 #include <drive_system.h>
 #include <tssp_system.h>
-#include <LSLB.h>
+#include <light_system.h>
 #include <DirCalc.h>
 #include <PID.h>
 #include <Adafruit_Sensor.h>
@@ -116,7 +116,7 @@ void loop() {
 
 // [Bluetooth]
     dirCalc.attack = bluetooth.update(dirCalc.attack, tssp.ballDir, tssp.ballStr);
-    Serial.println(dirCalc.attack);
+    dirCalc.attack = 1;
     
 // [Correction / Goal Tracking Calculations]
     compass.getEvent(&rotation);
@@ -195,9 +195,24 @@ void loop() {
     #endif
 
 // [Light Sensors]
-    // ls.calculateLineDirection();
-    // lsMoveAngle = (ls.lineDirection == -1)? -1 : 
-    //                                     floatMod(ls.lineDirection + 180, 360);
+    float lineAngle = ls.calculateLineDirection(rot);
+    lsMoveAngle = (lineAngle == -1)? -1 : floatMod(lineAngle + 180, 360);
+    Serial.print(rot);
+    Serial.print(" ");
+    Serial.println(lineAngle);
+    #if DEBUG_LS
+        Serial.print("ClusterAmt: ");
+        Serial.print(ls.clusterAmount);
+        Serial.print("\t"); 
+        Serial.print("LineState: ");
+        Serial.print(ls.lineState);
+        Serial.print("\t");
+        Serial.print("Move: ");
+        Serial.print(lsMoveAngle);
+        Serial.print("\t");
+        Serial.print("Line: ");
+        Serial.println(lineAngle);
+    #endif
 
 // [Strategy and Movement Calculation]
     // Calculate distance of the goals away from the robot (pixels)
@@ -226,11 +241,11 @@ void loop() {
     }
 // [Moving the Robot Final Calculations and Logic]
     #if DEBUG_ROBOT
-        motors.run(30, tssp.ballDir, 0);
+        motors.run(0, 0, bnoCorrection);
     #else
-        if(lsMoveAngle != -1) {
+        if(lineAngle != -1) {
             // If detecting line --> Line Avoidance
-            motors.run(SET_SPEED, lsMoveAngle, bnoCorrection);
+            motors.run(ls.moveSpeed, lsMoveAngle, bnoCorrection);
             robotState = "Line Avoidance";
         } else {
             if(dirCalc.attack) {
@@ -309,12 +324,6 @@ void loop() {
             batteryTimer.resetTime();
         }
     #endif
-    float mm_goal = 178.029*pow(1.10919, cam.goal_y_yellow);
 
 // [Manual Printing Space]
-    // Serial.print(cam.goal_x_yellow);
-    // Serial.print("\t");
-    // Serial.print(cam.goal_y_yellow);
-    // Serial.print("\t");
-    // Serial.println(cam.angle_to_goal_yellow);
 }

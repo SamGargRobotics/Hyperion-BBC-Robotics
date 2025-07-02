@@ -70,7 +70,7 @@
 #define TSSP16 17
 
 //! @def LIGHT_PIN @brief Light Sensor Pin
-#define LIGHT_PIN 21 
+#define LIGHT_PIN 21
 //! @def LIGHT_PIN2 @brief Light Sensor Pin
 #define LIGHT_PIN2 20
 //! @def LIGHT_PIN_DIGI_0 @brief Light Sensor Pin in correspondance to Mux
