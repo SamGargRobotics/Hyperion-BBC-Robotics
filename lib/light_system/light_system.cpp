@@ -19,7 +19,7 @@ void LSystem::init() {
     pinMode(LIGHT_PIN2, INPUT);
 
     for(int i = 0; i < 32; i++) {
-        whiteThreshold[i] = readOne(i) + 40;
+        whiteThreshold[i] = readOne(i) + 80;
     }
 }
 /*!
@@ -138,6 +138,7 @@ float LSystem::calculateLineDirection(float rot) {
         Serial.print("Cluster Amount: ");
         Serial.println(clusterAmount);
     #endif
+
     switch (clusterAmount) {
         case(0):
             lineDirection = -1;
@@ -166,17 +167,17 @@ float LSystem::calculateLineDirection(float rot) {
             small = (clusterCenter[0] > clusterCenter[1])? clusterCenter[1] : clusterCenter[0];
             big = (clusterCenter[1] > clusterCenter[0])? clusterCenter[1] : clusterCenter[0];
             dif = big - small;
-            differences[0] = (dif <= 180)?(360 - dif):dif;
+            differences[0] = (dif >= 180)?(360 - dif):dif;
             // Difference between cluster 2 and 3
             small = (clusterCenter[2] > clusterCenter[1])? clusterCenter[1] : clusterCenter[2];
             big = (clusterCenter[1] > clusterCenter[2])? clusterCenter[1] : clusterCenter[2];
             dif = big - small;
-            differences[1] = (dif <= 180)?(360 - dif):dif;
+            differences[1] = (dif >= 180)?(360 - dif):dif;
             // Difference between cluster 1 and 3
             small = (clusterCenter[2] > clusterCenter[0])? clusterCenter[0] : clusterCenter[2];
             big = (clusterCenter[0] > clusterCenter[2])? clusterCenter[0] : clusterCenter[2];
             dif = big - small;
-            differences[2] = (dif <= 180)?(360 - dif):dif;
+            differences[2] = (dif >= 180)?(360 - dif):dif;
 
             int largestDifIndex = 0;
             for(int i = 0; i < 3; i++) {
@@ -200,20 +201,9 @@ float LSystem::calculateLineDirection(float rot) {
                 innerAngle = clusterCenter[1];
             }
             float averages[2] = {0};
-            small = (outerAngles[0] > innerAngle)? innerAngle : outerAngles[0];
-            big = (innerAngle > outerAngles[0])? innerAngle : outerAngles[0];
-            dif = big - small;
-            averages[0] = (dif <= 180)? ((big + small) / 2) : ((big + (small + 360)) / 2);
-
-            small = (outerAngles[1] > innerAngle)? innerAngle : outerAngles[1];
-            big = (innerAngle > outerAngles[1])? innerAngle : outerAngles[1];
-            dif = big - small;
-            averages[1] = (dif <= 180)? ((big + small) / 2) : ((big + (small + 360)) / 2);
-
-            small = (averages[0] > averages[1])? averages[1] : averages[0];
-            big = (averages[1] > averages[0])? averages[1] : averages[0];
-            dif = big - small;
-            lineDirection = (dif <= 180)? ((big + small) / 2) : ((big + (small + 360)) / 2);
+            averages[0] = circularAverage(innerAngle, outerAngles[0]);
+            averages[1] = circularAverage(innerAngle, outerAngles[1]);
+            lineDirection = circularAverage(averages[0], averages[1]);
             break;
     }
     calculateLineState(rot);
@@ -232,36 +222,23 @@ float LSystem::calculateLineDirection(float rot) {
           field.
  */
 void LSystem::calculateLineState(float rot) {
-    // for(int i = 0; i < NUM_LS; i++) {
-    //     if(sensorIsWhite[i]) {
-    //         imOnLine = true;
-    //         break;
-    //     } else {
-    //         imOnLine = false;
-    //     }
-    // }
     imOnLine = (clusterAmount > 0);
-
-    // case 1 --> 2
-        // take stored angle
-        // checks all active light sensors --> any light sensors have difference more than 90? --> TRUE --> else false
-
     float lineAngle = imOnLine ? floatMod(lineDirection + rot, 360) : -1;
-    Serial.print(lineAngle);
-    Serial.print(" ");
-    insLineAngle = -1;
+    static int stableCounter = 0;
     if(lineState == 0) {
         #if DEBUG_LINE_STATE
             Serial.println("0 checking for line");
         #endif
         previousLineDirections = -1;
-        if(imOnLine) {
-            #if DEBUG_LINE_STATE
-                Serial.println("0 into 1, enter sent");
-            #endif
-            insLineAngle = lineAngle;
-            lineState = 1;
-            previousLineDirections = lineAngle;
+        if (imOnLine) {
+            stableCounter++;
+            if (stableCounter > 1) {
+                lineState = 1;
+                previousLineDirections = lineAngle;
+                stableCounter = 0;
+            }
+        } else {
+            stableCounter = 0;
         }
     } else if(lineState == 1) {
         #if DEBUG_LINE_STATE
@@ -272,19 +249,16 @@ void LSystem::calculateLineState(float rot) {
                 Serial.println("1 into 0, enter sent");
             #endif
             lineState = 0;
-            insLineAngle = -1;
-        } else if(case2Check(previousLineDirections, rot)) { // SOMETHING IS WORNG; check
+        } else if(case2Check(previousLineDirections, rot)) {
             #if DEBUG_LINE_STATE
                 Serial.println("1 into 2, enter sent");
             #endif
             lineState = 2;
-            insLineAngle = floatMod(lineAngle + 180, 360);
         } else {
             #if DEBUG_LINE_STATE
                 Serial.println("1 stagnated");
             #endif
             lineState = 1;
-            insLineAngle = lineAngle;
         }
     } else if(lineState == 2) {
         #if DEBUG_LINE_STATE
@@ -295,66 +269,37 @@ void LSystem::calculateLineState(float rot) {
                 Serial.println("2 to 3, enter sent");
             #endif
             lineState = 3;
-        } else if(!case2Check(previousLineDirections, rot)) { // SOMETHING IS WRONG; check
+        } else if(!case2Check(previousLineDirections, rot)) {
             #if DEBUG_LINE_STATE
                 Serial.println("2 to 1, enter sent");
             #endif
             lineState = 1;
-            insLineAngle = lineAngle;
         } else {
             #if DEBUG_LINE_STATE
                 Serial.println("2 stagnated");
             #endif
             lineState = 2; 
-            insLineAngle = floatMod(lineAngle + 180, 360);
         }
     } else {
         #if DEBUG_LINE_STATE
             Serial.println("3 checking for line");
         #endif
-        if(imOnLine) {
-            #if DEBUG_LINE_STATE
-                Serial.println("3 to 2, enter sent");
-            #endif
-            lineState = 2;
-            insLineAngle = lineAngle + 180;
+        if (imOnLine) {
+            stableCounter++;
+            if (stableCounter > 1) {
+                #if DEBUG_LINE_STATE
+                    Serial.println("3 to 2, enter sent");
+                #endif
+                lineState = 2;
+                stableCounter = 0;
+            }
+        } else {
+            stableCounter = 0;
         }
     }
 }
 
-// bool LSystem::case2Check(float prevDir) {
-//     if(prevDir > 180) {
-//         prevDir = floatMod(prevDir - 360, 360);
-//     }
-//     Serial.print("PrevDir: ");
-//     Serial.print(prevDir);
-//     Serial.print(" ");
-//     for(int i = 0; i < NUM_LS; i++) {
-//         if(sensorIsWhite[i]) {
-//             float sensorAngle = i*(360/NUM_LS);
-//             if(sensorAngle > 180) {
-//                 sensorAngle = floatMod(sensorAngle - 360, 360);
-//                 Serial.print(i);
-//                 Serial.print(": ");
-//                 Serial.print(sensorAngle);
-//             }
-//             Serial.print(" ");
-//             if((abs(sensorAngle - prevDir) > 90)) {
-//                 Serial.print("Final Verd: ");
-//                 Serial.print((abs(sensorAngle - prevDir) > 90));
-//             }
-//             return (abs(sensorAngle - prevDir) > 90);
-//         }
-//     }
-//     Serial.println();
-// }
-
 bool LSystem::case2Check(float prevDir, float rot) {
-    Serial.print(lineState);
-    Serial.print(" ");
-    prevDir = floatMod(prevDir - rot, 360);
-    Serial.print(prevDir);
-    Serial.print(" ");  
     if (prevDir > 180) {
         prevDir = prevDir - 360;
     }
@@ -362,7 +307,7 @@ bool LSystem::case2Check(float prevDir, float rot) {
     // Serial.print("PrevDir: ");
     // Serial.print(prevDir);
     // Serial.print(" ");
-
+    int validHits = 0;
     for (int i = 0; i < NUM_LS; i++) {
         if (sensorIsWhite[i]) {
             float sensorAngle = i * (360.0f / NUM_LS);
@@ -379,12 +324,19 @@ bool LSystem::case2Check(float prevDir, float rot) {
 
             // Serial.print("Final Verd: ");
             // Serial.println(condition);
-            if(abs(sensorAngle - prevDir) > 90 && abs(sensorAngle - prevDir) < 270) {
+
+            //0, 1 or 2 clusters: 90, 270
+            //3+ clusters: 145, 215
+            float currvsprevdiff = circularDiff(sensorAngle, prevDir);
+            bool condition = (clusterAmount <= 2) ? (currvsprevdiff > 90 && currvsprevdiff < 270) : (currvsprevdiff > 145 && currvsprevdiff < 215);
+            if(condition) {
+                // validHits++;
                 return true;
             }
         }
     }
 
     // Serial.println("No white sensor found.");
+    // return validHits >= 2;
     return false; // Return false if no white sensor is found
 }

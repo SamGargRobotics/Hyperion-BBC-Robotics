@@ -40,3 +40,31 @@ float angleDiff(float a, float b) {
     float diff = floatMod(fabs(a - b), 360);
     return diff > 180 ? 360 - diff : diff;
 }
+
+/**
+ * @brief Calculates the average of two angles on a circle, accounting for wrap-around at 360°.
+ * 
+ * This function returns the midpoint between two angles `a` and `b` (in degrees),
+ * taking into account circular geometry. It correctly handles cases where the 
+ * shortest path between the angles crosses the 0°/360° boundary.
+ *
+ * For example, the average of 350° and 10° will correctly return 0°, not 180°.
+ * 
+ * @param a The first angle in degrees (0 ≤ a < 360).
+ * @param b The second angle in degrees (0 ≤ b < 360).
+ * @return float The circular average of the two angles, normalized to the range [0, 360).
+ */
+float circularAverage(float a, float b) {
+    float diff = fabs(a - b);
+    if (diff > 180) {
+        if (a > b) b += 360;
+        else a += 360;
+    }
+    float avg = (a + b) / 2;
+    return fmod(avg, 360);
+}
+
+float circularDiff(float a, float b) {
+    float diff = fmodf(a - b + 540.0f, 360.0f) - 180.0f;
+    return fabs(diff);
+}

@@ -193,10 +193,12 @@ struct surgeState {
     //! @def DEBUG_ROBOT_STATE @brief Prints what the robot is currently doing
     #define DEBUG_ROBOT_STATE false
     //! @def DEBUG_LS @brief Reads LS values
-    #define DEBUG_LS false
+    #define DEBUG_LS true
     //! @def DEBUG_LS_SENSOR @brief Reads individual LS values
-    #define DEBUG_LS_SENSOR true
+    #define DEBUG_LS_SENSOR false
     //! @def DEBUG_LINE_STATE @brief Reads individual LS values
     #define DEBUG_LINE_STATE false
 
 #endif
+
+// 33.75, 135, 337.5

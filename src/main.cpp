@@ -197,8 +197,7 @@ void loop() {
 // [Light Sensors]
     float lineAngle = ls.calculateLineDirection(rot);
     lsMoveAngle = (lineAngle == -1)? -1 : floatMod(lineAngle + 180, 360);
-    Serial.print(rot);
-    Serial.print(" ");
+    // Serial.println(ls.lineState);
     Serial.println(lineAngle);
     #if DEBUG_LS
         Serial.print("ClusterAmt: ");
@@ -239,13 +238,14 @@ void loop() {
         ((tssp.ballDir >= 10 && tssp.ballDir <= 350) || goal_dis <= 225)) {
         surgestates.surgeQ = false;
     }
+
 // [Moving the Robot Final Calculations and Logic]
     #if DEBUG_ROBOT
         motors.run(0, 0, bnoCorrection);
     #else
         if(lineAngle != -1) {
             // If detecting line --> Line Avoidance
-            motors.run(ls.moveSpeed, lsMoveAngle, bnoCorrection);
+            motors.run(30, lsMoveAngle, bnoCorrection);
             robotState = "Line Avoidance";
         } else {
             if(dirCalc.attack) {

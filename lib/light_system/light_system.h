@@ -30,12 +30,11 @@ public:
     int lineState = 0;
     float previousLineDirections = -1;
     bool imOnLine = 0;
-    int moveSpeed = 0;
+    int moveSpeed = 30;
     int clusterAmount = 0;
 private:
     int loopReadClamp(int value,int min, int max);
     float lineDirection = -1;
-    float insLineAngle = -1;
     int whiteThreshold[NUM_LS] = {0};
     int pinList[4] = {LIGHT_PIN_DIGI_0, LIGHT_PIN_DIGI_1, LIGHT_PIN_DIGI_2,
                      LIGHT_PIN_DIGI_3};
