@@ -22,7 +22,7 @@
     //! @def SET_SPEED @brief Speed that is set for running
     #define SET_SPEED 125
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being tuned
-    #define SECOND_ROBOT true
+    #define SECOND_ROBOT false
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
     #define COMPETITION_MODE false
 
@@ -64,7 +64,7 @@ struct surgeState {
     //! @def PID_p_attack @brief Proportional aspect of PID
     #define PID_p_attack 0.9
     //! @def PID_p_attack_goal @brief Proportional aspect of PID (goal attack)
-    #define PID_p_attack_goal 0.8
+    #define PID_p_attack_goal 0.7
     //! @def PID_i_attack @brief Intergral aspect of PID
     #define PID_i_attack 0
     //! @def PID_d_attack @brief Derivative aspect of PID
@@ -107,7 +107,7 @@ struct surgeState {
     #define ORBIT_STRENGTH_RADIUS 100
     //! @def SURGE_STR_VALUE @brief Min Strength value that allows the robot to 
     //!                             surge (Attack)
-    #define SURGE_STR_VALUE 110
+    #define SURGE_STR_VALUE 107
     //! @def EXPO_MIN_VAL @brief Minimum value of the exponential orbit
     #define EXPO_MIN_VAL 60
 #endif
@@ -176,7 +176,7 @@ struct surgeState {
 
 // --[PHYSICAL DEBUG TOGGLES]
     //! @def DEBUG_ROBOT @brief Testing space for individual items
-    #define DEBUG_ROBOT false
+    #define DEBUG_ROBOT true
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
     #define GOAL_TRACKING_TOGGLE true
 
@@ -184,7 +184,7 @@ struct surgeState {
     //! @def DEBUG_MOTORS @brief Read what the motors are sending when true
     #define DEBUG_MOTORS false
     //! @def DEBUG_IMU @brief Prints various values for camera and BNO when true
-    #define DEBUG_IMU_CAM false
+    #define DEBUG_IMU_CAM true
     //! @def DEBUG_TSSP @brief Prints various values for tssp when true
     #define DEBUG_TSSP false
     //! @def DEBUG_TSSP_SENSOR_VAL @brief Prints tssp sensor values when true
@@ -196,7 +196,7 @@ struct surgeState {
     //! @def DEBUG_ROBOT_STATE @brief Prints what the robot is currently doing
     #define DEBUG_ROBOT_STATE false
     //! @def DEBUG_LS @brief Reads LS values
-    #define DEBUG_LS true
+    #define DEBUG_LS false
     //! @def DEBUG_LS_SENSOR @brief Reads individual LS values
     #define DEBUG_LS_SENSOR false
     //! @def DEBUG_LINE_STATE @brief Reads individual LS values

@@ -87,6 +87,8 @@ String robotState = "default";
 //! @brief State that the correction is in
 String correctionState = "default";
 
+bool chosenGoal = targetGoal;
+
 void setup() {
     Serial.begin(9600);
     tssp.init();
@@ -104,6 +106,9 @@ void setup() {
 }
 
 void loop() {
+// [Logic Pin Calculations]
+    chosenGoal = digitalRead(LOGIC_PIN);
+
 // [Tssp Calculations]
     tssp.update();
     #if DEBUG_TSSP
@@ -124,19 +129,19 @@ void loop() {
     cam.read_camera();
     
     // Decide which goal is being tracked
-    #if targetGoal
+    if(chosenGoal) {
         goal_y_val = (dirCalc.attack)? cam.goal_y_blue : cam.goal_y_yellow;
         goal_x_val = (dirCalc.attack)? cam.goal_x_blue : cam.goal_x_yellow;
         goal_angle = (dirCalc.attack)? cam.angle_to_goal_blue : \
                                        cam.angle_to_goal_yellow;
         goal_pixel = cam.distBlue;
-    #else
+    } else {
         goal_y_val = (dirCalc.attack)? cam.goal_y_yellow : cam.goal_y_blue;
         goal_x_val = (dirCalc.attack)? cam.goal_x_yellow : cam.goal_x_blue;
         goal_angle = (dirCalc.attack)? cam.angle_to_goal_yellow : \
                                        cam.angle_to_goal_blue;
         goal_pixel = cam.distYel;
-    #endif
+    }
     // Complete floatMod values to ensure that the heading is not constantly 
     // changing when the robot faces the goal.
     goalHeading = (dirCalc.attack)? (floatMod(-goal_angle, 360) > 180 ? \
@@ -151,10 +156,15 @@ void loop() {
     cameraDefenceCorrection = -goalDefendingCorrection.update(goalHeading, 180);
     // Heading logic to assign goal tracking or regular compass correct
     cameraAttackCorrection = ((goal_y_val == 0 || goal_x_val == 0) || \
-    !((tssp.ballDir <= 90 || tssp.ballDir >= 270))) ? \
+    !((tssp.ballDir <= 110 || tssp.ballDir >= 290))) ? \
                               bnoCorrection:cameraAttackCorrection;
     cameraDefenceCorrection = (goal_y_val == 0 || goal_x_val == 0)? \
                               bnoCorrection:cameraDefenceCorrection;
+    // Calculate distance of the goals away from the robot (pixels)
+    goal_dis = (sqrt(pow(abs(goal_x_val), 2) + pow(abs(goal_y_val), 2)));
+    // // Hard coded offset value as the camera was reading different values on
+    // // each side.
+    goal_dis = (goalHeading < 180)?(goal_dis + GOAL_DIS_OFFSET) : goal_dis;
     #if not GOAL_TRACKING_TOGGLE
         cameraAttackCorrection = bnoCorrection;
         cameraDefenceCorrection = bnoCorrection;
@@ -163,6 +173,8 @@ void loop() {
         Serial.print(rot);
         Serial.print("\t");
         Serial.print(bnoHeading);
+        Serial.print("\t");
+        Serial.print(bnoCorrection);
         Serial.print("\t");
         Serial.print(goalHeading);
         Serial.print("\t");
@@ -178,7 +190,7 @@ void loop() {
         Serial.print("\t"); 
         Serial.print(cam.angle_to_goal_yellow);
         Serial.print("\t");
-        Serial.println(bnoCorrection);
+        Serial.println(goal_dis);
     #endif
 
 // [Battery Level Calculations]
@@ -195,11 +207,17 @@ void loop() {
     #endif
 
 // [Light Sensors]
-    float lineAngle = ls.calculateLineDirection(rot);
+    float lineAngle = -1;
+    #if SECOND_ROBOT
+        lineAngle = ls.calculateLineDirection(rot);
+    #endif
     lsMoveAngle = (lineAngle == -1)? -1 : floatMod(lineAngle + 180, 360);
+<<<<<<< Updated upstream
     // Serial.print(rot);
     // Serial.print(" ");
     // Serial.println(lineAngle);
+=======
+>>>>>>> Stashed changes
     #if DEBUG_LS
         Serial.print("ClusterAmt: ");
         Serial.print(ls.clusterAmount);
@@ -215,13 +233,9 @@ void loop() {
     #endif
 
 // [Strategy and Movement Calculation]
-    // Calculate distance of the goals away from the robot (pixels)
-    goal_dis = (sqrt(pow(abs(goal_x_val), 2) + pow(abs(goal_y_val), 2)));
-    // // Hard coded offset value as the camera was reading different values on
-    // // each side.
-    goal_dis = (goalHeading < 180)?(goal_dis + GOAL_DIS_OFFSET) : goal_dis;
     attackerMoveDirection = dirCalc.exponentialOrbit(tssp.ballDir);  
     attackerMoveSpeed = dirCalc.calcSpeed(tssp.ballStr, tssp.ballDir)*SET_SPEED;
+    attackerMoveSpeed = max(50.0f, ((goal_angle >= 5 || goal_angle <= -15) || (goal_x_val == 0 && goal_y_val == 0))? attackerMoveSpeed/4 : attackerMoveSpeed);
     float defenderVertHeading = (tssp.detectingBall) ? ((tssp.ballDir > 180) ? (tssp.ballDir - 360) : tssp.ballDir) : -bnoHeading;
     verticalDefenderMovement = -defenderMovementVert.update(abs(goal_dis), \
                                                 GOAL_SEMI_CIRCLE_RADIUS_CM);
@@ -244,6 +258,9 @@ void loop() {
     float moveAngl = 0;
     float rotation = 0;
 // [Moving the Robot Final Calculations and Logic]
+    float _moveSpeed = 0;
+    float _moveAngle = 0;
+    float _moveRotation = 0;
     #if DEBUG_ROBOT
         motors.run(0, 0, bnoCorrection);
     #else
@@ -252,32 +269,56 @@ void loop() {
             if((tssp.ballDir >= 347.5 || tssp.ballDir <= 12.5) && \
                 tssp.ballStr >= SURGE_STR_VALUE) {
                 // If ball is generally straight and in capture --> surge
+<<<<<<< Updated upstream
                 movSpeed = (tssp.detectingBall?SET_SPEED:0);
                 moveAngl = 0;
                 rotation = cameraAttackCorrection;
+=======
+                _moveSpeed = tssp.detectingBall?SET_SPEED:0;
+                _moveAngle = goal_angle;
+                _moveRotation = cameraAttackCorrection;
+>>>>>>> Stashed changes
                 robotState = "Attacker Logic - Surge";
             } else {
                 if(tssp.ballStr > ORBIT_STRENGTH_RADIUS) {
                     // If ball is close then orbit
+<<<<<<< Updated upstream
                     movSpeed = (tssp.detectingBall?attackerMoveSpeed:0);
                     moveAngl = attackerMoveDirection;
                     rotation = cameraAttackCorrection;
+=======
+                    _moveSpeed = tssp.detectingBall?attackerMoveSpeed:0;
+                    _moveAngle = attackerMoveDirection;
+                    _moveRotation = cameraAttackCorrection;
+>>>>>>> Stashed changes
                     correctionState = "Regular";
                     robotState = "Attacker Logic - Orbit";
                 } else {
                     // If ball is far then ball follow
+<<<<<<< Updated upstream
                     movSpeed = (tssp.detectingBall?attackerMoveSpeed:0);
                     moveAngl = tssp.ballDir;
                     rotation = cameraAttackCorrection;
+=======
+                    _moveSpeed = tssp.detectingBall?attackerMoveSpeed:0;
+                    _moveAngle = tssp.ballDir;
+                    _moveRotation = cameraAttackCorrection;
+>>>>>>> Stashed changes
                     robotState = "Attacker Logic - Ball Follow";
                 }
             }
         } else {
             // Defender Logic
             if(surgestates.surgeQ) {
+<<<<<<< Updated upstream
                 movSpeed = SET_SPEED;
                 moveAngl = tssp.ballDir;
                 rotation = cameraAttackCorrection;
+=======
+                _moveSpeed = SET_SPEED;
+                _moveAngle = tssp.ballDir;
+                _moveRotation = cameraAttackCorrection;
+>>>>>>> Stashed changes
                 correctionState = "Goal";
                 robotState = "Defender Logic - Surge";
             } else {
@@ -286,6 +327,7 @@ void loop() {
                     // If can see goal
                     if(tssp.ballDir >= 110 && tssp.ballDir <= 290) {
                         // If ball is in threshold robot --> orbit
+<<<<<<< Updated upstream
                         movSpeed = attackerMoveSpeed;
                         moveAngl = attackerMoveDirection;
                         rotation = bnoCorrection;
@@ -295,14 +337,31 @@ void loop() {
                         movSpeed = netDefendSpeed;
                         moveAngl = netDefendMovementAngle;
                         rotation = cameraDefenceCorrection;
+=======
+                        _moveSpeed = attackerMoveSpeed;
+                        _moveAngle = attackerMoveDirection;
+                        _moveRotation = bnoCorrection;
+                        correctionState = "Regular";
+                        robotState = "Defender Logic - Ball Behind";
+                    } else {
+                        _moveSpeed = netDefendSpeed;
+                        _moveAngle = netDefendMovementAngle;
+                        _moveRotation = cameraDefenceCorrection;
+>>>>>>> Stashed changes
                         robotState = "Defender Logic - Regular";
                     }
                 } else {
                     // If cannot see goal --> Forward or Backward depending
                     // on last seen goal_y_val
+<<<<<<< Updated upstream
                     movSpeed = attackerMoveSpeed;
                     moveAngl = (cam.previousVals[0] <= DEF_GOAL_Y_THRESH)? 180: tssp.ballDir;
                     rotation = bnoCorrection;
+=======
+                    _moveSpeed = attackerMoveSpeed;
+                    _moveAngle = (cam.previousVals[0] <= DEF_GOAL_Y_THRESH)?180:tssp.ballDir;
+                    _moveRotation = bnoCorrection;
+>>>>>>> Stashed changes
                     correctionState = "Regular";
                     robotState = "Defender Logic - Cannot see goal";
                 }
@@ -310,11 +369,22 @@ void loop() {
         }
         if(lineAngle != -1) {
             // If detecting line --> Line Avoidance
+<<<<<<< Updated upstream
             movSpeed = ls.moveSpeed;
             moveAngl = lsMoveAngle;
             robotState = "Line Avoidance";
         }
         motors.run(movSpeed, moveAngl, rotation);
+=======
+            _moveAngle = lsMoveAngle;
+            _moveSpeed = ls.moveSpeed;
+            if(goal_y_val == 0 && goal_x_val == 0)  {
+                _moveSpeed = 30;
+            }
+            robotState = "Line Avoidance";
+        }
+        motors.run(_moveSpeed, _moveAngle, _moveRotation);
+>>>>>>> Stashed changes
     #endif
     #if DEBUG_ROBOT_STATE
         Serial.print(robotState);
