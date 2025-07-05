@@ -22,6 +22,7 @@ void LSystem::init() {
         whiteThreshold[i] = readOne(i) + 40;
     }
 }
+
 /*!
  * @brief a constraint function that loops to the other side/max or min if out
           side of the max and min
@@ -30,7 +31,7 @@ void LSystem::init() {
  * @param max the maximum value to constrain to
  * @return the value after the constrains are applied
  */
-int LSystem::loopReadClamp(int value, int  min, int max) {
+int LSystem::circularConstrain(int value, int  min, int max) {
     if (value < 0 || min != 0) {
         return ((value % max) + max) % max;
     } else {
@@ -60,7 +61,7 @@ int LSystem::readOne(int sensor_num) {
  */
 float LSystem::calculateLineDirection(float rot) {
     clusterAmount = 0;
-    loopTut = 0;
+    loopTotal = 0;
     loopCount = 0;
     lineDirection = -1;
     for(int i = 0; i < 32; i++) {
@@ -83,10 +84,10 @@ float LSystem::calculateLineDirection(float rot) {
     
     for(int j = 0; j < NUM_LS; j++) {
         if(sensorIsWhite[j]) {
-            if(sensorIsWhite[loopReadClamp(j-1,0,NUM_LS)] == 0) {
+            if(sensorIsWhite[circularConstrain(j-1,0,NUM_LS)] == 0) {
                 minIndex = j;
             }
-            if(sensorIsWhite[loopReadClamp(j+1,0,NUM_LS)] == 0) {
+            if(sensorIsWhite[circularConstrain(j+1,0,NUM_LS)] == 0) {
                 maxIndex = j;
                 clustersList[clusterAmount][0] = minIndex;
                 clustersList[clusterAmount][1] = maxIndex;
@@ -102,7 +103,7 @@ float LSystem::calculateLineDirection(float rot) {
         maxIndex = clustersList[c][1];
  
         if(minIndex>maxIndex) {
-            center = (loopReadClamp(maxIndex+minIndex,0,NUM_LS))/2;
+            center = (circularConstrain(maxIndex+minIndex,0,NUM_LS))/2;
             if(maxIndex+minIndex < NUM_LS) {
                 center += 16;
             }
@@ -114,7 +115,7 @@ float LSystem::calculateLineDirection(float rot) {
 
     for(uint8_t k = 0; k < clusterAmount; k++) {
         if(clusterCenter[k] != (44*11.25)) {
-            loopTut += clusterCenter[k];
+            loopTotal += clusterCenter[k];
             #if DEBUG_LS
                 Serial.print(" ");
                 Serial.print(clusterCenter[k]);
@@ -184,8 +185,6 @@ float LSystem::calculateLineDirection(float rot) {
                     largestDifIndex = i;
                 }
             }
-            float outerAngles[2] = {0};
-            float innerAngle = 0;
             if(largestDifIndex == 0) {
                 outerAngles[0] = clusterCenter[0];
                 outerAngles[1] = clusterCenter[1];
@@ -199,7 +198,6 @@ float LSystem::calculateLineDirection(float rot) {
                 outerAngles[1] = clusterCenter[2];
                 innerAngle = clusterCenter[1];
             }
-            float averages[2] = {0};
             small = (outerAngles[0] > innerAngle)? innerAngle : outerAngles[0];
             big = (innerAngle > outerAngles[0])? innerAngle : outerAngles[0];
             dif = big - small;
@@ -216,8 +214,6 @@ float LSystem::calculateLineDirection(float rot) {
             lineDirection = (dif <= 180)? ((big + small) / 2) : ((big + (small + 360)) / 2);
             break;
     }
-    Serial.print(lineDirection);
-    Serial.print(" ");
     calculateLineState(rot);
     // return lineDirection;
     switch(lineState) {
@@ -234,26 +230,8 @@ float LSystem::calculateLineDirection(float rot) {
           field.
  */
 void LSystem::calculateLineState(float rot) {
-    // for(int i = 0; i < NUM_LS; i++) {
-    //     if(sensorIsWhite[i]) {
-    //         imOnLine = true;
-    //         break;
-    //     } else {
-    //         imOnLine = false;
-    //     }
-    // }
     imOnLine = (clusterAmount > 0);
-
-    // case 1 --> 2
-        // take stored angle
-        // checks all active light sensors --> any light sensors have difference more than 90? --> TRUE --> else false
-
-    float lineAngle = imOnLine ? floatMod(lineDirection + rot, 360) : -1;
-    Serial.print(lineAngle);
-    Serial.print(" ");
-    Serial.print(previousLineDirections);
-    Serial.print(" ");
-    insLineAngle = -1;
+    relativeLineDirection = imOnLine ? floatMod(lineDirection + rot, 360) : -1;
     if(lineState == 0) {
         #if DEBUG_LINE_STATE
             Serial.println("0 checking for line");
@@ -263,9 +241,8 @@ void LSystem::calculateLineState(float rot) {
             #if DEBUG_LINE_STATE
                 Serial.println("0 into 1, enter sent");
             #endif
-            insLineAngle = lineAngle;
             lineState = 1;
-            previousLineDirections = lineAngle;
+            previousLineDirections = relativeLineDirection;
         }
     } else if(lineState == 1) {
         #if DEBUG_LINE_STATE
@@ -276,20 +253,17 @@ void LSystem::calculateLineState(float rot) {
                 Serial.println("1 into 0, enter sent");
             #endif
             lineState = 0;
-            insLineAngle = -1;
-        } else if((abs(previousLineDirections - lineAngle) > LS_FLIP_THRESH) && (abs(previousLineDirections - lineAngle) < (360 - LS_FLIP_THRESH))) {//case2Check(previousLineDirections, rot)) { // SOMETHING IS WORNG; check
+        } else if((abs(previousLineDirections - relativeLineDirection) > LS_FLIP_THRESH) && (abs(previousLineDirections - relativeLineDirection) < (360 - LS_FLIP_THRESH))) {//case2Check(previousLineDirections, rot)) { // SOMETHING IS WORNG; check
             #if DEBUG_LINE_STATE
                 Serial.println("1 into 2, enter sent");
             #endif
             lineState = 2;
-            insLineAngle = floatMod(lineAngle + 180, 360);
         } else {
             #if DEBUG_LINE_STATE
                 Serial.println("1 stagnated");
             #endif
             lineState = 1;
-            insLineAngle = lineAngle;
-            previousLineDirections = lineAngle;
+            previousLineDirections = relativeLineDirection;
         }
     } else if(lineState == 2) {
         #if DEBUG_LINE_STATE
@@ -300,19 +274,17 @@ void LSystem::calculateLineState(float rot) {
                 Serial.println("2 to 3, enter sent");
             #endif
             lineState = 3;
-        } else if((abs(previousLineDirections - lineAngle) <= LS_FLIP_THRESH) || (abs(previousLineDirections - lineAngle) >= (360 - LS_FLIP_THRESH))) {//!case2Check(previousLineDirections, rot)) { // SOMETHING IS WRONG; check
+        } else if((abs(previousLineDirections - relativeLineDirection) <= LS_FLIP_THRESH) || (abs(previousLineDirections - relativeLineDirection) >= (360 - LS_FLIP_THRESH))) {//!case2Check(previousLineDirections, rot)) { // SOMETHING IS WRONG; check
             #if DEBUG_LINE_STATE
                 Serial.println("2 to 1, enter sent");
             #endif
             lineState = 1;
-            insLineAngle = lineAngle;
-            previousLineDirections = lineAngle;
+            previousLineDirections = relativeLineDirection;
         } else {
             #if DEBUG_LINE_STATE
                 Serial.println("2 stagnated");
             #endif
             lineState = 2; 
-            insLineAngle = floatMod(lineAngle + 180, 360);
         }
     } else {
         #if DEBUG_LINE_STATE
@@ -323,7 +295,6 @@ void LSystem::calculateLineState(float rot) {
                 Serial.println("3 to 2, enter sent");
             #endif
             lineState = 2;
-            insLineAngle = lineAngle + 180;
         }
     }
 }

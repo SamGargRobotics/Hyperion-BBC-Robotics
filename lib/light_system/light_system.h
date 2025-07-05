@@ -24,18 +24,18 @@ public:
     LSystem() {};
     void init();
     float calculateLineDirection(float rot);
-    void calculateLineState(float rot);
     int readOne(int sensor_num);
-    bool case2Check(float prevDir, float rot);
     int lineState = 0;
     float previousLineDirections = -1;
     bool imOnLine = 0;
     int moveSpeed = 0;
     int clusterAmount = 0;
 private:
-    int loopReadClamp(int value,int min, int max);
+    int circularConstrain(int value,int min, int max);
+    void calculateLineState(float rot);
+    bool case2Check(float prevDir, float rot);
     float lineDirection = -1;
-    float insLineAngle = -1;
+    float relativeLineDirection = -1;
     int whiteThreshold[NUM_LS] = {0};
     int pinList[4] = {LIGHT_PIN_DIGI_0, LIGHT_PIN_DIGI_1, LIGHT_PIN_DIGI_2,
                      LIGHT_PIN_DIGI_3};
@@ -45,16 +45,15 @@ private:
     int minIndex = 44;
     int clustersList[3][2];
     float clusterCenter[3] = {44, 44, 44};
-    float center;
-    float loopTut = 0;
-    int flaggedLineDirection = 0;
-    int lineDirectionArray = 0;
-    int state3Counter = 0;
+    float center = 0;
+    float loopTotal = 0;
     float loopCount = 0;
     float small = 0;
     float big = 0;
     float dif = 0;
-    // 28 broken
+    float outerAngles[2] = {0};
+    float innerAngle = 0;
+    float averages[2] = {0};
 };
  
 #endif
