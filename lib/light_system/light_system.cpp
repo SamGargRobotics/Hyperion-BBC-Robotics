@@ -365,11 +365,14 @@ bool LSystem::case2Check(float prevDir, float rot) {
         prevDir = prevDir - 360;
     }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
     // Serial.print("PrevDir: ");
     // Serial.print(prevDir);
     // Serial.print(" ");
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     for (int i = 0; i < NUM_LS; i++) {
@@ -380,6 +383,7 @@ bool LSystem::case2Check(float prevDir, float rot) {
             if (sensorAngle > 180) {
                 sensorAngle = sensorAngle - 360;
             }
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
             // Serial.print(i);
@@ -395,13 +399,21 @@ bool LSystem::case2Check(float prevDir, float rot) {
             bool condition = (clusterAmount <= 2) ? (currvsprevdiff > 90 && currvsprevdiff < 270) : (currvsprevdiff > 145 && currvsprevdiff < 215);
             if(condition) {
 >>>>>>> Stashed changes
+=======
+            float currvsprevdiff = circularDiff(sensorAngle, prevDir);
+            bool condition = (clusterAmount <= 2) ? (currvsprevdiff > 90 && currvsprevdiff < 270) : (currvsprevdiff > 145 && currvsprevdiff < 215);
+            if(condition) {
+>>>>>>> Stashed changes
                 return true;
             }
         }
     }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
     // Serial.println("No white sensor found.");
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     return false; // Return false if no white sensor is found

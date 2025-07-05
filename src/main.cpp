@@ -213,9 +213,12 @@ void loop() {
     #endif
     lsMoveAngle = (lineAngle == -1)? -1 : floatMod(lineAngle + 180, 360);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     // Serial.print(rot);
     // Serial.print(" ");
     // Serial.println(lineAngle);
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     #if DEBUG_LS
@@ -270,9 +273,15 @@ void loop() {
                 tssp.ballStr >= SURGE_STR_VALUE) {
                 // If ball is generally straight and in capture --> surge
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 movSpeed = (tssp.detectingBall?SET_SPEED:0);
                 moveAngl = 0;
                 rotation = cameraAttackCorrection;
+=======
+                _moveSpeed = tssp.detectingBall?SET_SPEED:0;
+                _moveAngle = goal_angle;
+                _moveRotation = cameraAttackCorrection;
+>>>>>>> Stashed changes
 =======
                 _moveSpeed = tssp.detectingBall?SET_SPEED:0;
                 _moveAngle = goal_angle;
@@ -283,9 +292,15 @@ void loop() {
                 if(tssp.ballStr > ORBIT_STRENGTH_RADIUS) {
                     // If ball is close then orbit
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     movSpeed = (tssp.detectingBall?attackerMoveSpeed:0);
                     moveAngl = attackerMoveDirection;
                     rotation = cameraAttackCorrection;
+=======
+                    _moveSpeed = tssp.detectingBall?attackerMoveSpeed:0;
+                    _moveAngle = attackerMoveDirection;
+                    _moveRotation = cameraAttackCorrection;
+>>>>>>> Stashed changes
 =======
                     _moveSpeed = tssp.detectingBall?attackerMoveSpeed:0;
                     _moveAngle = attackerMoveDirection;
@@ -296,9 +311,15 @@ void loop() {
                 } else {
                     // If ball is far then ball follow
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     movSpeed = (tssp.detectingBall?attackerMoveSpeed:0);
                     moveAngl = tssp.ballDir;
                     rotation = cameraAttackCorrection;
+=======
+                    _moveSpeed = tssp.detectingBall?attackerMoveSpeed:0;
+                    _moveAngle = tssp.ballDir;
+                    _moveRotation = cameraAttackCorrection;
+>>>>>>> Stashed changes
 =======
                     _moveSpeed = tssp.detectingBall?attackerMoveSpeed:0;
                     _moveAngle = tssp.ballDir;
@@ -311,9 +332,15 @@ void loop() {
             // Defender Logic
             if(surgestates.surgeQ) {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 movSpeed = SET_SPEED;
                 moveAngl = tssp.ballDir;
                 rotation = cameraAttackCorrection;
+=======
+                _moveSpeed = SET_SPEED;
+                _moveAngle = tssp.ballDir;
+                _moveRotation = cameraAttackCorrection;
+>>>>>>> Stashed changes
 =======
                 _moveSpeed = SET_SPEED;
                 _moveAngle = tssp.ballDir;
@@ -327,6 +354,7 @@ void loop() {
                     // If can see goal
                     if(tssp.ballDir >= 110 && tssp.ballDir <= 290) {
                         // If ball is in threshold robot --> orbit
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
                         movSpeed = attackerMoveSpeed;
                         moveAngl = attackerMoveDirection;
@@ -348,15 +376,32 @@ void loop() {
                         _moveAngle = netDefendMovementAngle;
                         _moveRotation = cameraDefenceCorrection;
 >>>>>>> Stashed changes
+=======
+                        _moveSpeed = attackerMoveSpeed;
+                        _moveAngle = attackerMoveDirection;
+                        _moveRotation = bnoCorrection;
+                        correctionState = "Regular";
+                        robotState = "Defender Logic - Ball Behind";
+                    } else {
+                        _moveSpeed = netDefendSpeed;
+                        _moveAngle = netDefendMovementAngle;
+                        _moveRotation = cameraDefenceCorrection;
+>>>>>>> Stashed changes
                         robotState = "Defender Logic - Regular";
                     }
                 } else {
                     // If cannot see goal --> Forward or Backward depending
                     // on last seen goal_y_val
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     movSpeed = attackerMoveSpeed;
                     moveAngl = (cam.previousVals[0] <= DEF_GOAL_Y_THRESH)? 180: tssp.ballDir;
                     rotation = bnoCorrection;
+=======
+                    _moveSpeed = attackerMoveSpeed;
+                    _moveAngle = (cam.previousVals[0] <= DEF_GOAL_Y_THRESH)?180:tssp.ballDir;
+                    _moveRotation = bnoCorrection;
+>>>>>>> Stashed changes
 =======
                     _moveSpeed = attackerMoveSpeed;
                     _moveAngle = (cam.previousVals[0] <= DEF_GOAL_Y_THRESH)?180:tssp.ballDir;
@@ -370,12 +415,15 @@ void loop() {
         if(lineAngle != -1) {
             // If detecting line --> Line Avoidance
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             movSpeed = ls.moveSpeed;
             moveAngl = lsMoveAngle;
             robotState = "Line Avoidance";
         }
         motors.run(movSpeed, moveAngl, rotation);
 =======
+=======
+>>>>>>> Stashed changes
             _moveAngle = lsMoveAngle;
             _moveSpeed = ls.moveSpeed;
             if(goal_y_val == 0 && goal_x_val == 0)  {
@@ -384,6 +432,9 @@ void loop() {
             robotState = "Line Avoidance";
         }
         motors.run(_moveSpeed, _moveAngle, _moveRotation);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     #endif
     #if DEBUG_ROBOT_STATE
