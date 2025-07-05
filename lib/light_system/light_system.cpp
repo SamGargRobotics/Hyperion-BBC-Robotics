@@ -328,93 +328,23 @@ void LSystem::calculateLineState(float rot) {
     }
 }
 
-// bool LSystem::case2Check(float prevDir) {
-//     if(prevDir > 180) {
-//         prevDir = floatMod(prevDir - 360, 360);
-//     }
-//     Serial.print("PrevDir: ");
-//     Serial.print(prevDir);
-//     Serial.print(" ");
-//     for(int i = 0; i < NUM_LS; i++) {
-//         if(sensorIsWhite[i]) {
-//             float sensorAngle = i*(360/NUM_LS);
-//             if(sensorAngle > 180) {
-//                 sensorAngle = floatMod(sensorAngle - 360, 360);
-//                 Serial.print(i);
-//                 Serial.print(": ");
-//                 Serial.print(sensorAngle);
-//             }
-//             Serial.print(" ");
-//             if((abs(sensorAngle - prevDir) > 90)) {
-//                 Serial.print("Final Verd: ");
-//                 Serial.print((abs(sensorAngle - prevDir) > 90));
-//             }
-//             return (abs(sensorAngle - prevDir) > 90);
-//         }
-//     }
-//     Serial.println();
-// }
-
 bool LSystem::case2Check(float prevDir, float rot) {
-    // Serial.print(lineState);
-    // Serial.print(" ");
     prevDir = floatMod(prevDir - rot, 360);
-    // Serial.print(prevDir);
-    // Serial.print(" ");  
     if (prevDir > 180) {
         prevDir = prevDir - 360;
     }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-    // Serial.print("PrevDir: ");
-    // Serial.print(prevDir);
-    // Serial.print(" ");
-
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     for (int i = 0; i < NUM_LS; i++) {
         if (sensorIsWhite[i]) {
             float sensorAngle = i * (360.0f / NUM_LS);
-
-            // Normalize sensorAngle to [-180, 180)
             if (sensorAngle > 180) {
                 sensorAngle = sensorAngle - 360;
             }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-            // Serial.print(i);
-            // Serial.print(": ");
-            // Serial.print(sensorAngle);
-            // Serial.print(" ");
-
-            // Serial.print("Final Verd: ");
-            // Serial.println(condition);
-            if(abs(sensorAngle - prevDir) > 90 && abs(sensorAngle - prevDir) < 270) {
-=======
             float currvsprevdiff = circularDiff(sensorAngle, prevDir);
             bool condition = (clusterAmount <= 2) ? (currvsprevdiff > 90 && currvsprevdiff < 270) : (currvsprevdiff > 145 && currvsprevdiff < 215);
             if(condition) {
->>>>>>> Stashed changes
-=======
-            float currvsprevdiff = circularDiff(sensorAngle, prevDir);
-            bool condition = (clusterAmount <= 2) ? (currvsprevdiff > 90 && currvsprevdiff < 270) : (currvsprevdiff > 145 && currvsprevdiff < 215);
-            if(condition) {
->>>>>>> Stashed changes
                 return true;
             }
         }
     }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-    // Serial.println("No white sensor found.");
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     return false; // Return false if no white sensor is found
 }

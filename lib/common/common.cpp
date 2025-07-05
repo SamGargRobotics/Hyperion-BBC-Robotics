@@ -23,20 +23,19 @@ float floatMod(float x, float m) {
     return r<0 ? r+m : r;
 }
 
-/*!
- * @brief Calculates the minimal angular difference between two angles in degrees.
- * 
- * This function computes the smallest difference between two angles, `a` and `b`,
- * measured in degrees. The result is always in the range [0, 180], representing
- * the shortest rotation between the two angles, accounting for circular wrap-around.
- * 
- * For example, the difference between 350° and 10° is 20°, not 340°.
- * 
- * @param a The first angle in degrees.
- * @param b The second angle in degrees.
- * @return The minimal difference between the two angles, in degrees.
+/**
+ * @brief Calculates the smallest angular difference between two angles.
+ *
+ * This function computes the absolute difference between two angles on a circle,
+ * ensuring the result is always in the range [0, 180] degrees. It accounts for the 
+ * circular nature of angles, meaning that the difference between 350° and 10° is 20°, 
+ * not 340°.
+ *
+ * @param a The first angle in degrees (typically in range [0, 360), but any float is accepted).
+ * @param b The second angle in degrees (typically in range [0, 360), but any float is accepted).
+ * @return The smallest difference between the two angles, in degrees.
  */
-float angleDiff(float a, float b) {
-    float diff = floatMod(fabs(a - b), 360);
-    return diff > 180 ? 360 - diff : diff;
+float circularDiff(float a, float b) {
+    float diff = fabs(a - b);
+    return (diff <= 180) ? diff : 360 - diff;
 }

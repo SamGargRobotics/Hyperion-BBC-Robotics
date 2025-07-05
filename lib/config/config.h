@@ -176,7 +176,7 @@ struct surgeState {
 
 // --[PHYSICAL DEBUG TOGGLES]
     //! @def DEBUG_ROBOT @brief Testing space for individual items
-    #define DEBUG_ROBOT true
+    #define DEBUG_ROBOT false
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
     #define GOAL_TRACKING_TOGGLE true
 
