@@ -263,6 +263,7 @@ void loop() {
                 _moveSpeed = tssp.detectingBall?SET_SPEED:0;
                 _moveAngle = goal_angle;
                 _moveRotation = cameraAttackCorrection;
+                _moveRotation += random(-10,10);
                 robotState = "Attacker Logic - Surge";
             } else {
                 if(tssp.ballStr > ORBIT_STRENGTH_RADIUS) {

@@ -22,7 +22,7 @@
     //! @def SET_SPEED @brief Speed that is set for running
     #define SET_SPEED 125
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being tuned
-    #define SECOND_ROBOT false
+    #define SECOND_ROBOT true
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
     #define COMPETITION_MODE false
 
