@@ -23,6 +23,10 @@ float floatMod(float x, float m) {
     return r<0 ? r+m : r;
 }
 
+int intMod(int x, int m) {
+    int r = x % m;
+    return r < 0 ? r + m : r;
+}
 /**
  * @brief Calculates the smallest angular difference between two angles.
  *
@@ -38,4 +42,17 @@ float floatMod(float x, float m) {
 float circularDiff(float a, float b) {
     float diff = fabs(a - b);
     return (diff <= 180) ? diff : 360 - diff;
+}
+
+float angleBetween(float angleCounterClockwise, float angleClockwise) {
+    return floatMod(angleClockwise - angleCounterClockwise, 360);
+}
+
+float smallestAngleBetween(float angleCounterClockwise, float angleClockwise) {
+    float ang = angleBetween(angleCounterClockwise, angleClockwise);
+    return fmin(ang, 360 - ang);
+}
+
+float midAngleBetween(float angleCounterClockwise, float angleClockwise) {
+    return floatMod(angleCounterClockwise + angleBetween(angleCounterClockwise, angleClockwise) / 2.0, 360);
 }

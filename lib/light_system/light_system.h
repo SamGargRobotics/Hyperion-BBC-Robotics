@@ -23,37 +23,23 @@ class LSystem {
 public:
     LSystem() {};
     void init();
-    float calculateLineDirection(float rot);
+    void calculateLineDirection(float rot);
     int readOne(int sensor_num);
     int lineState = 0;
-    float previousLineDirections = -1;
-    bool imOnLine = 0;
-    int moveSpeed = 0;
-    int clusterAmount = 0;
+    float lineDir = -1;
+    float relativeDefenderMovement = 0;
 private:
-    int circularConstrain(int value,int min, int max);
-    void calculateLineState(float rot);
-    bool case2Check(float prevDir, float rot);
-    float lineDirection = -1;
-    float relativeLineDirection = -1;
+    bool imOnLine = 0;
+    int clusterAmount = 0;
+    void calculateLineState(float rot, float lineDirection);
     int whiteThreshold[NUM_LS] = {0};
     int pinList[4] = {LIGHT_PIN_DIGI_0, LIGHT_PIN_DIGI_1, LIGHT_PIN_DIGI_2,
                      LIGHT_PIN_DIGI_3};
-    int sensorValues[NUM_LS] = {0};
     bool sensorIsWhite[NUM_LS] = {0};
     int maxIndex = 44;
     int minIndex = 44;
-    int clustersList[3][2];
+    int clustersList[4][2];
     float clusterCenter[3] = {44, 44, 44};
-    float center = 0;
-    float loopTotal = 0;
-    float loopCount = 0;
-    float small = 0;
-    float big = 0;
-    float dif = 0;
-    float outerAngles[2] = {0};
-    float innerAngle = 0;
-    float averages[2] = {0};
 };
  
 #endif

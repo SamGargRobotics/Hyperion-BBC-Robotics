@@ -16,8 +16,11 @@
 #include <math.h>
 
 float floatMod(float x, float m);
-float angleDiff(float a, float b);
+int intMod(int x, int m);
 float circularDiff(float a, float b);
+float angleBetween(float angleCounterClockwise, float angleClockwise);
+float smallestAngleBetween(float angleCounterClockwise, float angleClockwise);
+float midAngleBetween(float angleCounterClockwise, float angleClockwise);
 
 #define ARRAYSHIFTDOWN(a, lower, upper){          \
 	if (upper == (sizeof(a)/sizeof(a[0])) - 1){   \

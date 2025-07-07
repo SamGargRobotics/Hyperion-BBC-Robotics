@@ -16,14 +16,17 @@ float DirectionCalc::exponentialOrbit(float ballDir) {
     // simpler versions of orbitting.
     // Find our exponential graph here: 
     // https://www.desmos.com/calculator/mjjqu8ujy0
+
+    float sigma;
     if(ballDir > 180) {
         modBallDir = ballDir-360;
-        return ballDir + (-1*min(0.04*(pow(EULER, -4.5*modBallDir) - 1), \
+        sigma = ballDir + (-1*min(0.04*(pow(EULER, -4.5*modBallDir) - 1), \
                                  EXPO_MIN_VAL));
 
     } else {
-        return ballDir + (min(0.04*(pow(EULER, 4.5*ballDir) - 1), EXPO_MIN_VAL));
+        sigma = ballDir + (min(0.04*(pow(EULER, 4.5*ballDir) - 1), EXPO_MIN_VAL));
     }
+    return sigma;
 }
 
 /*!
@@ -38,6 +41,7 @@ float DirectionCalc::exponentialOrbit(float ballDir) {
  * @return Returns a speed value for the robot to move.
  */
 float DirectionCalc::calcSpeed(float ballStr, float ballDir) {
+    float sigma;
     #if SECOND_ROBOT
         multi = (5*SET_SPEED/8);
         steepness = 97.5;
@@ -46,11 +50,11 @@ float DirectionCalc::calcSpeed(float ballStr, float ballDir) {
         steepness = 98.5;
     #endif
     if(ballDir >= 90 && ballDir <= 270) {
-        return max(min(pow(EULER, -0.02*(ballStr-(steepness*EULER))) + 30, \
+        sigma = max(min(pow(EULER, -0.02*(ballStr-(steepness*EULER))) + 30, \
             multi), 30)/ multi;
     } else {
-        return max(min(pow(EULER, -0.02*(ballStr-(steepness*EULER))) + 20 , \
+        sigma = max(min(pow(EULER, -0.02*(ballStr-(steepness*EULER))) + 20 , \
             multi), 30)/multi;
     }
-
+    return sigma;
 }

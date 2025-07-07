@@ -207,11 +207,14 @@ void loop() {
     #endif
 
 // [Light Sensors]
-    float lineAngle = -1;
-    #if SECOND_ROBOT
-        lineAngle = ls.calculateLineDirection(rot);
-    #endif
-    lsMoveAngle = (lineAngle == -1)? -1 : floatMod(lineAngle + 180, 360);
+    ls.calculateLineDirection(rot);
+    lsMoveAngle = (ls.lineDir == -1)? -1 : floatMod((ls.lineDir - rot) + 180, 360);
+    for(int i = 0; i < NUM_LS; i++) {
+        Serial.print(ls.readOne(i));
+        Serial.print(" ");
+    }
+    Serial.println();
+    // Serial.println(ls.relativeDefenderMovement);
     #if DEBUG_LS
         Serial.print("ClusterAmt: ");
         Serial.print(ls.clusterAmount);
@@ -317,15 +320,13 @@ void loop() {
                 }
             }
         }
-        if(lineAngle != -1) {
+        if(ls.lineDir != -1) {
             // If detecting line --> Line Avoidance
             _moveAngle = lsMoveAngle;
-            _moveSpeed = ls.moveSpeed;
-            if(goal_y_val == 0 && goal_x_val == 0)  {
-                _moveSpeed = 30;
-            }
+            _moveSpeed = SET_SPEED;
             robotState = "Line Avoidance";
         }
+        //TEMP
         motors.run(_moveSpeed, _moveAngle, _moveRotation);
     #endif
     #if DEBUG_ROBOT_STATE
@@ -348,4 +349,5 @@ void loop() {
     #endif
 
 // [Manual Printing Space]
+// Serial.println
 }

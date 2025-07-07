@@ -64,7 +64,7 @@ struct surgeState {
     //! @def PID_p_attack @brief Proportional aspect of PID
     #define PID_p_attack 0.9
     //! @def PID_p_attack_goal @brief Proportional aspect of PID (goal attack)
-    #define PID_p_attack_goal 0.7
+    #define PID_p_attack_goal 0.815
     //! @def PID_i_attack @brief Intergral aspect of PID
     #define PID_i_attack 0
     //! @def PID_d_attack @brief Derivative aspect of PID
@@ -161,7 +161,7 @@ struct surgeState {
 #endif
 
 // --[LIGHT SENSOR Values]--
-#define LS_FLIP_THRESH 110
+#define LS_FLIP_THRESH 90
 
 // --[BATTERY TRACKING Values]--
 #if not SECOND_ROBOT
@@ -184,7 +184,7 @@ struct surgeState {
     //! @def DEBUG_MOTORS @brief Read what the motors are sending when true
     #define DEBUG_MOTORS false
     //! @def DEBUG_IMU @brief Prints various values for camera and BNO when true
-    #define DEBUG_IMU_CAM true
+    #define DEBUG_IMU_CAM false
     //! @def DEBUG_TSSP @brief Prints various values for tssp when true
     #define DEBUG_TSSP false
     //! @def DEBUG_TSSP_SENSOR_VAL @brief Prints tssp sensor values when true
@@ -200,6 +200,6 @@ struct surgeState {
     //! @def DEBUG_LS_SENSOR @brief Reads individual LS values
     #define DEBUG_LS_SENSOR false
     //! @def DEBUG_LINE_STATE @brief Reads individual LS values
-    #define DEBUG_LINE_STATE true
+    #define DEBUG_LINE_STATE false
 
 #endif
