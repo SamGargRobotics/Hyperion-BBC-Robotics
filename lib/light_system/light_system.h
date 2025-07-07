@@ -32,6 +32,7 @@ private:
     bool imOnLine = 0;
     int clusterAmount = 0;
     void calculateLineState(float rot, float lineDirection);
+    float calculateDistanceOver(float angle1, float angle2);
     int whiteThreshold[NUM_LS] = {0};
     int pinList[4] = {LIGHT_PIN_DIGI_0, LIGHT_PIN_DIGI_1, LIGHT_PIN_DIGI_2,
                      LIGHT_PIN_DIGI_3};

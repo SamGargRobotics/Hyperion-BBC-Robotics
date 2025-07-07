@@ -23,10 +23,21 @@ float floatMod(float x, float m) {
     return r<0 ? r+m : r;
 }
 
+/**
+ * @brief Computes a positive modulo result for integers.
+ *
+ * Returns the result of `x mod m`, ensuring the result is always in the range [0, m).
+ * This handles negative `x` values correctly, unlike the standard `%` operator.
+ *
+ * @param x The dividend (can be negative).
+ * @param m The modulus (must be positive).
+ * @return The positive remainder of `x` modulo `m`.
+ */
 int intMod(int x, int m) {
     int r = x % m;
     return r < 0 ? r + m : r;
 }
+
 /**
  * @brief Calculates the smallest angular difference between two angles.
  *
@@ -44,15 +55,45 @@ float circularDiff(float a, float b) {
     return (diff <= 180) ? diff : 360 - diff;
 }
 
+/**
+ * @brief Calculates the directional angle from one angle to another in a clockwise direction.
+ *
+ * Returns the angular distance from `angleCounterClockwise` to `angleClockwise`, measured clockwise,
+ * wrapped within the range [0, 360).
+ *
+ * @param angleCounterClockwise The starting angle (in degrees).
+ * @param angleClockwise The target angle (in degrees).
+ * @return The clockwise angle difference between the two angles (in degrees).
+ */
 float angleBetween(float angleCounterClockwise, float angleClockwise) {
     return floatMod(angleClockwise - angleCounterClockwise, 360);
 }
 
+/**
+ * @brief Calculates the smallest angular difference between two angles.
+ *
+ * Returns the minimal angular distance between two angles, regardless of direction.
+ * Always returns a value in the range [0, 180].
+ *
+ * @param angleCounterClockwise The first angle (in degrees).
+ * @param angleClockwise The second angle (in degrees).
+ * @return The smallest angle between the two angles (in degrees).
+ */
 float smallestAngleBetween(float angleCounterClockwise, float angleClockwise) {
     float ang = angleBetween(angleCounterClockwise, angleClockwise);
     return fmin(ang, 360 - ang);
 }
 
+/**
+ * @brief Calculates the midpoint angle between two angles.
+ *
+ * Returns the angle exactly halfway between `angleCounterClockwise` and `angleClockwise`,
+ * moving in a clockwise direction from `angleCounterClockwise`.
+ *
+ * @param angleCounterClockwise The starting angle (in degrees).
+ * @param angleClockwise The ending angle (in degrees).
+ * @return The midpoint angle between the two given angles (in degrees), wrapped to [0, 360).
+ */
 float midAngleBetween(float angleCounterClockwise, float angleClockwise) {
     return floatMod(angleCounterClockwise + angleBetween(angleCounterClockwise, angleClockwise) / 2.0, 360);
 }

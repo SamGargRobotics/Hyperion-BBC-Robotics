@@ -9,7 +9,8 @@
 #include "light_system.h"
  
 /*!
- * @brief Initalizes The Light System
+ * @brief Initalizes The Light System, and creates thresholds based on initially
+ *        read values.
  */
 void LSystem::init() {
     for(uint8_t i = 0; i < 4; i++) {
@@ -24,10 +25,12 @@ void LSystem::init() {
 }
  
 /*!
- * @brief reads a single light sensor
- * @param sensor_num the sensors index in the light sensor array that you want
- *                   to read
- * @return returns the value of the light sensor
+ * @brief Reads a singlular light sensor.
+ * 
+ * @param sensor_num The sensor index in the light sensor array that you want
+ *                   to read.
+ * 
+ * @return Returns the analogue value of the sensor that is read.
  */
 int LSystem::readOne(int sensor_num) {
     for(u_int8_t i = 0; i < 4; i++) {
@@ -41,7 +44,11 @@ int LSystem::readOne(int sensor_num) {
 }
  
 /*!
- * @brief calculates the direction of the white line to detect outs
+ * @brief Calculates the direction of the white line on the field.
+ * 
+ * @param rot Rotation of the robot (bno value).
+ * 
+ * @return Calculated line direction with line state taken into account.
  */
 void LSystem::calculateLineDirection(float rot) {
 
@@ -63,9 +70,6 @@ void LSystem::calculateLineDirection(float rot) {
         if(sensorIsWhite[intMod(i+1, NUM_LS)] && sensorIsWhite[intMod(i-1, NUM_LS)]) {
             sensorIsWhite[i] = 1;
         }
-        // if(!sensorIsWhite[intMod(i+1, NUM_LS)] && !sensorIsWhite[intMod(i-1, NUM_LS)]) {
-            // sensorIsWhite[i] = 0;
-        // }
     }
 
     clusterAmount = 0;
@@ -92,12 +96,12 @@ void LSystem::calculateLineDirection(float rot) {
     float lineDirection = -1;
     if(clusterAmount == 1) {
         lineDirection = clusterCenter[0]; // just the 1 cluster angle
-        relativeDefenderMovement = 1 - (1 - (0.5*(1-cos(smallestAngleBetween(clustersList[0][0]*11.25, clustersList[0][1]*11.25)))));
+        relativeDefenderMovement = calculateDistanceOver(clustersList[0][0]*11.25, clustersList[0][1]*11.25);
     } else if(clusterAmount == 2) {
         lineDirection = angleBetween(clusterCenter[0], clusterCenter[1]) <= 180\
                         ? midAngleBetween(clusterCenter[0], clusterCenter[1]) :\
                         midAngleBetween(clusterCenter[1], clusterCenter[0]);
-        relativeDefenderMovement = 1 - (1 - (0.5*(1-cos(smallestAngleBetween(clusterCenter[0], clusterCenter[1])))));
+        relativeDefenderMovement = calculateDistanceOver(clusterCenter[0], clusterCenter[1]);
     } else if(clusterAmount == 3) {
         float differences[3];
         for(int i = 0; i < 3; i++) {
@@ -107,7 +111,8 @@ void LSystem::calculateLineDirection(float rot) {
         for(int i = 0; i < 3; i++) {
             if(bigDiff == differences[i]) {
                 lineDirection = clusterCenter[(i+2)%3];
-                // lineDirection = midAngleBetween(clusterCenter[(i+1)%3], clusterCenter[i]);
+                relativeDefenderMovement = calculateDistanceOver(clusterCenter[0], clusterCenter[(i+1) % 3]);
+                break;
             }
         }
     }
@@ -116,7 +121,9 @@ void LSystem::calculateLineDirection(float rot) {
 
 /*!
  * @brief Calculates the state at which the robot is relative to the line and
-          field.
+ *        field.
+ * @param rot Rotation of the robot (bno)
+ * @param lineDirection Direction of the line
  */
 void LSystem::calculateLineState(float rot, float lineDirection) {
     imOnLine = lineDirection != -1;
@@ -151,4 +158,20 @@ void LSystem::calculateLineState(float rot, float lineDirection) {
             lineDir = floatMod(relLineDirection + 180, 360);
         }
     }
+}
+
+/**
+ * @brief Calculates a normalized distance metric between two angles.
+ *
+ * This function computes a value between 0 and 1 that represents the "distance over"
+ * or difference between two angles, `angle1` and `angle2`, using a cosine-based smoothing.
+ * The result is smallest (0) when the angles are identical and approaches 1 as the
+ * angular difference increases.
+ *
+ * @param angle1 The first angle in degrees.
+ * @param angle2 The second angle in degrees.
+ * @return A float between 0 and 1 representing the angular difference.
+ */
+float LSystem::calculateDistanceOver(float angle1, float angle2) {
+    return 1 - (1 - (0.5*(1-cos(smallestAngleBetween(angle1, angle2)))));
 }

@@ -82,12 +82,20 @@ float batteryCurrentLevel = 0;
 float currentBatteryLevelVolts = 0;
 //! @brief Move Angle in relevancy to the ls.lineDirection
 float lsMoveAngle = -1;
+//! @brief Vertical heading of the defender calculations (vectors)
+float defenderVertHeading = 0;
+//! @brief Assigned move speed of the robot throughout the logic
+float _moveSpeed = 0;
+//! @brief Assigned move angle of the robot throughout the logic
+float _moveAngle = 0;
+//! @brief Assigned move rotation of the robot throughout the logic
+float _moveRotation = 0;
+//! @brief Goal that is chosen to be tracker (attacker wise)
+bool chosenGoal = targetGoal;
 //! @brief Current logic state of the robot
 String robotState = "default";
 //! @brief State that the correction is in
 String correctionState = "default";
-
-bool chosenGoal = targetGoal;
 
 void setup() {
     Serial.begin(9600);
@@ -120,7 +128,8 @@ void loop() {
     #endif
 
 // [Bluetooth]
-    dirCalc.attack = bluetooth.update(dirCalc.attack, tssp.ballDir, tssp.ballStr);
+    dirCalc.attack = bluetooth.update(dirCalc.attack, tssp.ballDir, 
+                     tssp.ballStr);
     dirCalc.attack = 1;
     
 // [Correction / Goal Tracking Calculations]
@@ -208,13 +217,8 @@ void loop() {
 
 // [Light Sensors]
     ls.calculateLineDirection(rot);
-    lsMoveAngle = (ls.lineDir == -1)? -1 : floatMod((ls.lineDir - rot) + 180, 360);
-    for(int i = 0; i < NUM_LS; i++) {
-        Serial.print(ls.readOne(i));
-        Serial.print(" ");
-    }
-    Serial.println();
-    // Serial.println(ls.relativeDefenderMovement);
+    lsMoveAngle = (ls.lineDir == -1)? -1 : floatMod((ls.lineDir - rot) + 180, 
+                  360);
     #if DEBUG_LS
         Serial.print("ClusterAmt: ");
         Serial.print(ls.clusterAmount);
@@ -226,17 +230,22 @@ void loop() {
         Serial.print(lsMoveAngle);
         Serial.print("\t");
         Serial.print("Line: ");
-        Serial.println(lineAngle);
+        Serial.println(ls.lineDir);
     #endif
 
 // [Strategy and Movement Calculation]
     attackerMoveDirection = dirCalc.exponentialOrbit(tssp.ballDir);  
     attackerMoveSpeed = dirCalc.calcSpeed(tssp.ballStr, tssp.ballDir)*SET_SPEED;
-    attackerMoveSpeed = max(50.0f, ((goal_angle >= 5 || goal_angle <= -15) || (goal_x_val == 0 && goal_y_val == 0))? attackerMoveSpeed/4 : attackerMoveSpeed);
-    float defenderVertHeading = (tssp.detectingBall) ? ((tssp.ballDir > 180) ? (tssp.ballDir - 360) : tssp.ballDir) : -bnoHeading;
+    attackerMoveSpeed = max(50.0f, ((goal_angle >= 5 || goal_angle <= -15) || \
+                        (goal_x_val == 0 && goal_y_val == 0))? \
+                        attackerMoveSpeed/4 : attackerMoveSpeed);
+    defenderVertHeading = (tssp.detectingBall) ? ((tssp.ballDir > 180) ? \
+                          (tssp.ballDir - 360) : tssp.ballDir) : \
+                          -bnoHeading;
     verticalDefenderMovement = -defenderMovementVert.update(abs(goal_dis), \
                                                 GOAL_SEMI_CIRCLE_RADIUS_CM);
-    horizontalDefenderMovement = -defenderMovementHozt.update(defenderVertHeading, 0);
+    horizontalDefenderMovement = -defenderMovementHozt.update(
+                                  defenderVertHeading, 0);
     netDefendMovementAngle = floatMod(atan2(horizontalDefenderMovement, \
                              verticalDefenderMovement)*RAD_TO_DEG, 360);
     netDefendSpeed = sqrt(pow(verticalDefenderMovement, 2) + \
@@ -246,15 +255,12 @@ void loop() {
             surgestates.surgeQ = true;
             surgestates.startMillis = micros();
         }
-    if((tssp.ballStr <= 60) || (surgestates.startMillis+5000000) <= micros() || \
+    if((tssp.ballStr <= 60) || (surgestates.startMillis+5000000) <= micros() ||\
         ((tssp.ballDir >= 10 && tssp.ballDir <= 350) || goal_dis <= 225)) {
         surgestates.surgeQ = false;
     }
 
 // [Moving the Robot Final Calculations and Logic]
-    float _moveSpeed = 0;
-    float _moveAngle = 0;
-    float _moveRotation = 0;
     #if DEBUG_ROBOT
         motors.run(0, 0, bnoCorrection);
     #else
@@ -313,7 +319,8 @@ void loop() {
                     // If cannot see goal --> Forward or Backward depending
                     // on last seen goal_y_val
                     _moveSpeed = attackerMoveSpeed;
-                    _moveAngle = (cam.previousVals[0] <= DEF_GOAL_Y_THRESH)?180:tssp.ballDir;
+                    _moveAngle = (cam.previousVals[0] <= DEF_GOAL_Y_THRESH)?\
+                                 180:tssp.ballDir;
                     _moveRotation = bnoCorrection;
                     correctionState = "Regular";
                     robotState = "Defender Logic - Cannot see goal";
@@ -349,5 +356,4 @@ void loop() {
     #endif
 
 // [Manual Printing Space]
-// Serial.println
 }

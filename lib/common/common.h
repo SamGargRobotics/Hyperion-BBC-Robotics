@@ -22,13 +22,28 @@ float angleBetween(float angleCounterClockwise, float angleClockwise);
 float smallestAngleBetween(float angleCounterClockwise, float angleClockwise);
 float midAngleBetween(float angleCounterClockwise, float angleClockwise);
 
+/**
+ * @brief Shifts elements in an array down by one position within a specified range.
+ *
+ * This macro shifts the elements in array `a` one index forward (to the right), starting from
+ * index `lower` to `upper`, inclusive. It performs a bounds-aware shift, handling the case
+ * where `upper` is the last index in the array.
+ *
+ * **Usage Note:** The macro relies on `sizeof(a)/sizeof(a[0])` to determine the array size,
+ * so `a` must be a true array (not a pointer). Be cautious when using this with dynamically
+ * allocated arrays or function parameters.
+ *
+ * @param a The array whose elements are to be shifted.
+ * @param lower The starting index of the range to shift (inclusive).
+ * @param upper The ending index of the range to shift (inclusive).
+ */
 #define ARRAYSHIFTDOWN(a, lower, upper){          \
-	if (upper == (sizeof(a)/sizeof(a[0])) - 1){   \
-		for (int q = upper - 1; q >= lower; q--){ \
-			*(a + q + 1) = *(a + q); }            \
-	} else{                                       \
-		for (int q = upper; q >= lower; q--){     \
-			*(a + q + 1) = *(a + q); }}}
+    if (upper == (sizeof(a)/sizeof(a[0])) - 1){   \
+        for (int q = upper - 1; q >= lower; q--){ \
+            *(a + q + 1) = *(a + q); }            \
+    } else{                                       \
+        for (int q = upper; q >= lower; q--){     \
+            *(a + q + 1) = *(a + q); }}}
 
 //! @def MOTORNUM @brief Number of motors.
 #define MOTORNUM 4
