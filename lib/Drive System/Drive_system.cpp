@@ -6,7 +6,7 @@
  * This is a library to calculate the speed of 4 motors based on the direction
  * given.
  */
-#include "drive_system.h"
+#include "Drive_system.h"
 #include <math.h>
 
 /*!

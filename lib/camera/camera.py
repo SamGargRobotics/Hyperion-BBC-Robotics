@@ -12,15 +12,11 @@ import image
 from math import *
 from pyb import UART
 
-# Setting up UART
-uart = UART(3, 115200, timeout_char=100) #(only UART 1 or 3 available,baud rate,delay b/w frames)
-uart.init(115200, bits=8, timeout_char=10)
+
 
 # Vars
 YellowIsAttack = True
-thresholds = [(43, 99, -19, -1, 24, 127)]
-# (61, 99, -17, 9, 24, 68)
-thresholds2 = [(41, 58, -20, -1, -128, -9)]
+#              Yellow                          Blue
 Both = [(43, 99, -19, -1, 24, 127),(41, 58, -20, -1, -128, -9)]
 
 sensor.reset()  # Reset and initialize the sensor.
@@ -31,6 +27,9 @@ sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
 sensor.set_windowing((120,120))
 clock = time.clock()  # Create a clock object to track the FPS.
+# Setting up UART
+uart = UART(3, 115200, timeout_char=100) #(only UART 1 or 3 available,baud rate,delay b/w frames)
+uart.init(115200, bits=8, timeout_char=10)
 
 def GoalFind():
     """This function finds the distance on the x and y from the middle of the camera.
@@ -41,15 +40,17 @@ def GoalFind():
     Blob.code() : int
     List : [XDIST, YDIST, blob.code()]
     """
-    Temp1 = [0,0,0]
-    Temp2 = [0,0,0]
-    for blob in img.find_blobs(Both, pixels_threshold=35, area_threshold=35, merge=True, x_stride = 4, y_stride = 2):
-        if(blob.code() == 1):
-            img.draw_rectangle(blob.rect(),color=(255,255,0))
-            Temp1 = [blob.cx(),blob.cy(),blob.area()]
-        elif(blob.code() == 2):
-            img.draw_rectangle(blob.rect(),color=(0,0,255))
-            Temp2 = [blob.cx(),blob.cy(),blob.area()]
+    Temp1 = [255, 255]
+    Temp2 = [255, 255]
+    blobs = img.find_blobs(Both, pixels_threshold=35, area_threshold=35, merge=True, x_stride = 4, y_stride = 2)
+    blobs = sorted(blobs, key=lambda blob: -blob.area())
+    for blob in blobs:
+        if(blob.code() == 1 and Temp1[0] == 255):
+            # img.draw_rectangle(blob.rect(),color=(255,255,0))
+            Temp1 = [blob.cx(),blob.cy()]
+        elif(blob.code() == 2 and Temp2[0] == 255):
+            # img.draw_rectangle(blob.rect(),color=(0,0,255))
+            Temp2 = [blob.cx(),blob.cy()]
     return [Temp1,Temp2]
 
 while True:
@@ -63,6 +64,4 @@ while True:
     uart.writechar(int(TRI[0][1]))
     uart.writechar(int(TRI[1][0]))
     uart.writechar(int(TRI[1][1]))
-    uart.writechar(int(TRI[0][2]))
-    uart.writechar(int(TRI[1][2]))
-    print(TRI)
+    # print(TRI)

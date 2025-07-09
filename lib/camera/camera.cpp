@@ -2,7 +2,7 @@
  * @file Camera.cpp
  */
  
-#include "camera.h"
+#include "Camera.h"
  
 // i think we need the UART Libary
  
@@ -12,68 +12,86 @@
 void Camera::init(){
     cameraSerial.begin(115200); // frequancey thing :D
 }
+
 /*!
  * @brief a function that comuniates to the camera and recieves its information
  * @return the values that the camera is transmitting [goal_x, goal_y, 
  *         goal_index (colour), angle_to_goal]
  */
-void Camera::read_camera(){
-    if (cameraSerial.available() >= 8) {
+void Camera::update(bool attackBlue){
+    if (cameraSerial.available() >= CAM_PACKET_SIZE) {
         // read the incoming stuff
-        if(cameraSerial.read() == 200){
-            if(cameraSerial.peek() == 122){
-                cameraSerial.read();
-                goal_x_yellow = cameraSerial.read();
-                if(goal_x_yellow == 0) {
-                    goal_x_yellow = goal_x_yellow;
-                } else {
-                    goal_x_yellow -= 60;
-                }
-                goal_y_yellow = cameraSerial.read();
-                if(goal_y_yellow == 0) {
-                    goal_y_yellow = goal_y_yellow;
-                } else {
-                    goal_y_yellow -= 60;
-                }
-                angle_to_goal_yellow = calculate_theta(goal_y_yellow,goal_x_yellow);
-                goal_x_blue = cameraSerial.read();
-                if(goal_x_blue == 0) {
-                    goal_x_blue = goal_x_blue;
-                } else {
-                    goal_x_blue -= 60;
-                }
-                goal_y_blue = cameraSerial.read();
-                if(goal_y_blue == 0) {
-                    goal_y_blue = goal_y_blue;
-                } else {
-                    goal_y_blue -= 60;
-                }
-                distYel = cameraSerial.read();
-                distBlue = cameraSerial.read();
-                angle_to_goal_blue = calculate_theta(goal_y_blue,goal_x_blue);
+        uint8_t byte1 = cameraSerial.read();
+        uint8_t byte2 = cameraSerial.peek();
+        if(byte1 == CAM_START_PACK_1 && byte2 == CAM_START_PACK_2) {
+            cameraSerial.read();
+            uint8_t goal_x_yellow = cameraSerial.read();
+            uint8_t goal_y_yellow = cameraSerial.read();
+            uint8_t goal_x_blue = cameraSerial.read();
+            uint8_t goal_y_blue = cameraSerial.read();
+            if(goal_x_yellow != 255) {
+                goal_x_yellow -= 60;
+                goal_y_yellow -= 60;
+            }
+            if(goal_x_blue != 255) {
+                goal_x_blue -= 60;
+                goal_y_yellow -= 60;
+            }
+            if (attackBlue) {
+                attackGoalAngle = calculate_theta(goal_y_blue, goal_x_blue);
+                attackGoalDist = calculate_hypot(goal_x_blue, goal_y_blue);
+                defendGoalAngle = calculate_theta(goal_y_yellow, goal_x_yellow);
+                defendGoalDist = calculate_hypot(goal_x_yellow, goal_y_yellow);
+                seeingAttackingGoal = (goal_y_blue != 255);
+                seeingDefendingGoal = (goal_y_yellow != 255);
+            } else {
+                attackGoalAngle = calculate_theta(goal_y_yellow, goal_x_yellow);
+                attackGoalDist = calculate_hypot(goal_x_yellow, goal_y_yellow);
+                defendGoalAngle = calculate_theta(goal_y_blue, goal_x_blue);
+                defendGoalDist = calculate_hypot(goal_x_blue, goal_y_blue);
+                seeingAttackingGoal = (goal_y_yellow != 255);
+                seeingDefendingGoal = (goal_y_blue != 255);
             }
         }
     }
-    if(targetGoal?goal_y_yellow:goal_y_blue != 0) {
-        previousVals[0] = goal_y_blue;
-        previousVals[1] = goal_x_blue;
-        previousVals[2] = goal_y_yellow;
-        previousVals[3] = goal_x_yellow;
-    }
 }
- 
+
+float Camera::getAttackGoalAngle() {
+    return attackGoalAngle;
+}
+
+float Camera::getAttackGoalDist() {
+    return attackGoalDist;
+}
+
+float Camera::getDefendGoalAngle() {
+    return defendGoalAngle;
+}
+
+float Camera::getDefendGoalDist() {
+    return defendGoalDist;
+}
+
+bool Camera::getAttackGoalVisible() {
+    return seeingAttackingGoal;
+}
+
+bool Camera::getDefendGoalVisible() {
+    return seeingDefendingGoal;
+}
+
 /*!
- * @brief calculate the hypotinus from two distances
- * @return returns the hypotinus
+ * @brief Calculates the hypotenuse on a triangle based on two distances
+ * @return Returns the Hypotenuse
  */
 float Camera::calculate_hypot(float x, float y){
-    return sqrt(pow(x,2) + pow(y,2));
+    return sqrtf(pow(x,2) + pow(y,2));
 }
  
 /*!
- * @brief calculate the angle from two distances
- * @return returns theta
+ * @brief Calculates the angle between two distances using trigonometry.
+ * @return Returns Theta
  */
-float Camera::calculate_theta(float o, float a){
-    return 90 - (atan2(o, a) * RAD_TO_DEG);
+float Camera::calculate_theta(float opp, float adj){
+    return 90 - (atan2f(opp, adj) * RAD_TO_DEG);
 }

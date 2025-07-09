@@ -1,15 +1,16 @@
 /*!
  * @file bluetooth.cpp
  */
-#include <bluetooth.h>
+#include <Bluetooth.h>
 
 /*!
  * @brief Initializes the module for use accross the library and code
  */
 void Bluetooth::init() {
-    BLUETOOTH_SERIAL.begin(BLUETOOTH_BAUD);
-    last_received_time = micros();
-    last_sent_time = micros();
+    BT_SERIAL.begin(BT_BAUD);
+    connectedTimer.resetTime();
+    roleConflict.resetTime();
+    sendTimer.resetTime();
 }
 
 /*!
@@ -19,52 +20,55 @@ void Bluetooth::init() {
  * @param ballDir Current Direction of Ball.
  * @param ballDis Current Distance of Ball away from robot (cm).
  */
-bool Bluetooth::update(bool logic, float ballDir, float ballDis) {
-    thisRobot = {logic, ballDir, ballDis};
-    unsigned long current_time = micros();
-    if(current_time - last_sent_time > 250000) {
-        send(logic, ballDir, ballDis);
+void Bluetooth::update(float ballDir, float ballStr) {
+    self.ballDir = ballDir;
+    self.ballStr = ballStr;
+    if(sendTimer.timeHasPassed()) {
+        send();
     }
-    if(read()) {
-        last_received_time = micros();
+    read();
+
+    bool connected = !connectedTimer.timeHasPassedNoUpdate();
+    
+    if(!connected) {
+        self.role = 0;
+        roleConflict.resetTime();
+    } else if(switching) {
+        self.role = !self.role;
+        roleConflict.resetTime();
+    } else if(self.role == other.role) {
+        if(roleConflict.timeHasPassedNoUpdate()) {
+            self.role = self.ballStr > other.ballStr;
+            roleConflict.resetTime();
+        }
+    } else if(!self.role && (self.ballStr > SURGE_STR_VALUE) && (self.ballDir < 15 || self.ballDir > 345)) {
+        switching = true;
     }
-    // prevBallStr = otherRobotBallLocation[1];
-    // prevPrevAttacking = prevAttacking;
-    // prevAttacking = otherRobotLogic;
-    connection = micros() - last_received_time > 2000000 ? false : true;
-    return switching();
 }
 
 /*!
  * @brief If the serial has more than one full packet, it attempts to read the
           bluetooth module.
  * 
- * @return If there is any data in the packet.
  */
-bool Bluetooth::read() {
-    // See if serial has more than one full packet
-    while(BLUETOOTH_SERIAL.available() >= BLUETOOTH_PACKET_SIZE) {
-        // Checks if the serial has the associatde starting BYTE
-        if(BLUETOOTH_SERIAL.read() == BLUETOOTH_START_BYTE) {
-            for(int i = 0; i < BLUETOOTH_PACKET_SIZE - 1; i++) {
-                // Reads information sent on the serial
-                bluetoothBuffer[i] = BLUETOOTH_SERIAL.read();
-            }
-            // Assigned associated public variables with information read from 
-            // the serial
-            otherRobotBallLocation[0] = (bluetoothBuffer[0] == \
-                                BLUETOOTH_NO_DATA ? -1 : bluetoothBuffer[0]);
-            otherRobotBallLocation[1] = (bluetoothBuffer[0] == \
-                                BLUETOOTH_NO_DATA ? -1 : bluetoothBuffer[1]);
-            otherRobotLogic = (bluetoothBuffer[2] == BLUETOOTH_NO_DATA \
-                                ? -1 : bluetoothBuffer[2]);
-            // Returns true if the data from the serial was read.
-            otherRobot = {otherRobotLogic, otherRobotBallLocation[0], otherRobotBallLocation[1]};
-            return true;
+void Bluetooth::read() {
+   if(BT_SERIAL.available() >= BT_PACKET_SIZE) {
+        uint8_t byte1 = BT_SERIAL.read();
+        uint8_t byte2 = BT_SERIAL.peek();
+        if(byte1 == BT_START_BYTE && byte2 == BT_START_BYTE) {
+            BT_SERIAL.read();
+            bool otherPrevRole = other.role;
+            other.role = BT_SERIAL.read();
+            switching = (otherPrevRole != other.role) && (self.role == other.role);
+
+            byte1 = BT_SERIAL.read();
+            byte2 = BT_SERIAL.read();
+            uint16_t tempBallDir = (byte1 << 8) | byte2;
+            other.ballDir = tempBallDir / 100.0f;
+            other.ballStr = BT_SERIAL.read();
+            connectedTimer.resetTime();
         }
     }
-    // Returns false if the data was not read at all.
-    return false;
 }
 
 /*!
@@ -74,27 +78,16 @@ bool Bluetooth::read() {
  * @param ballDir Current direction of the ball.
  * @param ballDis Current distance of the ball away from the robot (cm).
  */
-void Bluetooth::send(bool logic, float ballDir, float ballDis) {
-    BLUETOOTH_SERIAL.write(BLUETOOTH_START_BYTE);
-    BLUETOOTH_SERIAL.write(int(ballDir));
-    BLUETOOTH_SERIAL.write(int(ballDis));
-    BLUETOOTH_SERIAL.write(logic);
-    last_sent_time = micros();
+void Bluetooth::send() {
+    BT_SERIAL.write(BT_START_BYTE);
+    BT_SERIAL.write(BT_START_BYTE);
+    BT_SERIAL.write(self.role);
+    uint16_t b = self.ballDir * 100;
+    BT_SERIAL.write(highByte(b));
+    BT_SERIAL.write(lowByte(b));
+    BT_SERIAL.write(self.ballStr);
 }
 
-bool Bluetooth::switching() {
-    bool switchCon;
-    if(!connection) {
-        return false;
-    } 
-    if(switchTimer.timeHasPassedNoUpdate()) {
-        switchCon = (thisRobot.ballDistance > otherRobot.ballDistance) || \
-                    ((otherRobot.ballAngle > 90 && otherRobot.ballAngle < 270) \
-                    && thisRobot.ballDistance >= 95);
-        if(switchCon == thisRobot.role) {
-            switchTimer.resetTime();
-        }
-        return switchCon;
-    }
-    return thisRobot.role;
+bool Bluetooth::getRole() {
+    return self.role;
 }

@@ -11,14 +11,15 @@
 #define BLUETOOTH_H
 
 #include <Arduino.h>
-#include <common.h>
+#include <Common.h>
+#include <Config.h>
 #include <Timer.h>
 
 
 struct robotData {
     bool role;
-    float ballAngle;
-    float ballDistance;
+    float ballDir;
+    uint8_t ballStr;
 };
 
 /*!
@@ -29,8 +30,27 @@ class Bluetooth {
 public:
     Bluetooth() {};
     void init();
-    bool update(bool logic, float ballDir, float ballDis);
-    void send(bool logic, float ballDir, float ballDis);
+    void update(float ballDir, float ballStr);
+    bool getRole();
+private:
+    void read();
+    void send();
+
+    robotData self = {false, 0.0, 0};
+    robotData other = {false, 0.0, 0};
+    Timer connectedTimer = Timer(1000000);
+    Timer roleConflict = Timer(1000000);
+    Timer sendTimer = Timer(10000);
+
+    bool otherPrevRole = false;
+    bool switching = false;
+
+};/*
+
+
+
+
+    void send(bool logic, float ballDir, float ballStr);
     bool switching();
     //! @brief Location of the ball for the connected robot. [1] is ballDir, [2]
     //!        is ballStr
@@ -39,16 +59,14 @@ public:
     float otherRobotLogic = 0;
     //! @brief If the robot is connected to another bluetooth module
     bool connection;
-private:
-    robotData thisRobot = {};
-    robotData otherRobot = {};
+    
     bool read();
     Timer switchTimer = Timer(200000);
     bool read_data;
     int bluetoothBuffer[BLUETOOTH_PACKET_SIZE - 1];
     unsigned long last_sent_time;
     unsigned long last_received_time;
-};
+};*/
 
 
 #endif

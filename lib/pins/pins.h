@@ -82,14 +82,13 @@
 //! @def LIGHT_PIN_DIGI_3 @brief Light Sensor Pin in correspondance to Mux
 #define LIGHT_PIN_DIGI_3 14
 
-//! @def BAT_READ_PIN @brief Pin used to read battery of robot LiPo
-#define BAT_READ_PIN 38
-//! @def BAT_LED_PIN @brief LED pin for the battery warning critical battery
-#define BAT_LED_PIN 35
+//! @def BATT_READ_PIN @brief Pin used to read battery of robot LiPo
+#define BATT_READ_PIN 38
 
-//! @def LOGIC_PIN @brief The logic pin has various uses, it is connected to a
+
+//! @def GOAL_PIN @brief The logic pin has various uses, it is connected to a
 //!                       switch which is connected to two different conditions
 //!                       depending on what is happening inside the code.
-#define LOGIC_PIN 32
+#define GOAL_PIN 32
 
 #endif

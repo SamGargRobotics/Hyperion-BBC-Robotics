@@ -19,8 +19,10 @@
     //! @def targetGoal @brief Blue = 1, Yelow = 0; Assigns which goal is the target
     //!                        for either attacking or defending
     #define targetGoal false
-    //! @def SET_SPEED @brief Speed that is set for running
-    #define SET_SPEED 125
+    //! @def SURGE_SPEED @brief Speed that is set for surging
+    #define  SURGE_SPEED 125
+    //! @def BASE_SPEED @brief Speed that is set for minimum
+    #define  BASE_SPEED 125
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being tuned
     #define SECOND_ROBOT true
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
@@ -34,62 +36,58 @@ struct surgeState {
 
 // --[PID Values]--
 #if not SECOND_ROBOT
-    //! @def PID_p_attack @brief Proportional aspect of PID
-    #define PID_p_attack 0.9
-    //! @def PID_p_attack_goal @brief Proportional aspect of PID (goal attack)
-    #define PID_p_attack_goal 1.4
-    //! @def PID_i_attack @brief Intergral aspect of PID
-    #define PID_i_attack 0
-    //! @def PID_d_attack @brief Derivative aspect of PID
-    #define PID_d_attack 0.055
-    //! @def PID_p_defend @brief Proportional aspect of PID
-    #define PID_p_defend 0.65
-    //! @def PID_i_defend @brief Intergral aspect of PID
-    #define PID_i_defend 0
-    //! @def PID_d_defend @brief Derivative aspect of PID
-    #define PID_d_defend 0.03
-    //! @def PID_p_defender_movement_vert @brief Proportional aspect of PID
-    #define PID_p_defender_movement_vert 5
-    //! @def PID_i_defender_movement_vert @brief Intergral aspect of PID
-    #define PID_i_defender_movement_vert 0
-    //! @def PID_d_defender_movement_vert @brief Derivative aspect of PID
-    #define PID_d_defender_movement_vert 0
-    //! @def PID_p_defender_movement_hozt @brief Proportional aspect of PID
-    #define PID_p_defender_movement_hozt 1.2
-    //! @def PID_i_defender_movement_hozt @brief Intergral aspect of PID
-    #define PID_i_defender_movement_hozt 0
-    //! @def PID_d_defender_movement_hozt @brief Derivative aspect of PID
-    #define PID_d_defender_movement_hozt 0
+    #define KP_IMU 0.9
+    #define KI_IMU 0.0
+    #define KD_IMU 0.055
+
+    #define KP_CAM_ATTACK 1.4
+    #define KI_CAM_ATTACK 0.0
+    #define KD_CAM_ATTACK 0.04125
+
+    #define KP_CAM_DEFEND 0.65
+    #define KI_CAM_DEFEND 0
+    #define KD_CAM_DEFEND 0.03
+
+    #define KP_DEFEND_VERT 40.0
+    #define KI_DEFEND_VERT 0.0
+    #define KD_DEFEND_VERT 0.0
+
+    #define KP_DEFEND_HOZT 2.0
+    #define KI_DEFEND_HOZT 0.0
+    #define KD_DEFEND_HOZT 0.0
+
+    #define KP_LINE_AVOID 40.0
+    #define KI_LINE_AVOID 0.0
+    #define KD_LINE_AVOID 0.0
 #else
-    //! @def PID_p_attack @brief Proportional aspect of PID
-    #define PID_p_attack 0.9
-    //! @def PID_p_attack_goal @brief Proportional aspect of PID (goal attack)
-    #define PID_p_attack_goal 0.815
-    //! @def PID_i_attack @brief Intergral aspect of PID
-    #define PID_i_attack 0
-    //! @def PID_d_attack @brief Derivative aspect of PID
-    #define PID_d_attack 0.0275
-    //! @def PID_p_defend @brief Proportional aspect of PID
-    #define PID_p_defend 0.65
-    //! @def PID_i_defend @brief Intergral aspect of PID
-    #define PID_i_defend 0
-    //! @def PID_d_defend @brief Derivative aspect of PID
-    #define PID_d_defend 0.03
-    //! @def PID_p_defender_movement_vert @brief Proportional aspect of PID
-    #define PID_p_defender_movement_vert 5
-    //! @def PID_i_defender_movement_vert @brief Intergral aspect of PID
-    #define PID_i_defender_movement_vert 0
-    //! @def PID_d_defender_movement_vert @brief Derivative aspect of PID
-    #define PID_d_defender_movement_vert 0
-    //! @def PID_p_defender_movement_hozt @brief Proportional aspect of PID
-    #define PID_p_defender_movement_hozt 1.2
-    //! @def PID_i_defender_movement_hozt @brief Intergral aspect of PID
-    #define PID_i_defender_movement_hozt 0
-    //! @def PID_d_defender_movement_hozt @brief Derivative aspect of PID
-    #define PID_d_defender_movement_hozt 0
+    #define KP_IMU 0.9
+    #define KI_IMU 0.0
+    #define KD_IMU 0.0275
+
+    #define KP_CAM_ATTACK 0.815
+    #define KI_CAM_ATTACK 0.0
+    #define KD_CAM_ATTACK 0.020625
+
+    #define KP_CAM_DEFEND 0.65
+    #define KI_CAM_DEFEND 0
+    #define KD_CAM_DEFEND 0.03
+
+    #define KP_DEFEND_VERT 40.0
+    #define KI_DEFEND_VERT 0.0
+    #define KD_DEFEND_VERT 0.0
+
+    #define KP_DEFEND_HOZT 2.0
+    #define KI_DEFEND_HOZT 0.0
+    #define KD_DEFEND_HOZT 0.1
+
+    #define KP_LINE_AVOID 40.0
+    #define KI_LINE_AVOID 0.0
+    #define KD_LINE_AVOID 0.0
+
+    #define KP_CENTERING 1.0
+    #define KI_CENTERING 0.0
+    #define KD_CENTERING 0.0
 #endif
-//! @def PID_abs_max @brief Absoloute max of PID
-#define PID_abs_max SET_SPEED
 
 // --[ATTACK LOGIC Values]
 #if not SECOND_ROBOT
@@ -110,21 +108,6 @@ struct surgeState {
     #define SURGE_STR_VALUE 107
     //! @def EXPO_MIN_VAL @brief Minimum value of the exponential orbit
     #define EXPO_MIN_VAL 60
-#endif
-
-// --[DEFENCE LOGIC Values]
-#if not SECOND_ROBOT
-    //! @def GOAL_SEMI_CIRCLE_RADIUS_CM @brief The defender's arc orbit around goal
-    #define GOAL_SEMI_CIRCLE_RADIUS_CM 243 //243
-    //! @def DEFENCE_SURGE_STR_VALUE @brief Min strength value that allows robot to 
-    //!                                     surge (Defence)
-    #define DEFENCE_SURGE_STR_VALUE 135
-#else
-    //! @def GOAL_SEMI_CIRCLE_RADIUS_CM @brief The defender's arc orbit around goal
-    #define GOAL_SEMI_CIRCLE_RADIUS_CM 243
-    //! @def DEFENCE_SURGE_STR_VALUE @brief Min strength value that allows robot to 
-    //!                                     surge (Defence)
-    #define DEFENCE_SURGE_STR_VALUE 85
 #endif
 
 // --[GOAL TRACKING Values]--
@@ -162,6 +145,10 @@ struct surgeState {
 
 // --[LIGHT SENSOR Values]--
 #define LS_FLIP_THRESH 90
+#define ATK_LINE_SP 0.2
+#define DEF_LINE_SP 0.5
+#define LINE_STRICT_AVOID 0.75
+#define DEF_VERT_SP 1
 
 // --[BATTERY TRACKING Values]--
 #if not SECOND_ROBOT
@@ -173,12 +160,20 @@ struct surgeState {
 #endif
     //! @def BATTERY_CRITICAL @brief The battery level where the battery is critical
     #define BATTERY_CRITICAL 11.1
+    //! @def BATTERY1_DIVIDER
+    #define BATTERY1_DIVIDER 70.5
 
 // --[PHYSICAL DEBUG TOGGLES]
     //! @def DEBUG_ROBOT @brief Testing space for individual items
     #define DEBUG_ROBOT false
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
     #define GOAL_TRACKING_TOGGLE true
+    //! @def CAM_PACKET_SIZE @brief Size of the sent data accross camera
+    #define CAM_PACKET_SIZE 6
+    //! @def CAM_START_PACK_1 @brief Size of the sent data accross camera
+    #define CAM_START_PACK_1 200
+    //! @def CAM_START_PACK_2 @brief Size of the sent data accross camera
+    #define CAM_START_PACK_2 122
 
 // --[DEBUG TOGGLES]--
     //! @def DEBUG_MOTORS @brief Read what the motors are sending when true
@@ -202,4 +197,5 @@ struct surgeState {
     //! @def DEBUG_LINE_STATE @brief Reads individual LS values
     #define DEBUG_LINE_STATE false
 
+    #define DEBUG false
 #endif

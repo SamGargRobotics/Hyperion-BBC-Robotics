@@ -7,31 +7,24 @@
  * 
  * @author S.Garg (Brisbane Boys' College)
  */
-#ifndef BATREAD_H
-#define BATREAD_H
+#ifndef VOLTDIV_H
+#define VOLTDIV_H
 
 #include <Arduino.h>
-#include <config.h>
-#include <pins.h>
 
 /*!
  * @brief Class that stores state and functions for interacting with the
  *        robot's electrical circuit using voltage dividers to uncover battery
  *        level.
  */
-class BatRead { 
+class VoltDiv { 
 public:
-    BatRead() {};
+    VoltDiv(uint8_t p, float d) : pin(p), divider(d) {}
     void init();
-    void read();
-    //! @brief The amount of volts inside a battery on the robot
-    float volts = 0;
-    //! @brief If the motor switch is on or not
-    bool motorOn = false;
+    float update();
 private:
-    void calcBat(float rawVal);
-    void calcSwitchStatus(float V);
-    float rawValue = 0;
+    uint8_t pin;
+    float divider;
 };
 
-#endif
+#endif // VOLTDIV_H

@@ -19,19 +19,19 @@
  * @brief Class that stores state and functions for calculating the direction of
           the line for outs
  */
-class LSystem {
+class Light_system {
 public:
-    LSystem() {};
+    Light_system() {};
     void init();
-    void calculateLineDirection(float rot);
-    int readOne(int sensor_num);
-    int lineState = 0;
-    float lineDir = -1;
-    float relativeDefenderMovement = 0;
+    void update(float rot);
+
+    float getLineState();
+    float getLineDirection();
 private:
-    bool imOnLine = 0;
-    int clusterAmount = 0;
-    void calculateLineState(float rot, float lineDirection);
+    int readOne(int sensor_num);
+    float lineState = 0;
+    float lineDir = -1;
+    void calculateLineState(float rot, float lineDirection, float linePos);
     float calculateDistanceOver(float angle1, float angle2);
     int whiteThreshold[NUM_LS] = {0};
     int pinList[4] = {LIGHT_PIN_DIGI_0, LIGHT_PIN_DIGI_1, LIGHT_PIN_DIGI_2,

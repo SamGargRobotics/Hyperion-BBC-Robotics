@@ -1,0 +1,11 @@
+bluetooth library - fix with raj
+
+bluetooth HC-05 x4 (2 sets)
+BNO055 x2
+Teensy 4.1 x2
+OpenMV x2
+
+- camera lib done
+- tssp system lib done
+- light system lib done
+- tssp system done

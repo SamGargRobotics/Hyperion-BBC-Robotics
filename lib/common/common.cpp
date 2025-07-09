@@ -2,7 +2,7 @@
  * @file common.cpp
  */
 
- #include "common.h"
+ #include "Common.h"
 
 /*!
  * @brief Computes the floating-point modulus operation that always returns a 

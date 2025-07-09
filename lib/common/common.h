@@ -56,18 +56,6 @@ float midAngleBetween(float angleCounterClockwise, float angleClockwise);
 //! @def NUMBER_MUX @brief Number of mux's
 #define NUMBER_MUX 2
 
-//! @def PI @brief π
-#define PI 3.1415926535897932384626433832795
-//! @def HALF_PI @brief π/2
-#define HALF_PI 1.5707963267948966192313216916398
-//! @def TWO_PI @brief 2π
-#define TWO_PI 6.283185307179586476925286766559
-//! @def DEG_TO_RAD @brief Degrees to Radians
-#define DEG_TO_RAD 0.017453292519943295769236907684886
-//! @def RAD_TO_DEG @brief Radians to Degrees
-#define RAD_TO_DEG 57.295779513082320876798154814105
-//! @def EULER @brief Euler's Number
-#define EULER 2.718281828459045235360287471352
 //! @def CIRCLE_DEGREES @brief Number of degrees in a circle
 #define CIRCLE_DEGREES 360
 //! @def SEMI_CIRCLE_DEGREES @brief Number of degrees in a semi circle
@@ -87,17 +75,17 @@ float midAngleBetween(float angleCounterClockwise, float angleClockwise);
 //! @def cameraSerial @brief Serial that the camera sends data over to
 #define cameraSerial Serial8
 
-//! @def BLUETOOTH_SERIAL @brief Serial used to transfer data from the
+//! @def BT_SERIAL @brief Serial used to transfer data from the
 //!                              bluetooth modules
-#define BLUETOOTH_SERIAL Serial1
-//! @def BLUETOOTH_BAUD @brief Bluetooth communication baud rate.
-#define BLUETOOTH_BAUD 9600
-//! @def BLUETOOTH_PACKET_SIZE @brief Size of data being sent over.
-#define BLUETOOTH_PACKET_SIZE 4
-//! @def BLUETOOTH_START_BYTE @brief Byte start identifier.
-#define BLUETOOTH_START_BYTE 254
-//! @def BLUETOOTH_NO_DATA @brief If module has no data output.
-#define BLUETOOTH_NO_DATA 255
+#define BT_SERIAL Serial1
+//! @def BT_BAUD @brief Bluetooth communication baud rate.
+#define BT_BAUD 9600
+//! @def BT_PACKET_SIZE @brief Size of data being sent over.
+#define BT_PACKET_SIZE 4
+//! @def BT_START_BYTE @brief Byte start identifier.
+#define BT_START_BYTE 255
+//! @def BT_NO_DATA @brief If module has no data output.
+#define BT_NO_DATA 255
 
 
 #endif

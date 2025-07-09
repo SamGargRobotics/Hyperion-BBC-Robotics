@@ -5,7 +5,7 @@
  * 
  * This is a library for multiple TSSP50838 Sensor
  */
-#include "tssp_system.h"
+#include "Tssp_system.h"
 
 /*!
  * @brief Initialize all the tssp's accordingly
@@ -20,7 +20,12 @@ void Tssp_system::init() {
  * @brief Completes calculations for ballDir and ballStr by reading the Tssps
  */
 void Tssp_system::update() {
+    int readTssp[TSSPNUM] = {0};
+    uint8_t tsspSortedValues[TSSPNUM] = {0};
+    uint8_t tsspSortedIndex[TSSPNUM] = {0}; 
     // Assign tssp x and y components based on place in unit circle (vs real)
+    float tsspX[TSSPNUM] = {0};
+    float tsspY[TSSPNUM] = {0};
     for(uint8_t i = 0; i < TSSPNUM; i++) {
         tsspX[i] = sin(i*(360/TSSPNUM)*DEG_TO_RAD); 
         tsspY[i] = cos(i*(360/TSSPNUM)*DEG_TO_RAD);
@@ -90,7 +95,14 @@ void Tssp_system::update() {
     //          and then that is converted to degrees.
     ballStr = ((3 * tsspSortedValues[0]) + (2 * tsspSortedValues[1]) + \
               tsspSortedValues[2] + tsspSortedValues[3]) / 7;
-    detectingBall = (ballStr != 0);
-    ballDir = detectingBall ? 360 - \
+    ballDir = (ballStr != 0) ? 360 - \
                             floatMod((RAD_TO_DEG * (atan2f(y, x)))-90, 360) : 0;
+}
+
+float Tssp_system::getBallStr() {
+    return ballStr;
+}
+
+float Tssp_system::getBallDir() {
+    return ballDir;
 }
