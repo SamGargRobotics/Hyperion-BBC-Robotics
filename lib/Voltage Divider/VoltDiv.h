@@ -1,9 +1,7 @@
 /*!
- * @file batread.h
+ * @file VoltDiv.h
  * 
  * @mainpage This is a library used to read the battery level of the robot.
- * 
- * @date 30/04/25
  * 
  * @author S.Garg (Brisbane Boys' College)
  */

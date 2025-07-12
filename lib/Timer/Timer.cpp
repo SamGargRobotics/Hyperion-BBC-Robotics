@@ -5,6 +5,8 @@
 
 /*! 
  * @brief Initialize the timer based on the users constraints.
+ * 
+ * @param duration Duration of the time set per instance (in microseconds).
  */
 Timer::Timer(unsigned long duration) {
     timerDuration = duration;

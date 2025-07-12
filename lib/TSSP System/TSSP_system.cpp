@@ -1,14 +1,14 @@
 /*!
  * @file tssp_system.cpp
  * 
- * @mainpage Multiple TSSP58038 Sensor's
+ * @mainpage An array of TSSP58038 Sensors
  * 
- * This is a library for multiple TSSP50838 Sensor
+ * This is a library for an array of TSSP50838 Sensors
  */
 #include "Tssp_system.h"
 
 /*!
- * @brief Initialize all the tssp's accordingly
+ * @brief Initialize all the tssp's accordingly.
  */
 void Tssp_system::init() {
     for(uint8_t i = 0; i < TSSPNUM; i++) {
@@ -17,7 +17,7 @@ void Tssp_system::init() {
 }
 
 /*! 
- * @brief Completes calculations for ballDir and ballStr by reading the Tssps
+ * @brief Completes calculations for ballDir and ballStr by reading the Tssps.
  */
 void Tssp_system::update() {
     int readTssp[TSSPNUM] = {0};
@@ -45,7 +45,7 @@ void Tssp_system::update() {
     }
 
     // Prints each individual sensor value out if true.
-    #if DEBUG_TSSP_SENSOR_VAL 
+    #if DEBUG_TSSP_VALS 
         for(uint8_t i = 0; i < TSSPNUM; i++) {
             Serial.print(readTssp[i]);
             Serial.print("\t");
@@ -97,12 +97,29 @@ void Tssp_system::update() {
               tsspSortedValues[2] + tsspSortedValues[3]) / 7;
     ballDir = (ballStr != 0) ? 360 - \
                             floatMod((RAD_TO_DEG * (atan2f(y, x)))-90, 360) : 0;
+    #if DEBUG_TSSP
+        Serial.print("BallDir: ");
+        Serial.print(ballDir);
+        Serial.print(" BallStr: ");
+        Serial.println(ballStr);
+    #endif
 }
 
+/*!
+ * @brief Get function for the how far away the ball is relative to the robot
+ *        in units.
+ * 
+ * @returns Ball Strength (how far away the ball is) of the array of TSSPs.
+ */
 float Tssp_system::getBallStr() {
     return ballStr;
 }
 
+/*!
+ * @brief Get function for the direction of the ball relative to the robot.
+ * 
+ * @returns Direction of the ball relative ot the array of TSSPs (robot).
+ */
 float Tssp_system::getBallDir() {
     return ballDir;
 }

@@ -47,45 +47,12 @@ float midAngleBetween(float angleCounterClockwise, float angleClockwise);
 
 //! @def MOTORNUM @brief Number of motors.
 #define MOTORNUM 4
-
-//! @def TSSPNUM @brief Number of Tssps on the robot
+//! @def TSSPNUM @brief Number of Tssps (in the array) that are on the robot.
 #define TSSPNUM 16
-
-//! @def NUM_LS @brief Number of light sensors
+//! @def NUM_LS @brief Number of light sensors (in the array) that are on robot.
 #define NUM_LS 32
-//! @def NUMBER_MUX @brief Number of mux's
+//! @def NUMBER_MUX @brief Number of multiplexers.
 #define NUMBER_MUX 2
-
-//! @def CIRCLE_DEGREES @brief Number of degrees in a circle
-#define CIRCLE_DEGREES 360
-//! @def SEMI_CIRCLE_DEGREES @brief Number of degrees in a semi circle
-#define SEMI_CIRCLE_DEGREES 180
-
-//! @def TSSP_DEVIATION_CONSTANT @brief Constant to multiply the deviation
-//!                                     offset to calculate a more accurate
-//!                                     reading.
-#define TSSP_DEVIATION_CONSTANT 0
-//! @def BALL_DIS_MULTIPLIER @brief Constant to multiply ball strength to
-//!                                 return ball distance.
-#define BALL_DIS_MULTIPLIER 1
-//! @def BALL_DIS_MULTIPLIER @brief Used to scale ball strength to calculate
-//!                                 speed.
-#define BALL_STRENGTH_MULTIPLIER 1
-
-//! @def cameraSerial @brief Serial that the camera sends data over to
-#define cameraSerial Serial8
-
-//! @def BT_SERIAL @brief Serial used to transfer data from the
-//!                              bluetooth modules
-#define BT_SERIAL Serial1
-//! @def BT_BAUD @brief Bluetooth communication baud rate.
-#define BT_BAUD 9600
-//! @def BT_PACKET_SIZE @brief Size of data being sent over.
-#define BT_PACKET_SIZE 4
-//! @def BT_START_BYTE @brief Byte start identifier.
-#define BT_START_BYTE 255
-//! @def BT_NO_DATA @brief If module has no data output.
-#define BT_NO_DATA 255
 
 
 #endif

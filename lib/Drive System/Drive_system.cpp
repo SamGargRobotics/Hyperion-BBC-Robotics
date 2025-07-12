@@ -23,7 +23,7 @@ void Drive_system::init() {
 /*!
  * @brief Calculates the motor speed and writes to each motor accordingly.
  * 
- * @param speed Scaled speed needed.
+ * @param speed Speed robot is running at.
  * @param angle Angle that the robot should move in.
  * @param correction Rotation needed to ensure that the robot stays forward.
  */

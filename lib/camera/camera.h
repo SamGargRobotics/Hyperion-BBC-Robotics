@@ -40,8 +40,8 @@ private:
     bool seeingAttackingGoal;
     bool seeingDefendingGoal;
 
-    float calculate_hypot(float x, float y);
-    float calculate_theta(float opp, float adj);
+    float calcDistance(float x, float y);
+    float calculateAngleDistance(float opp, float adj);
 };
  
 #endif

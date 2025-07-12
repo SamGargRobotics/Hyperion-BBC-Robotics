@@ -4,7 +4,7 @@
 #include <Bluetooth.h>
 
 /*!
- * @brief Initializes the module for use accross the library and code
+ * @brief Initializes bluetooth module for usage.
  */
 void Bluetooth::init() {
     BT_SERIAL.begin(BT_BAUD);
@@ -14,11 +14,10 @@ void Bluetooth::init() {
 }
 
 /*!
- * @brief Main controlling function, determines when the HC-05 interacts with 
- *        other modules.
- * @param logic Attack or defend state
+ * @brief Main controlling function of the bluetooth modules.
+ * 
  * @param ballDir Current Direction of Ball.
- * @param ballDis Current Distance of Ball away from robot (cm).
+ * @param ballStr Current Distance of Ball away from robot (units).
  */
 void Bluetooth::update(float ballDir, float ballStr) {
     self.ballDir = ballDir;
@@ -41,15 +40,30 @@ void Bluetooth::update(float ballDir, float ballStr) {
             self.role = self.ballStr > other.ballStr;
             roleConflict.resetTime();
         }
-    } else if(!self.role && (self.ballStr > SURGE_STR_VALUE) && (self.ballDir < 15 || self.ballDir > 345)) {
+    } else if(!self.role && (self.ballStr > BALL_CLOSE_VAL) && (self.ballDir < 15 || self.ballDir > 345)) {
         switching = true;
     }
+
+    #if DEBUG_BLUETOOTH
+        Serial.print("Self: Role, ");
+        Serial.print(self.role);
+        Serial.print(" BallDir: ");
+        Serial.print(self.ballDir);
+        Serial.print(" BallStr: ");
+        Serial.print(self.ballStr);
+        Serial.print(" Other: Role, ");
+        Serial.print(other.role);
+        Serial.print(" BallDir: ");
+        Serial.print(other.ballDir);
+        Serial.print(" BallStr: ");
+        Serial.print(other.ballStr);
+        Serial.println();
+    #endif
 }
 
 /*!
  * @brief If the serial has more than one full packet, it attempts to read the
           bluetooth module.
- * 
  */
 void Bluetooth::read() {
    if(BT_SERIAL.available() >= BT_PACKET_SIZE) {
@@ -73,10 +87,7 @@ void Bluetooth::read() {
 
 /*!
  * @brief Writes data to the bluetooth module for other bluetooth devices to
- *        read off (other HC-05's)
- * @param batLevel Current battery level of the robot.
- * @param ballDir Current direction of the ball.
- * @param ballDis Current distance of the ball away from the robot (cm).
+ *        read off (other bluetooth modules).
  */
 void Bluetooth::send() {
     BT_SERIAL.write(BT_START_BYTE);
@@ -88,6 +99,11 @@ void Bluetooth::send() {
     BT_SERIAL.write(self.ballStr);
 }
 
+/*! 
+ * @brief Get function for role of robot (Attack/Defend).
+ * 
+ * @returns Role of the robot.
+ */
 bool Bluetooth::getRole() {
     return self.role;
 }

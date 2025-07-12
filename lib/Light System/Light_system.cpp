@@ -1,7 +1,7 @@
 /*!
  * @file LSLB.cpp
  *
- * @mainpage LS calculations for Robot
+ * @mainpage LS calculations for robot.
  *
  * This is a library for LS calculations within the robot's code.
  */
@@ -20,7 +20,7 @@ void Light_system::init() {
     pinMode(LIGHT_PIN2, INPUT);
 
     for(int i = 0; i < 32; i++) {
-        whiteThreshold[i] = readOne(i) + 200;
+        whiteThreshold[i] = readOne(i) + LS_CLB_THRESH;
     }
 }
  
@@ -30,7 +30,7 @@ void Light_system::init() {
  * @param sensor_num The sensor index in the light sensor array that you want
  *                   to read.
  * 
- * @return Returns the analogue value of the sensor that is read.
+ * @returns Returns the analogue value of the sensor that is read.
  */
 int Light_system::readOne(int sensor_num) {
     for(u_int8_t i = 0; i < 4; i++) {
@@ -47,10 +47,15 @@ int Light_system::readOne(int sensor_num) {
  * @brief Calculates the direction of the white line on the field.
  * 
  * @param rot Rotation of the robot (bno value).
- * 
- * @return Calculated line direction with line state taken into account.
  */
 void Light_system::update(float rot) {
+    #if DEBUG_LS_VALS
+        for(int i = 0; i < NUM_LS; i++) {
+            Serial.print(readOne(i));
+            Serial.print(" ");
+        }
+        Serial.println();
+    #endif
 
     for(int i = 0; i < NUM_LS; i++) {
         sensorIsWhite[i] = readOne(i) >= whiteThreshold[i];
@@ -66,6 +71,14 @@ void Light_system::update(float rot) {
         }
     }
 
+    #if DEBUG_LS_TRIG
+        for(int i = 0; i < NUM_LS; i++) {
+            Serial.print(sensorIsWhite[i]);
+            Serial.print(" ");
+        }
+        Serial.println();
+    #endif
+
     uint8_t clusterAmount = 0;
     for(int i = 0; i < NUM_LS; i++) {
         if(sensorIsWhite[i]) {
@@ -80,6 +93,10 @@ void Light_system::update(float rot) {
             }  
         }
     }
+    #if DEBUG_LS_CALCS
+        Serial.print("ClustNum: ");
+        Serial.print(clusterAmount);
+    #endif
     if(sensorIsWhite[31] && sensorIsWhite[0]) {
         clustersList[0][0] = minIndex;
     }
@@ -87,6 +104,14 @@ void Light_system::update(float rot) {
     for(int i = 0; i < clusterAmount; i++) {
         clusterCenter[i] = midAngleBetween(clustersList[i][0]*11.25, clustersList[i][1]*11.25);
     }
+    #if DEBUG_LS_CALCS
+        Serial.print(" ClustCen: ");
+        for(int i = 0; i < clusterAmount; i++) {
+            Serial.print(clusterCenter[i]);
+            Serial.print(" ");
+        }
+        Serial.println();
+    #endif
     float lineDirection = -1;
     float linePos = 0;
     if(clusterAmount == 1) {
@@ -113,13 +138,21 @@ void Light_system::update(float rot) {
         }
     }
     calculateLineState(rot, lineDirection, linePos);
+    #if DEBUG_LS
+        Serial.print("LineDir: ");
+        Serial.print(lineDir);
+        Serial.print(" LineSt: ");
+        Serial.println(lineState);
+    #endif
 }
 
 /*!
  * @brief Calculates the state at which the robot is relative to the line and
  *        field.
- * @param rot Rotation of the robot (bno)
- * @param lineDirection Direction of the line
+ * 
+ * @param rot Rotation of the robot relative to forward (bno value).
+ * @param lineDirection Direction of the line.
+ * @param linePos How far over the robot is over the line.
  */
 void Light_system::calculateLineState(float rot, float lineDirection, float linePos) {
     bool onLine = lineDirection != -1;
@@ -168,17 +201,28 @@ void Light_system::calculateLineState(float rot, float lineDirection, float line
  *
  * @param angle1 The first angle in degrees.
  * @param angle2 The second angle in degrees.
- * @return A float between 0 and 1 representing the angular difference.
+ * 
+ * @returns A float between 0 and 1 representing the angular difference.
  */
 float Light_system::calculateDistanceOver(float angle1, float angle2) {
     float condition = 0.5 * (1 - cosf(DEG_TO_RAD * smallestAngleBetween(angle1, angle2)));
     return (condition == 0)?condition+=0.001:condition;
 }
 
+/*!
+ * @brief Get function for how far over the robot is over the line.
+ * 
+ * @returns How far over the line the robot is.
+ */
 float Light_system::getLineState() {
     return lineState;
 }
 
+/*!
+ * @brief Get function for where the line is relative to the robot.
+ * 
+ * @returns Where the line is relative to the robot.
+ */
 float Light_system::getLineDirection() {
     return lineDir;
 }
