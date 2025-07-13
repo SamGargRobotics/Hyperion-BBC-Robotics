@@ -14,27 +14,20 @@ void Tssp_system::init() {
     for(uint8_t i = 0; i < TSSPNUM; i++) {
         pinMode(tsspPins[i], INPUT);
     }
+    // Assign tssp x and y components based on place in unit circle (vs real)
+    for(uint8_t i = 0; i < TSSPNUM; i++) {
+        tsspX[i] = cosf(DEG_TO_RAD * (450 - i * (360 / TSSPNUM)));
+        tsspY[i] = sinf(DEG_TO_RAD * (450 - i * (360 / TSSPNUM)));
+    }
 }
 
 /*! 
  * @brief Completes calculations for ballDir and ballStr by reading the Tssps.
  */
 void Tssp_system::update() {
-    int readTssp[TSSPNUM] = {0};
+    uint8_t readTssp[TSSPNUM] = {0};
     uint8_t tsspSortedValues[TSSPNUM] = {0};
     uint8_t tsspSortedIndex[TSSPNUM] = {0}; 
-    // Assign tssp x and y components based on place in unit circle (vs real)
-    float tsspX[TSSPNUM] = {0};
-    float tsspY[TSSPNUM] = {0};
-    for(uint8_t i = 0; i < TSSPNUM; i++) {
-        tsspX[i] = sin(i*(360/TSSPNUM)*DEG_TO_RAD); 
-        tsspY[i] = cos(i*(360/TSSPNUM)*DEG_TO_RAD);
-    }
-    // Zero all arrays from previous loop
-    for(uint8_t i = 0; i < TSSPNUM; i++) {
-        readTssp[i] = 0;
-        tsspSortedValues[i] = 0;
-    }
 
     // Read the tssps themselves.
     for(uint8_t i = 0; i < 255; i++) {
@@ -42,6 +35,21 @@ void Tssp_system::update() {
             readTssp[j] += 1 - digitalRead(tsspPins[j]);
         }
         delayMicroseconds(10);
+    }
+
+    
+    
+    // // If any sensors are broken, the average of the 2 sensors beside it become 
+    // // it's value
+    // for(uint8_t i = 0; i < TSSPNUM; i++) {
+    //     readTssp[i] = (readTssp[i] == 255 || readTssp[i] == -1) ? \
+    //                             (readTssp[i+1] + readTssp[i-1])/2 : readTssp[i];
+    // }
+
+    for(uint8_t i = 0; i < TSSPNUM; i++) {
+        if(readTssp[i] > 0) {
+            readTssp[i] += offset[i];
+        }
     }
 
     // Prints each individual sensor value out if true.
@@ -52,13 +60,15 @@ void Tssp_system::update() {
         }
         Serial.println();
     #endif
-    
-    // If any sensors are broken, the average of the 2 sensors beside it become 
-    // it's value
-    for(uint8_t i = 0; i < TSSPNUM; i++) {
-        readTssp[i] = (readTssp[i] == 255 || readTssp[i] == -1) ? \
-                                (readTssp[i+1] + readTssp[i-1])/2 : readTssp[i];
-    }
+
+    // for(uint8_t i = 0; i < TSSPNUM; i++) {
+    //     if(highestVals[i] < readTssp[i]) {
+    //         highestVals[i] = readTssp[i];
+    //     }
+    //     Serial.print(highestVals[i]);
+    //     Serial.print("\t");
+    // }
+    // Serial.println();
 
     // tsspSortedValues: Sorts all readTssp values in descending order
     // tsspSortedIndex: Sorts index's of readTssp in descending
@@ -82,11 +92,13 @@ void Tssp_system::update() {
     float x = ((tsspSortedValues[0] * tsspX[tsspSortedIndex[0]]) + \
               (tsspSortedValues[1] * tsspX[tsspSortedIndex[1]]) + \
               (tsspSortedValues[2] * tsspX[tsspSortedIndex[2]]) + \
-              (tsspSortedValues[3] * tsspX[tsspSortedIndex[3]])) / 4;
+              (tsspSortedValues[3] * tsspX[tsspSortedIndex[3]]) + \
+              (tsspSortedValues[4] * tsspX[tsspSortedIndex[4]])) / 5;
     float y = ((tsspSortedValues[0] * tsspY[tsspSortedIndex[0]]) + \
               (tsspSortedValues[1] * tsspY[tsspSortedIndex[1]]) + \
               (tsspSortedValues[2] * tsspY[tsspSortedIndex[2]]) + \
-              (tsspSortedValues[3] * tsspY[tsspSortedIndex[3]])) / 4;
+              (tsspSortedValues[3] * tsspY[tsspSortedIndex[3]]) + \
+              (tsspSortedValues[4] * tsspY[tsspSortedIndex[4]])) / 5;
     
     // ballStr: Weighted average of the top 4 sensors.
     // detectingBall: If ball strength is 0 (all sensors read 0), then ball isnt 
@@ -100,7 +112,7 @@ void Tssp_system::update() {
     #if DEBUG_TSSP
         Serial.print("BallDir: ");
         Serial.print(ballDir);
-        Serial.print(" BallStr: ");
+        Serial.print("\tBallStr: ");
         Serial.println(ballStr);
     #endif
 }

@@ -13,6 +13,7 @@
 #define COMMON_H
 
 #include <Arduino.h>
+#include <Config.h>
 #include <math.h>
 
 float floatMod(float x, float m);
@@ -55,4 +56,24 @@ float midAngleBetween(float angleCounterClockwise, float angleClockwise);
 #define NUMBER_MUX 2
 
 
+#endif
+
+#if SECOND_ROBOT
+#else
+    #define TOFFSET1 10
+    #define TOFFSET2 0
+    #define TOFFSET3 0
+    #define TOFFSET4 0
+    #define TOFFSET5 0
+    #define TOFFSET6 0
+    #define TOFFSET7 0
+    #define TOFFSET8 0
+    #define TOFFSET9 0
+    #define TOFFSET10 0
+    #define TOFFSET11 0
+    #define TOFFSET12 0
+    #define TOFFSET13 0
+    #define TOFFSET14 0
+    #define TOFFSET15 0
+    #define TOFFSET16 0
 #endif

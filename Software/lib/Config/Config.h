@@ -17,12 +17,12 @@
 
 // --[MASTER Values]--
     //! @def SURGE_SPEED @brief Speed that is set for surging
-    #define  SURGE_SPEED 140
+    #define  SURGE_SPEED 150
     //! @def BASE_SPEED @brief Speed that is set for minimum
-    #define  BASE_SPEED 100
+    #define  BASE_SPEED 75
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
     //!                          tuned.
-    #define SECOND_ROBOT true
+    #define SECOND_ROBOT false
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
     #define COMPETITION_MODE false
 
@@ -48,9 +48,16 @@
     #define KI_DEFEND_HOZT 0.0
     #define KD_DEFEND_HOZT 0.0
 
-    #define KP_LINE_AVOID 40.0
+    #define KP_LINE_AVOID 55.0
     #define KI_LINE_AVOID 0.0
     #define KD_LINE_AVOID 0.0
+
+    //! @def KP_CENTERING @brief Proportional value for the field centering PID
+    #define KP_CENTERING 1.0
+    //! @def KI_CENTERING @brief Intergral value for the field centering PID
+        #define KI_CENTERING 0.0
+    //! @def KD_CENTERING @brief Derivative value for the field centering PID
+        #define KD_CENTERING 0.0
 #else
     //! @def KP_IMU @brief Proportional value for the IMU PID
     #define KP_IMU 0.9
@@ -107,14 +114,14 @@
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches.
     // strats for orbit
-    #define ORBIT_STRENGTH_RADIUS 85
+    #define ORBIT_STRENGTH_RADIUS 140
     //! @def BALL_CLOSE_VAL @brief Ball Strength Value for when ball is close.
     #define BALL_CLOSE_VAL 104
 #else
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches
     // strats for orbit
-    #define ORBIT_STRENGTH_RADIUS 100
+    #define ORBIT_STRENGTH_RADIUS 140
     //! @def BALL_CLOSE_VAL @brief Ball Strength Value for when ball is close.
     #define BALL_CLOSE_VAL 107
 #endif
@@ -198,7 +205,7 @@
     #define DEBUG_LS false
     //! @def DEBUG_TSSP_SENSOR_VAL @brief Allows printing of tssp values for
     //!                                   testing.
-    #define DEBUG_TSSP_VALS false
+    #define DEBUG_TSSP_VALS  false
     //! @def DEBUG_TSSP @brief Allows printing and debugging of the tssp sensor
     //!                        final values for testing.
     #define DEBUG_TSSP false
