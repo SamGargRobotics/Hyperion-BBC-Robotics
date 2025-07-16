@@ -20,19 +20,19 @@ void Camera::init(){
 void Camera::update(bool attackBlue){
     if (cameraSerial.available() >= CAM_PACKET_SIZE) {
         // read the incoming stuff
-        uint8_t byte1 = cameraSerial.read();
-        uint8_t byte2 = cameraSerial.peek();
+        int8_t byte1 = cameraSerial.read();
+        int8_t byte2 = cameraSerial.peek();
         if(byte1 == CAM_START_PACK_1 && byte2 == CAM_START_PACK_2) {
             cameraSerial.read();
-            uint8_t goal_x_yellow = cameraSerial.read();
-            uint8_t goal_y_yellow = cameraSerial.read();
-            uint8_t goal_x_blue = cameraSerial.read();
-            uint8_t goal_y_blue = cameraSerial.read();
-            if(goal_x_yellow != 255) {
+            int8_t goal_x_yellow = cameraSerial.read();
+            int8_t goal_y_yellow = cameraSerial.read();
+            int8_t goal_x_blue = cameraSerial.read();
+            int8_t goal_y_blue = cameraSerial.read();
+            if(goal_x_yellow != 0) {
                 goal_x_yellow -= 60;
                 goal_y_yellow -= 60;
             }
-            if(goal_x_blue != 255) {
+            if(goal_x_blue != 0) {
                 goal_x_blue -= 60;
                 goal_y_yellow -= 60;
             }
@@ -41,15 +41,15 @@ void Camera::update(bool attackBlue){
                 attackGoalDist = calcDistance(goal_x_blue, goal_y_blue);
                 defendGoalAngle = calculateAngleDistance(goal_y_yellow, goal_x_yellow);
                 defendGoalDist = calcDistance(goal_x_yellow, goal_y_yellow);
-                seeingAttackingGoal = (goal_y_blue != 255);
-                seeingDefendingGoal = (goal_y_yellow != 255);
+                seeingAttackingGoal = (goal_y_blue != 0);
+                seeingDefendingGoal = (goal_y_yellow != 0);
             } else {
                 attackGoalAngle = calculateAngleDistance(goal_y_yellow, goal_x_yellow);
                 attackGoalDist = calcDistance(goal_x_yellow, goal_y_yellow);
                 defendGoalAngle = calculateAngleDistance(goal_y_blue, goal_x_blue);
                 defendGoalDist = calcDistance(goal_x_blue, goal_y_blue);
-                seeingAttackingGoal = (goal_y_yellow != 255);
-                seeingDefendingGoal = (goal_y_blue != 255);
+                seeingAttackingGoal = (goal_y_yellow != 0);
+                seeingDefendingGoal = (goal_y_blue != 0);
             }
         }
     }
@@ -134,12 +134,11 @@ bool Camera::getDefendGoalVisible() {
 float Camera::calcDistance(float x, float y){
     return sqrtf(pow(x,2) + pow(y,2));
 }
- 
+
 /*!
  * @brief Calculates the angle between two distances.
- * 
- * @returns The angle between two distances.
+ * @returns The angle between the two distances.
  */
 float Camera::calculateAngleDistance(float opp, float adj){
-    return 90 - (atan2f(opp, adj) * RAD_TO_DEG);
+    return 90 - (atan2(opp, adj) * RAD_TO_DEG);
 }

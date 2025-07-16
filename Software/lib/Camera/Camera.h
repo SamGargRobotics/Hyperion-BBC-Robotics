@@ -39,7 +39,6 @@ private:
     float defendGoalDist;
     bool seeingAttackingGoal;
     bool seeingDefendingGoal;
-
     float calcDistance(float x, float y);
     float calculateAngleDistance(float opp, float adj);
 };

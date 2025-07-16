@@ -22,7 +22,7 @@
     #define  BASE_SPEED 75
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
     //!                          tuned.
-    #define SECOND_ROBOT false
+    #define SECOND_ROBOT true
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
     #define COMPETITION_MODE false
 
@@ -34,7 +34,7 @@
 
     #define KP_CAM_ATTACK 1.4
     #define KI_CAM_ATTACK 0.0
-    #define KD_CAM_ATTACK 0.04125
+    #define KD_CAM_ATTACK 0.0 //0.04125
 
     #define KP_CAM_DEFEND 0.65
     #define KI_CAM_DEFEND 0
@@ -48,7 +48,7 @@
     #define KI_DEFEND_HOZT 0.0
     #define KD_DEFEND_HOZT 0.0
 
-    #define KP_LINE_AVOID 55.0
+    #define KP_LINE_AVOID 80.0
     #define KI_LINE_AVOID 0.0
     #define KD_LINE_AVOID 0.0
 
