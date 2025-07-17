@@ -34,6 +34,11 @@ public:
 
     void debugBytes();
 
+    int goal_x_yellow = 0;
+    int goal_y_yellow = 0;
+    int goal_x_blue = 0;
+    int goal_y_blue = 0;
+
 private:
     float attackGoalAngle;
     float attackGoalDist;

@@ -40,7 +40,7 @@
     #define KI_CAM_DEFEND 0
     #define KD_CAM_DEFEND 0.03
 
-    #define KP_DEFEND_VERT 40.0
+    #define KP_DEFEND_VERT 80
     #define KI_DEFEND_VERT 0.0
     #define KD_DEFEND_VERT 0.0
 
@@ -185,7 +185,7 @@
     //!                             values.
     #define DEBUG_BLUETOOTH false
     //! @def DEBUG_CAMERA @brief Allows printing and debugging of camera values.
-    #define DEBUG_CAMERA true
+    #define DEBUG_CAMERA false
     //! @def DEBUG_MOTORS @brief Allows printing and debugging of sent motor
     //!                          values.
     #define DEBUG_MOTORS false

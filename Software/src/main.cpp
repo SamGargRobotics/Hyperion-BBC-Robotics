@@ -87,17 +87,21 @@ void loop() {
     float moveOffset = moveScaler * min(0.4 * expf(0.25 * abs(modBallDir))
                     - 0.4, 90.0);
 
-    if(false) {//bt.getRole()) {
+    if(true) {//bt.getRole()) {
         // Role --> Attacking
         if(tssp.getBallStr() != 0) {
             // Ball is visible --> Ball Movement
+            int xtarg = digitalRead(GOAL_PIN)?cam.goal_x_blue:cam.goal_x_yellow;
+            Serial.println(xtarg);
+            bool areaCond = xtarg > 13 || xtarg < -17;
             if((tssp.getBallDir() < 10 || tssp.getBallDir() > 350) && tssp.getBallStr() >= 133) {
                 moveDir = tssp.getBallDir();
-                moveSpeed = SURGE_SPEED;
+                moveSpeed = areaCond?(SURGE_SPEED*5/8):SURGE_SPEED;
             } else {
                 moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
                 moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 -
                         moveOffset / 90.0);
+                moveSpeed = areaCond?(moveSpeed*5/8):moveSpeed;
             }
             if(cam.getAttackGoalVisible()) {
                 float goalHeading = cam.getAttackGoalAngle() > 180 ?

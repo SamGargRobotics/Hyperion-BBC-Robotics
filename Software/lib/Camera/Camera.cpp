@@ -24,10 +24,10 @@ void Camera::update(bool attackBlue) {
         int byte2 = cameraSerial.peek();
         if(byte1 == CAM_START_PACK_1 && byte2 == CAM_START_PACK_2) {
             cameraSerial.read();
-            int goal_x_yellow = cameraSerial.read();
-            int goal_y_yellow = cameraSerial.read();
-            int goal_x_blue = cameraSerial.read();
-            int goal_y_blue = cameraSerial.read();
+            goal_x_yellow = cameraSerial.read();
+            goal_y_yellow = cameraSerial.read();
+            goal_x_blue = cameraSerial.read();
+            goal_y_blue = cameraSerial.read();
             if(goal_x_yellow != 0) {
                 goal_x_yellow -= 60;
                 goal_y_yellow -= 60;
