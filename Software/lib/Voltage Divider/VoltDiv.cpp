@@ -25,3 +25,7 @@ float VoltDiv::update() {
     #endif
     return analogRead(pin) / divider;
 }
+
+bool VoltDiv::getMotorOn() {
+    return motorOn;
+}

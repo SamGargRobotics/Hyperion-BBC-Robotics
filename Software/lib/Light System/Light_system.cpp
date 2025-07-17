@@ -48,7 +48,7 @@ int Light_system::readOne(int sensor_num) {
  * 
  * @param rot Rotation of the robot (bno value).
  */
-void Light_system::update(float rot) {
+void Light_system::update(float rot, bool motorOn) {
     #if DEBUG_LS_VALS
         for(int i = 0; i < NUM_LS; i++) {
             Serial.print(readOne(i));
@@ -138,6 +138,10 @@ void Light_system::update(float rot) {
         }
     }
     calculateLineState(rot, lineDirection, linePos);
+    if(!motorOn) {
+        lineDir = -1;
+        lineState = 0.0;
+    }
     #if DEBUG_LS
         Serial.print("LineDir: ");
         Serial.print(lineDir);

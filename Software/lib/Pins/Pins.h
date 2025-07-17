@@ -91,4 +91,6 @@
 //!                       depending on what is happening inside the code.
 #define GOAL_PIN 32
 
+#define COM_PIN 35
+
 #endif

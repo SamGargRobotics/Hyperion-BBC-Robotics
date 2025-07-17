@@ -56,7 +56,7 @@ void Drive_system::run(float speed, float angle, float correction) {
     #endif
 
     for(uint8_t i = 0; i < MOTORNUM; i++) {
-        analogWrite(motorPWM[i], abs(round(values[i])));
+        analogWrite(motorPWM[i], constrain(abs(round(values[i])), 0, 255));
         digitalWrite(motorInA[i], (values[i] > 0));
         digitalWrite(motorInB[i], (values[i] < 0));
     }

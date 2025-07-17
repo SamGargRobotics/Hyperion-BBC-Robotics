@@ -20,8 +20,8 @@ void Camera::init(){
 void Camera::update(bool attackBlue) {
     if (cameraSerial.available() >= CAM_PACKET_SIZE) {
         // read the incoming stuff
-        uint8_t byte1 = cameraSerial.read();
-        uint8_t byte2 = cameraSerial.peek();
+        int byte1 = cameraSerial.read();
+        int byte2 = cameraSerial.peek();
         if(byte1 == CAM_START_PACK_1 && byte2 == CAM_START_PACK_2) {
             cameraSerial.read();
             int goal_x_yellow = cameraSerial.read();
@@ -140,7 +140,7 @@ float Camera::calcDistance(float x, float y){
  * @returns The angle between the two distances.
  */
 float Camera::calculateAngleDistance(float opp, float adj){
-    return 90 - (atan2(opp, adj) * RAD_TO_DEG);
+    return floatMod(90 - (atan2(opp, adj) * RAD_TO_DEG), 360);
 }
 
 void Camera::debugBytes() {

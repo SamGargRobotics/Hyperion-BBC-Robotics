@@ -20,9 +20,11 @@ public:
     VoltDiv(uint8_t p, float d) : pin(p), divider(d) {}
     void init();
     float update();
+    bool getMotorOn();
 private:
     uint8_t pin;
     float divider;
+    bool motorOn;
 };
 
 #endif // VOLTDIV_H

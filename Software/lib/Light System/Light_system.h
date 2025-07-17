@@ -23,7 +23,7 @@ class Light_system {
 public:
     Light_system() {};
     void init();
-    void update(float rot);
+    void update(float rot, bool motorOn);
 
     float getLineState();
     float getLineDirection();

@@ -17,12 +17,12 @@
 
 // --[MASTER Values]--
     //! @def SURGE_SPEED @brief Speed that is set for surging
-    #define  SURGE_SPEED 150
+    #define  SURGE_SPEED 100
     //! @def BASE_SPEED @brief Speed that is set for minimum
-    #define  BASE_SPEED 75
+    #define  BASE_SPEED 60
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
     //!                          tuned.
-    #define SECOND_ROBOT true
+    #define SECOND_ROBOT false
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
     #define COMPETITION_MODE false
 
@@ -60,28 +60,28 @@
         #define KD_CENTERING 0.0
 #else
     //! @def KP_IMU @brief Proportional value for the IMU PID
-    #define KP_IMU 0.6 //0.86
+    #define KP_IMU 0.6 //0.6
     //! @def KI_IMU @brief Intergral value for the IMU PID
     #define KI_IMU 0.0
     //! @def KD_IMU @brief Derivative value for the IMU PID
-    #define KD_IMU 0.21 //0.7
+    #define KD_IMU 0.21 //0.21 0.67
 
     //! @def KP_CAM_ATTACK @brief Proportional value for the Goal Track Atk PID
     #define KP_CAM_ATTACK 0.815
     //! @def KI_CAM_ATTACK @brief Intergral value for the Goal Track Atk PID
     #define KI_CAM_ATTACK 0.0
     //! @def KD_CAM_ATTACK @brief Derivative value for the Goal Track Atk PID
-    #define KD_CAM_ATTACK 0.020625
+    #define KD_CAM_ATTACK 0.0
 
     //! @def KP_CAM_DEFEND @brief Proportional value for the Goal Track Def PID
-    #define KP_CAM_DEFEND 0.65
+    #define KP_CAM_DEFEND 0.05
     //! @def KI_CAM_DEFEND @brief Intergral value for the Goal Track Def PID
     #define KI_CAM_DEFEND 0
     //! @def KD_CAM_DEFEND @brief Derivative value for the Goal Track Def PID
-    #define KD_CAM_DEFEND 0.03
+    #define KD_CAM_DEFEND 1
 
  //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
-    #define KP_DEFEND_VERT 40.0
+    #define KP_DEFEND_VERT 80.0
  //! @def KI_DEFEND_VERT @brief Intergral value for the Def Vert Goal Pos PID
     #define KI_DEFEND_VERT 0.0
  //! @def KD_DEFEND_VERT @brief Derivative value for the Def Vert Goal Pos PID
@@ -95,7 +95,7 @@
     #define KD_DEFEND_HOZT 0.1
 
 //! @def KP_LINE_AVOID @brief Proportional value for the line avoid PID
-    #define KP_LINE_AVOID 40.0
+    #define KP_LINE_AVOID 200
 //! @def KI_LINE_AVOID @brief Intergral value for the line avoid PID
     #define KI_LINE_AVOID 0.0
 //! @def KD_LINE_AVOID @brief Derivative value for the line avoid PID
@@ -117,6 +117,7 @@
     #define ORBIT_STRENGTH_RADIUS 140
     //! @def BALL_CLOSE_VAL @brief Ball Strength Value for when ball is close.
     #define BALL_CLOSE_VAL 104
+    #define DEFEND_SURGE 110
 #else
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches
@@ -124,26 +125,24 @@
     #define ORBIT_STRENGTH_RADIUS 145
     //! @def BALL_CLOSE_VAL @brief Ball Strength Value for when ball is close.
     #define BALL_CLOSE_VAL 107
+    #define DEFEND_SURGE 140
 #endif
 
 // --[LIGHT SENSOR Values]--
     //! @def LS_CLB_THRESH @brief Threshold to determine if a sensor is
     //!                           detecting white.
-    #define LS_CLB_THRESH 50
+    #define LS_CLB_THRESH 100 // 50
     //! @def LS_FLIP_THRESH @brief Threshold to determine when the robot
     //!                            flips from state 1 to 2, or 2 to 1.
     #define LS_FLIP_THRESH 90
     //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
     //!                         avoid PID.
-    #define ATK_LINE_SP 0.2
-    //! @def DEF_LINE_SP @brief Target line state of the defender robots line
-    //!                         avoid PID.
-    #define DEF_LINE_SP 0.5
+    #define ATK_LINE_SP 0.1
     //! @def LINE_STRICT_AVOID @brief The set line state where the robot will
     //!                               strictly line avoid at full speed.
     #define LINE_STRICT_AVOID 0.75
     //! @def DEF_VERT_SP @brief The set line state which the defender follows.
-    #define DEF_VERT_SP 1
+    #define DEF_VERT_SP 0.5
 
 // --[BLUETOOTH Values]
     //! @def BT_SERIAL @brief Serial used to transfer data from the
@@ -174,8 +173,7 @@
     #define BATTERY_CRITICAL 11.0
     //! @def BATTERY1_DIVIDER @brief The divider of the analogue value to 
     //!                              achieve a battery level in volts.
-    #define BATTERY1_DIVIDER 70.5
-
+    #define BATTERY1_DIVIDER 71
 // --[PHYSICAL DEBUG TOGGLES]
     //! @def DEBUG_ROBOT @brief Testing space for individual items
     #define DEBUG_ROBOT false

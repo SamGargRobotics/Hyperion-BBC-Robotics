@@ -44,7 +44,6 @@ private:
 
     bool otherPrevRole = false;
     bool switching = false;
-
 };/*
 
 

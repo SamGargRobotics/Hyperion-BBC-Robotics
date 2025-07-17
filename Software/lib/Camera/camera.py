@@ -7,7 +7,7 @@ import time
 from pyb import UART
 
 #              Yellow                          Blue
-Both = [(55, 85, -15, -1, 43, 127),(41, 58, -20, -1, -128, -9)]
+Both = [(70, 100, -31, 2, 30, 127),(49, 77, -21, -5, -38, -4)]
 
 sensor.reset()  # Reset and initialize the sensor.
 sensor.set_pixformat(sensor.RGB565)
@@ -15,8 +15,9 @@ sensor.set_framesize(sensor.QQVGA)
 sensor.skip_frames(30)  # Wait for settings take effect.
 sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
-sensor.set_auto_exposure(False, exposure_us=100000)
+# sensor.set_auto_exposure(False)
 sensor.set_windowing((120,120))
+# sensor.set_brightness(0)
 clock = time.clock()  # Create a clock object to track the FPS.
 # Setting up UART
 uart = UART(3, 115200, timeout_char=100) #(only UART 1 or 3 available,baud rate,delay b/w frames)
@@ -37,10 +38,10 @@ def GoalFind():
     blobs = sorted(blobs, key=lambda blob: -blob.area())
     for blob in blobs:
         if(blob.code() == 1 and Temp1[0] == 0):
-            # img.draw_rectangle(blob.rect(),color=(255,255,0))
+            img.draw_rectangle(blob.rect(),color=(255,255,0))
             Temp1 = [blob.cx(),blob.cy()]
         elif(blob.code() == 2 and Temp2[0] == 0):
-            # img.draw_rectangle(blob.rect(),color=(0,0,255))
+            img.draw_rectangle(blob.rect(),color=(0,0,255))
             Temp2 = [blob.cx(),blob.cy()]
     return [Temp1,Temp2]
 
