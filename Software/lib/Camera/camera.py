@@ -7,7 +7,7 @@ import time
 from pyb import UART
 
 #              Yellow                          Blue
-Both = [(43, 99, -19, -1, 24, 127),(41, 58, -20, -1, -128, -9)]
+Both = [(55, 85, -15, -1, 43, 127),(41, 58, -20, -1, -128, -9)]
 
 sensor.reset()  # Reset and initialize the sensor.
 sensor.set_pixformat(sensor.RGB565)
@@ -15,6 +15,7 @@ sensor.set_framesize(sensor.QQVGA)
 sensor.skip_frames(30)  # Wait for settings take effect.
 sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
+sensor.set_auto_exposure(False, exposure_us=100000)
 sensor.set_windowing((120,120))
 clock = time.clock()  # Create a clock object to track the FPS.
 # Setting up UART
@@ -52,4 +53,4 @@ while True:
     uart.writechar(int(TRI[0][1]))
     uart.writechar(int(TRI[1][0]))
     uart.writechar(int(TRI[1][1]))
-    #print(TRI)
+    # print(TRI)

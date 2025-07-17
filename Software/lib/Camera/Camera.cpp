@@ -17,17 +17,17 @@ void Camera::init(){
  * 
  * @param attackBlue If the robot is attacking the blue goal or not.
  */
-void Camera::update(bool attackBlue){
+void Camera::update(bool attackBlue) {
     if (cameraSerial.available() >= CAM_PACKET_SIZE) {
         // read the incoming stuff
-        int8_t byte1 = cameraSerial.read();
-        int8_t byte2 = cameraSerial.peek();
+        uint8_t byte1 = cameraSerial.read();
+        uint8_t byte2 = cameraSerial.peek();
         if(byte1 == CAM_START_PACK_1 && byte2 == CAM_START_PACK_2) {
             cameraSerial.read();
-            int8_t goal_x_yellow = cameraSerial.read();
-            int8_t goal_y_yellow = cameraSerial.read();
-            int8_t goal_x_blue = cameraSerial.read();
-            int8_t goal_y_blue = cameraSerial.read();
+            int goal_x_yellow = cameraSerial.read();
+            int goal_y_yellow = cameraSerial.read();
+            int goal_x_blue = cameraSerial.read();
+            int goal_y_blue = cameraSerial.read();
             if(goal_x_yellow != 0) {
                 goal_x_yellow -= 60;
                 goal_y_yellow -= 60;
@@ -141,4 +141,12 @@ float Camera::calcDistance(float x, float y){
  */
 float Camera::calculateAngleDistance(float opp, float adj){
     return 90 - (atan2(opp, adj) * RAD_TO_DEG);
+}
+
+void Camera::debugBytes() {
+    while(cameraSerial.available()) {
+        Serial.print(cameraSerial.read());
+        Serial.print("\t");
+    }
+    Serial.println();
 }

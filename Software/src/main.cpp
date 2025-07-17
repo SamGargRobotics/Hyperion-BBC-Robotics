@@ -55,23 +55,25 @@ void loop() {
     float heading = (bearing.orientation.x > 180) ? bearing.orientation.x - 360
                     : bearing.orientation.x;
     cam.update(digitalRead(GOAL_PIN));
+    // cam.debugBytes();
     ls.update(bearing.orientation.x);
 
     float moveDir = 0.0;
     float moveSpeed = 0.0;
     float correction = -bearingCorrection.update(heading, 0);
 
+    float modBallDir = tssp.getBallDir() > 180 ? tssp.getBallDir() - 360
+                            : tssp.getBallDir();
+    float moveScaler = constrain(tssp.getBallStr() /
+                    ORBIT_STRENGTH_RADIUS, 0, 1);
+    moveScaler = constrain((0.02 * moveScaler * expf(4.5 * moveScaler)), 0, 1);
+    float moveOffset = moveScaler * min(0.4 * expf(0.25 * abs(modBallDir))
+                    - 0.4, 90.0);
+
     if(true) {//bt.getRole()) {
         // Role --> Attacking
         if(tssp.getBallStr() != 0) {
             // Ball is visible --> Ball Movement
-            float modBallDir = tssp.getBallDir() > 180 ? tssp.getBallDir() - 360
-                               : tssp.getBallDir();
-            float moveScaler = constrain(tssp.getBallStr() /
-                               ORBIT_STRENGTH_RADIUS, 0, 1);
-            moveScaler = constrain((0.02 * moveScaler * expf(4.5 * moveScaler)), 0, 1);
-            float moveOffset = moveScaler * min(0.4 * expf(0.25 * abs(modBallDir))
-                               - 0.4, 90.0);
             moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
             moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 -
                         moveOffset / 90.0);
@@ -104,9 +106,10 @@ void loop() {
     } else {
         // Role --> Defending
         if(tssp.getBallDir() > 110 && tssp.getBallDir() <= 290) {
-            // Ball is behind --> Move backwards
-            moveDir = 180;
-            moveSpeed = BASE_SPEED;
+            // Ball is behind --> Orbit
+            moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
+            moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 -
+                        moveOffset / 90.0);
         } else {
             // Ball is infront --> Defend goal.
             float vertVect = -defenderVert.update(ls.getLineState(),
@@ -124,6 +127,8 @@ void loop() {
                                 cam.getDefendGoalAngle();
             correction = -camDefendCorrection.update(goalHeading, 0);
         } else {
+            moveDir = tssp.getBallDir();
+            moveSpeed = BASE_SPEED;
             correction = -bearingCorrection.update(heading, 0);
         }
         // If seeing line, only avoid line if in corner.
@@ -148,5 +153,7 @@ void loop() {
     #endif
 
     // Run motors depending on given values through logic.
+    // correction = -bearingCorrection.update(heading, 0);
+    // motors.run(moveSpeed, moveDir, correction);
     motors.run(moveSpeed, moveDir, correction);
 }

@@ -60,11 +60,11 @@
         #define KD_CENTERING 0.0
 #else
     //! @def KP_IMU @brief Proportional value for the IMU PID
-    #define KP_IMU 0.9
+    #define KP_IMU 0.6 //0.86
     //! @def KI_IMU @brief Intergral value for the IMU PID
     #define KI_IMU 0.0
     //! @def KD_IMU @brief Derivative value for the IMU PID
-    #define KD_IMU 0.0275
+    #define KD_IMU 0.21 //0.7
 
     //! @def KP_CAM_ATTACK @brief Proportional value for the Goal Track Atk PID
     #define KP_CAM_ATTACK 0.815
@@ -121,7 +121,7 @@
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches
     // strats for orbit
-    #define ORBIT_STRENGTH_RADIUS 140
+    #define ORBIT_STRENGTH_RADIUS 145
     //! @def BALL_CLOSE_VAL @brief Ball Strength Value for when ball is close.
     #define BALL_CLOSE_VAL 107
 #endif
@@ -129,7 +129,7 @@
 // --[LIGHT SENSOR Values]--
     //! @def LS_CLB_THRESH @brief Threshold to determine if a sensor is
     //!                           detecting white.
-    #define LS_CLB_THRESH 200
+    #define LS_CLB_THRESH 50
     //! @def LS_FLIP_THRESH @brief Threshold to determine when the robot
     //!                            flips from state 1 to 2, or 2 to 1.
     #define LS_FLIP_THRESH 90
@@ -187,7 +187,7 @@
     //!                             values.
     #define DEBUG_BLUETOOTH false
     //! @def DEBUG_CAMERA @brief Allows printing and debugging of camera values.
-    #define DEBUG_CAMERA false
+    #define DEBUG_CAMERA true
     //! @def DEBUG_MOTORS @brief Allows printing and debugging of sent motor
     //!                          values.
     #define DEBUG_MOTORS false

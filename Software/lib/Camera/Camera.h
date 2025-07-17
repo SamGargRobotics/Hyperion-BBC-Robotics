@@ -32,6 +32,8 @@ public:
     bool getAttackGoalVisible();
     bool getDefendGoalVisible();
 
+    void debugBytes();
+
 private:
     float attackGoalAngle;
     float attackGoalDist;
