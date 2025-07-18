@@ -19,9 +19,10 @@ void Bluetooth::init() {
  * @param ballDir Current Direction of Ball.
  * @param ballStr Current Distance of Ball away from robot (units).
  */
-void Bluetooth::update(float ballDir, float ballStr) {
+void Bluetooth::update(float ballDir, float ballStr, bool enabled) {
     self.ballDir = ballDir;
     self.ballStr = ballStr;
+    self.enabled = enabled;
     if(sendTimer.timeHasPassed()) {
         send();
     }
@@ -29,7 +30,10 @@ void Bluetooth::update(float ballDir, float ballStr) {
 
     bool connected = !connectedTimer.timeHasPassedNoUpdate();
     
-    if(!connected) {
+    if(!self.enabled) {
+        self.role = 1;
+        roleConflict.resetTime();
+    } else if(!connected || !other.enabled) {
         self.role = 0;
         roleConflict.resetTime();
     } else if(switching) {
@@ -40,24 +44,27 @@ void Bluetooth::update(float ballDir, float ballStr) {
             self.role = self.ballStr > other.ballStr;
             roleConflict.resetTime();
         }
-    } else if(!self.role && (self.ballStr > BALL_CLOSE_VAL) && (self.ballDir < 15 || self.ballDir > 345)) {
+    } else if(!self.role && ((self.ballDir < 15 || self.ballDir > 345) && self.ballStr > DEFEND_SURGE)) {
         switching = true;
     }
 
     #if DEBUG_BLUETOOTH
-        Serial.print("Self: Role, ");
+        Serial.print("SELF - role: ");
         Serial.print(self.role);
-        Serial.print(" BallDir: ");
+        Serial.print(" en: ");
+        Serial.print(self.enabled);
+        Serial.print(" ballDir: ");
         Serial.print(self.ballDir);
-        Serial.print(" BallStr: ");
+        Serial.print(" ballStr: ");
         Serial.print(self.ballStr);
-        Serial.print(" Other: Role, ");
+        Serial.print(" ||| OTHER - role: ");
         Serial.print(other.role);
-        Serial.print(" BallDir: ");
+        Serial.print(" en:");
+        Serial.print(other.enabled);
+        Serial.print(" balDir: ");
         Serial.print(other.ballDir);
-        Serial.print(" BallStr: ");
-        Serial.print(other.ballStr);
-        Serial.println();
+        Serial.print(" ballStr: ");
+        Serial.println(other.ballStr);
     #endif
 }
 
@@ -72,9 +79,10 @@ void Bluetooth::read() {
         if(byte1 == BT_START_BYTE && byte2 == BT_START_BYTE) {
             BT_SERIAL.read();
             bool otherPrevRole = other.role;
-            other.role = BT_SERIAL.read();
+            uint8_t info = BT_SERIAL.read();
+            other.enabled = info >> 4;
+            other.role = info % 2;
             switching = (otherPrevRole != other.role) && (self.role == other.role);
-
             byte1 = BT_SERIAL.read();
             byte2 = BT_SERIAL.read();
             uint16_t tempBallDir = (byte1 << 8) | byte2;
@@ -92,7 +100,8 @@ void Bluetooth::read() {
 void Bluetooth::send() {
     BT_SERIAL.write(BT_START_BYTE);
     BT_SERIAL.write(BT_START_BYTE);
-    BT_SERIAL.write(self.role);
+    uint8_t info = (self.enabled&0x01) << 4 | (self.role&0x01);
+    BT_SERIAL.write(info);
     uint16_t b = self.ballDir * 100;
     BT_SERIAL.write(highByte(b));
     BT_SERIAL.write(lowByte(b));

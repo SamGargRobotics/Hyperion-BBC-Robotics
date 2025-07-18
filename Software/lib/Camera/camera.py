@@ -15,7 +15,7 @@ sensor.set_framesize(sensor.QQVGA)
 sensor.skip_frames(time=2000)  # Wait for settings take effect.
 sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
-sensor.set_auto_exposure(False)
+sensor.set_auto_exposure(False, exposure_us=8000)
 sensor.set_windowing((120,120))
 LED(1).off()
 clock = time.clock()  # Create a clock object to track the FPS.

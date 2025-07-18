@@ -17,47 +17,65 @@
 
 // --[MASTER Values]--
     //! @def SURGE_SPEED @brief Speed that is set for surging
-    #define  SURGE_SPEED 110
+    #define  SURGE_SPEED 70
     //! @def BASE_SPEED @brief Speed that is set for minimum
     #define  BASE_SPEED 60
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
     //!                          tuned.
-    #define SECOND_ROBOT true
+    #define SECOND_ROBOT false
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
-    #define COMPETITION_MODE false
+    #define COMPETITION_MODE true
 
 // --[PID Values]--
 #if not SECOND_ROBOT
-    #define KP_IMU 1.0
+    //! @def KP_IMU @brief Proportional value for the IMU PID
+    #define KP_IMU 1.0 //0.6
+    //! @def KI_IMU @brief Intergral value for the IMU PID
     #define KI_IMU 0.0
-    #define KD_IMU 0.055
+    //! @def KD_IMU @brief Derivative value for the IMU PID
+    #define KD_IMU 0.05 //0.21 0.67
 
-    #define KP_CAM_ATTACK 0.5
+    //! @def KP_CAM_ATTACK @brief Proportional value for the Goal Track Atk PID
+    #define KP_CAM_ATTACK 0.815
+    //! @def KI_CAM_ATTACK @brief Intergral value for the Goal Track Atk PID
     #define KI_CAM_ATTACK 0.0
+    //! @def KD_CAM_ATTACK @brief Derivative value for the Goal Track Atk PID
     #define KD_CAM_ATTACK 0.0
 
-    #define KP_CAM_DEFEND 0.65
+    //! @def KP_CAM_DEFEND @brief Proportional value for the Goal Track Def PID
+    #define KP_CAM_DEFEND 0.05
+    //! @def KI_CAM_DEFEND @brief Intergral value for the Goal Track Def PID
     #define KI_CAM_DEFEND 0
-    #define KD_CAM_DEFEND 0.03
+    //! @def KD_CAM_DEFEND @brief Derivative value for the Goal Track Def PID
+    #define KD_CAM_DEFEND 1
 
-    #define KP_DEFEND_VERT 80
+ //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
+    #define KP_DEFEND_VERT 80.0
+ //! @def KI_DEFEND_VERT @brief Intergral value for the Def Vert Goal Pos PID
     #define KI_DEFEND_VERT 0.0
+ //! @def KD_DEFEND_VERT @brief Derivative value for the Def Vert Goal Pos PID
     #define KD_DEFEND_VERT 0.0
 
-    #define KP_DEFEND_HOZT 1.0
+//! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
+    #define KP_DEFEND_HOZT 1.5
+//! @def KI_DEFEND_HOZT @brief Intergral value for the Def Hozt Goal Pos PID
     #define KI_DEFEND_HOZT 0.0
+//! @def KD_DEFEND_HOZT @brief Derivative value for the Def Hozt Goal Pos PID
     #define KD_DEFEND_HOZT 0.0
 
-    #define KP_LINE_AVOID 80.0
+//! @def KP_LINE_AVOID @brief Proportional value for the line avoid PID
+    #define KP_LINE_AVOID 200
+//! @def KI_LINE_AVOID @brief Intergral value for the line avoid PID
     #define KI_LINE_AVOID 0.0
+//! @def KD_LINE_AVOID @brief Derivative value for the line avoid PID
     #define KD_LINE_AVOID 0.0
 
-    //! @def KP_CENTERING @brief Proportional value for the field centering PID
+//! @def KP_CENTERING @brief Proportional value for the field centering PID
     #define KP_CENTERING 1.0
-    //! @def KI_CENTERING @brief Intergral value for the field centering PID
-        #define KI_CENTERING 0.0
-    //! @def KD_CENTERING @brief Derivative value for the field centering PID
-        #define KD_CENTERING 0.0
+//! @def KI_CENTERING @brief Intergral value for the field centering PID
+    #define KI_CENTERING 0.0
+//! @def KD_CENTERING @brief Derivative value for the field centering PID
+    #define KD_CENTERING 0.0
 #else
     //! @def KP_IMU @brief Proportional value for the IMU PID
     #define KP_IMU 1.0 //0.6
@@ -88,11 +106,11 @@
     #define KD_DEFEND_VERT 0.0
 
 //! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
-    #define KP_DEFEND_HOZT 2.0
+    #define KP_DEFEND_HOZT 1.5
 //! @def KI_DEFEND_HOZT @brief Intergral value for the Def Hozt Goal Pos PID
     #define KI_DEFEND_HOZT 0.0
 //! @def KD_DEFEND_HOZT @brief Derivative value for the Def Hozt Goal Pos PID
-    #define KD_DEFEND_HOZT 0.1
+    #define KD_DEFEND_HOZT 0.0
 
 //! @def KP_LINE_AVOID @brief Proportional value for the line avoid PID
     #define KP_LINE_AVOID 200
@@ -112,26 +130,26 @@
 // --[ATTACK LOGIC Values]
 #if not SECOND_ROBOT
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
-    //!                                   switches.
+    //!                                   switches
     // strats for orbit
-    #define ORBIT_STRENGTH_RADIUS 140
+    #define ORBIT_STRENGTH_RADIUS 65
     //! @def BALL_CLOSE_VAL @brief Ball Strength Value for when ball is close.
-    #define BALL_CLOSE_VAL 104
-    #define DEFEND_SURGE 110
+    #define BALL_CLOSE_VAL 107
+    #define DEFEND_SURGE 50
 #else
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches
     // strats for orbit
-    #define ORBIT_STRENGTH_RADIUS 145
+    #define ORBIT_STRENGTH_RADIUS 65
     //! @def BALL_CLOSE_VAL @brief Ball Strength Value for when ball is close.
     #define BALL_CLOSE_VAL 107
-    #define DEFEND_SURGE 140
+    #define DEFEND_SURGE 50
 #endif
 
 // --[LIGHT SENSOR Values]--
     //! @def LS_CLB_THRESH @brief Threshold to determine if a sensor is
     //!                           detecting white.
-    #define LS_CLB_THRESH 50 // 100
+    #define LS_CLB_THRESH 150 // 50
     //! @def LS_FLIP_THRESH @brief Threshold to determine when the robot
     //!                            flips from state 1 to 2, or 2 to 1.
     #define LS_FLIP_THRESH 90
@@ -151,7 +169,7 @@
     //! @def BT_BAUD @brief Bluetooth communication baud rate.
     #define BT_BAUD 9600
     //! @def BT_PACKET_SIZE @brief Size of data being sent over.
-    #define BT_PACKET_SIZE 4
+    #define BT_PACKET_SIZE 6
     //! @def BT_START_BYTE @brief Byte start identifier.
     #define BT_START_BYTE 255
     //! @def BT_NO_DATA @brief If module has no data output.
@@ -183,7 +201,7 @@
 // --[DEBUG TOGGLES]--
     //! @def DEBUG_BLUETOOTH @brief Allows printing and debugging of bluetooth
     //!                             values.
-    #define DEBUG_BLUETOOTH false
+    #define DEBUG_BLUETOOTH true
     //! @def DEBUG_CAMERA @brief Allows printing and debugging of camera values.
     #define DEBUG_CAMERA false
     //! @def DEBUG_MOTORS @brief Allows printing and debugging of sent motor

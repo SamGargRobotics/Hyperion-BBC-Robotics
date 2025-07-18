@@ -20,6 +20,7 @@ struct robotData {
     bool role;
     float ballDir;
     uint8_t ballStr;
+    bool enabled;
 };
 
 /*!
@@ -30,7 +31,7 @@ class Bluetooth {
 public:
     Bluetooth() {};
     void init();
-    void update(float ballDir, float ballStr);
+    void update(float ballDir, float ballStr, bool enabled);
     bool getRole();
 private:
     void read();
