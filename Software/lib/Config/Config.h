@@ -17,7 +17,7 @@
 
 // --[MASTER Values]--
     //! @def SURGE_SPEED @brief Speed that is set for surging
-    #define  SURGE_SPEED 100
+    #define  SURGE_SPEED 110
     //! @def BASE_SPEED @brief Speed that is set for minimum
     #define  BASE_SPEED 60
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
@@ -44,7 +44,7 @@
     #define KI_DEFEND_VERT 0.0
     #define KD_DEFEND_VERT 0.0
 
-    #define KP_DEFEND_HOZT 2.0
+    #define KP_DEFEND_HOZT 1.0
     #define KI_DEFEND_HOZT 0.0
     #define KD_DEFEND_HOZT 0.0
 
@@ -131,7 +131,7 @@
 // --[LIGHT SENSOR Values]--
     //! @def LS_CLB_THRESH @brief Threshold to determine if a sensor is
     //!                           detecting white.
-    #define LS_CLB_THRESH 100 // 50
+    #define LS_CLB_THRESH 50 // 100
     //! @def LS_FLIP_THRESH @brief Threshold to determine when the robot
     //!                            flips from state 1 to 2, or 2 to 1.
     #define LS_FLIP_THRESH 90
@@ -188,7 +188,7 @@
     #define DEBUG_CAMERA false
     //! @def DEBUG_MOTORS @brief Allows printing and debugging of sent motor
     //!                          values.
-    #define DEBUG_MOTORS false
+    #define DEBUG_MOTORS true
     //! @def DEBUG_LS_VALS @brief Allows printing and debugging of individual
     //!                           sensor values for testing.
     #define DEBUG_LS_VALS false

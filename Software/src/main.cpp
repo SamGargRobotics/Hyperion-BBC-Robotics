@@ -92,11 +92,12 @@ void loop() {
         if(tssp.getBallStr() != 0) {
             // Ball is visible --> Ball Movement
             int xtarg = digitalRead(GOAL_PIN)?cam.goal_x_blue:cam.goal_x_yellow;
+            xtarg = 0;
             Serial.println(xtarg);
             bool areaCond = xtarg > 13 || xtarg < -17;
             if((tssp.getBallDir() < 10 || tssp.getBallDir() > 350) && tssp.getBallStr() >= 133) {
                 moveDir = tssp.getBallDir();
-                moveSpeed = areaCond?(SURGE_SPEED*5/8):SURGE_SPEED;
+                moveSpeed = areaCond?(SURGE_SPEED*5/8):150;
             } else {
                 moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
                 moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 -
