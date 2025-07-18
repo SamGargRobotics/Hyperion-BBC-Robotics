@@ -33,7 +33,7 @@ void Drive_system::run(float speed, float angle, float correction) {
         values[i] = cosf(DEG_TO_RAD * (dir + 270.0 - motorAngles[i])) * speed + correction;
     }
 
-    largestSpeed = 0;
+    float largestSpeed = 0;
 
     for(uint8_t i = 0; i < MOTORNUM; i++) {
         if(abs(values[i]) > largestSpeed) {

@@ -24,10 +24,10 @@ void Camera::update(bool attackBlue) {
         int byte2 = cameraSerial.peek();
         if(byte1 == CAM_START_PACK_1 && byte2 == CAM_START_PACK_2) {
             cameraSerial.read();
-            goal_x_yellow = cameraSerial.read();
-            goal_y_yellow = cameraSerial.read();
-            goal_x_blue = cameraSerial.read();
-            goal_y_blue = cameraSerial.read();
+            int goal_x_yellow = cameraSerial.read();
+            int goal_y_yellow = cameraSerial.read();
+            int goal_x_blue = cameraSerial.read();
+            int goal_y_blue = cameraSerial.read();
             if(goal_x_yellow != 0) {
                 goal_x_yellow -= 60;
                 goal_y_yellow -= 60;
@@ -43,6 +43,7 @@ void Camera::update(bool attackBlue) {
                 defendGoalDist = calcDistance(goal_x_yellow, goal_y_yellow);
                 seeingAttackingGoal = (goal_y_blue != 0);
                 seeingDefendingGoal = (goal_y_yellow != 0);
+                attackGoalX = goal_x_blue;
             } else {
                 attackGoalAngle = calculateAngleDistance(goal_y_yellow, goal_x_yellow);
                 attackGoalDist = calcDistance(goal_x_yellow, goal_y_yellow);
@@ -50,6 +51,7 @@ void Camera::update(bool attackBlue) {
                 defendGoalDist = calcDistance(goal_x_blue, goal_y_blue);
                 seeingAttackingGoal = (goal_y_yellow != 0);
                 seeingDefendingGoal = (goal_y_blue != 0);
+                attackGoalX = goal_y_blue;
             }
         }
     }
@@ -141,6 +143,10 @@ float Camera::calcDistance(float x, float y){
  */
 float Camera::calculateAngleDistance(float opp, float adj){
     return floatMod(90 - (atan2(opp, adj) * RAD_TO_DEG), 360);
+}
+
+int Camera::getAttackGoalX() {
+    return attackGoalX;
 }
 
 void Camera::debugBytes() {

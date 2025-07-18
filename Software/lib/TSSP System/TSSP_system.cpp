@@ -34,7 +34,6 @@ void Tssp_system::update() {
         for(uint8_t j = 0; j < TSSPNUM; j++) {
             readTssp[j] += 1 - digitalRead(tsspPins[j]);
         }
-        delayMicroseconds(10);
     }
 
     
@@ -42,7 +41,7 @@ void Tssp_system::update() {
     // // If any sensors are broken, the average of the 2 sensors beside it become 
     // // it's value
     // for(uint8_t i = 0; i < TSSPNUM; i++) {
-    //     readTssp[i] = (readTssp[i] == 255 || readTssp[i] == -1) ? \
+    //     readTssp[i] = (readTssp[i] == 255 || readTssp[i] == -1) ?
     //                             (readTssp[i+1] + readTssp[i-1])/2 : readTssp[i];
     // }
 

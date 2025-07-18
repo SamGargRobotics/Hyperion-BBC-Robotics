@@ -22,19 +22,19 @@
     #define  BASE_SPEED 60
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
     //!                          tuned.
-    #define SECOND_ROBOT false
+    #define SECOND_ROBOT true
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
     #define COMPETITION_MODE false
 
 // --[PID Values]--
 #if not SECOND_ROBOT
-    #define KP_IMU 0.9
+    #define KP_IMU 1.0
     #define KI_IMU 0.0
     #define KD_IMU 0.055
 
-    #define KP_CAM_ATTACK 1.4
+    #define KP_CAM_ATTACK 0.5
     #define KI_CAM_ATTACK 0.0
-    #define KD_CAM_ATTACK 0.0 //0.04125
+    #define KD_CAM_ATTACK 0.0
 
     #define KP_CAM_DEFEND 0.65
     #define KI_CAM_DEFEND 0
@@ -60,11 +60,11 @@
         #define KD_CENTERING 0.0
 #else
     //! @def KP_IMU @brief Proportional value for the IMU PID
-    #define KP_IMU 0.6 //0.6
+    #define KP_IMU 1.0 //0.6
     //! @def KI_IMU @brief Intergral value for the IMU PID
     #define KI_IMU 0.0
     //! @def KD_IMU @brief Derivative value for the IMU PID
-    #define KD_IMU 0.21 //0.21 0.67
+    #define KD_IMU 0.05 //0.21 0.67
 
     //! @def KP_CAM_ATTACK @brief Proportional value for the Goal Track Atk PID
     #define KP_CAM_ATTACK 0.815
@@ -188,7 +188,7 @@
     #define DEBUG_CAMERA false
     //! @def DEBUG_MOTORS @brief Allows printing and debugging of sent motor
     //!                          values.
-    #define DEBUG_MOTORS true
+    #define DEBUG_MOTORS false
     //! @def DEBUG_LS_VALS @brief Allows printing and debugging of individual
     //!                           sensor values for testing.
     #define DEBUG_LS_VALS false

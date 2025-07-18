@@ -31,7 +31,6 @@ private:
     int motorPWM[MOTORNUM] = {FRPWM, FLPWM, BLPWM, BRPWM};
     int motorAngles[MOTORNUM] = {45, 135, 225, 315};
     float values[MOTORNUM] = {0};
-    float largestSpeed = 0;
 };
 
 #endif

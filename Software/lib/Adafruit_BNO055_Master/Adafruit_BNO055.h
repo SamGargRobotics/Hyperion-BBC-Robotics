@@ -283,7 +283,7 @@ public:
     } adafruit_vector_type_t;
 
     Adafruit_BNO055(int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_B,
-                    TwoWire *theWire = &Wire1);
+                    TwoWire *theWire = &Wire);
     
     bool begin(adafruit_bno055_opmode_t mode = OPERATION_MODE_IMUPLUS);
     void setMode(adafruit_bno055_opmode_t mode);

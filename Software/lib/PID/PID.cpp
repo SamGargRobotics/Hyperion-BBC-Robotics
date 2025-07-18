@@ -14,14 +14,14 @@ float PID::update(float input, float setpoint, float modulus) {
     float derivative;
     float error = setpoint - input;
 
-    unsigned long currentTime = micros();
+    uint32_t currentTime = micros();
     float elapsedTime = (currentTime - lastTime) / 1000000.0;
     lastTime = currentTime;
 
     integral += elapsedTime * error;
 
     if (modulus != 0.0) {
-        float difference = (input - lastInput);
+        float difference = (error - lastError);
 
         if (difference < -modulus) {
             difference += modulus;
@@ -29,12 +29,12 @@ float PID::update(float input, float setpoint, float modulus) {
             difference -= modulus;
         }
 
-        derivative = difference / elapsedTime;
+        derivative = -difference / elapsedTime;
     } else {
-        derivative = (input - lastInput) / elapsedTime;
+        derivative = -(error - lastError) / elapsedTime;
     }
 
-    lastInput = input;
+    lastError = error;
 
     float correction = kp * error + ki * integral - kd * derivative;
 

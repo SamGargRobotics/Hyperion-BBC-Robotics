@@ -29,23 +29,21 @@ public:
     float getAttackGoalDist();
     float getDefendGoalAngle();
     float getDefendGoalDist();
+    int getAttackGoalX();
     bool getAttackGoalVisible();
     bool getDefendGoalVisible();
 
     void debugBytes();
-
-    int goal_x_yellow = 0;
-    int goal_y_yellow = 0;
-    int goal_x_blue = 0;
-    int goal_y_blue = 0;
 
 private:
     float attackGoalAngle;
     float attackGoalDist;
     float defendGoalAngle;
     float defendGoalDist;
+    float attackGoalX;
     bool seeingAttackingGoal;
     bool seeingDefendingGoal;
+
     float calcDistance(float x, float y);
     float calculateAngleDistance(float opp, float adj);
 };
