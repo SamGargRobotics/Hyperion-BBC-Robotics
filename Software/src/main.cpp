@@ -80,12 +80,12 @@ void loop() {
         if(tssp.getBallStr() != 0) {
             moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
             moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
-            // if(cam.getAttackGoalVisible()) {
-            //     float goalHeading = cam.getAttackGoalAngle() > 180 ?
-            //                         cam.getAttackGoalAngle() - 360 :
-            //                         cam.getAttackGoalAngle();
-            //     correction = camAttackCorrection.update(goalHeading, 0.0);
-            // }
+            if(cam.getAttackGoalVisible()) {
+                float goalHeading = cam.getAttackGoalAngle() > 180 ?
+                                    cam.getAttackGoalAngle() - 360 :
+                                    cam.getAttackGoalAngle();
+                correction = camAttackCorrection.update(goalHeading, 0.0);
+            }
         }
     } else {
         if(tssp.getBallStr() != 0) {
@@ -137,7 +137,7 @@ void loop() {
         } else {
             batteryTimer.resetTime();
         }
-    #endif
+    #endif;
     
     if(motorSwitch && commEnable) {
         motors.run(moveSpeed, moveDir, correction);

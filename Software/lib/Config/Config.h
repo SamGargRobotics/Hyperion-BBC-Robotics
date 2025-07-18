@@ -17,12 +17,12 @@
 
 // --[MASTER Values]--
     //! @def SURGE_SPEED @brief Speed that is set for surging
-    #define  SURGE_SPEED 70
+    #define  SURGE_SPEED 125
     //! @def BASE_SPEED @brief Speed that is set for minimum
-    #define  BASE_SPEED 60
+    #define  BASE_SPEED 40
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
     //!                          tuned.
-    #define SECOND_ROBOT false
+    #define SECOND_ROBOT true
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
     #define COMPETITION_MODE true
 
@@ -45,9 +45,9 @@
     //! @def KP_CAM_DEFEND @brief Proportional value for the Goal Track Def PID
     #define KP_CAM_DEFEND 0.05
     //! @def KI_CAM_DEFEND @brief Intergral value for the Goal Track Def PID
-    #define KI_CAM_DEFEND 0
+    #define KI_CAM_DEFEND 0.0
     //! @def KD_CAM_DEFEND @brief Derivative value for the Goal Track Def PID
-    #define KD_CAM_DEFEND 1
+    #define KD_CAM_DEFEND 1.0
 
  //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
     #define KP_DEFEND_VERT 80.0
@@ -78,11 +78,11 @@
     #define KD_CENTERING 0.0
 #else
     //! @def KP_IMU @brief Proportional value for the IMU PID
-    #define KP_IMU 1.0 //0.6
+    #define KP_IMU 0.75 //0.6
     //! @def KI_IMU @brief Intergral value for the IMU PID
     #define KI_IMU 0.0
     //! @def KD_IMU @brief Derivative value for the IMU PID
-    #define KD_IMU 0.05 //0.21 0.67
+    #define KD_IMU 0.045 ///0.21 0.67
 
     //! @def KP_CAM_ATTACK @brief Proportional value for the Goal Track Atk PID
     #define KP_CAM_ATTACK 0.815
@@ -94,9 +94,9 @@
     //! @def KP_CAM_DEFEND @brief Proportional value for the Goal Track Def PID
     #define KP_CAM_DEFEND 0.05
     //! @def KI_CAM_DEFEND @brief Intergral value for the Goal Track Def PID
-    #define KI_CAM_DEFEND 0
+    #define KI_CAM_DEFEND 0.0
     //! @def KD_CAM_DEFEND @brief Derivative value for the Goal Track Def PID
-    #define KD_CAM_DEFEND 1
+    #define KD_CAM_DEFEND 1.0
 
  //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
     #define KP_DEFEND_VERT 80.0
@@ -132,7 +132,7 @@
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches
     // strats for orbit
-    #define ORBIT_STRENGTH_RADIUS 65
+    #define ORBIT_STRENGTH_RADIUS 60
     //! @def BALL_CLOSE_VAL @brief Ball Strength Value for when ball is close.
     #define BALL_CLOSE_VAL 107
     #define DEFEND_SURGE 50
@@ -149,7 +149,7 @@
 // --[LIGHT SENSOR Values]--
     //! @def LS_CLB_THRESH @brief Threshold to determine if a sensor is
     //!                           detecting white.
-    #define LS_CLB_THRESH 150 // 50
+    #define LS_CLB_THRESH 50 // 50
     //! @def LS_FLIP_THRESH @brief Threshold to determine when the robot
     //!                            flips from state 1 to 2, or 2 to 1.
     #define LS_FLIP_THRESH 90
