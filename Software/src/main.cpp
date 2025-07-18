@@ -54,7 +54,6 @@ void loop() {
         bool motorSwitch = true;
         bool commEnable = true;
     #endif
-    commEnable = true;
 
     tssp.update();
     bt.update(tssp.getBallDir(), tssp.getBallStr(), (motorSwitch && commEnable));
