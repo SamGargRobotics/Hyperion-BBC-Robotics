@@ -27,6 +27,8 @@ Timer batteryTimer(5000000);
 Tssp_system tssp;
 VoltDiv battery(BATT_READ_PIN, BATTERY1_DIVIDER);
 
+Timer testMot(1000000);
+
 sensors_event_t bearing;
 
 void setup() {
@@ -39,6 +41,7 @@ void setup() {
     bt.init();
     battery.init();
     batteryTimer.resetTime();
+    testMot.resetTime();
     cam.init();
     bno.setExtCrystalUse(true);
     pinMode(GOAL_PIN, INPUT);
@@ -76,7 +79,7 @@ void loop() {
     float moveOffset = moveScaler * min(0.4 * expf(0.25 * abs(modBallDir))
                     - 0.4, 90.0);
     
-    if(bt.getRole()) {
+    if(true) {//bt.getRole()) {
         if(tssp.getBallStr() != 0) {
             moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
             moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
@@ -86,6 +89,9 @@ void loop() {
                                     cam.getAttackGoalAngle();
                 correction = camAttackCorrection.update(goalHeading, 0.0);
             }
+            Serial.print(moveDir);
+            Serial.print("\t");
+            Serial.println(tssp.getBallDir());
         }
     } else {
         if(tssp.getBallStr() != 0) {
@@ -102,11 +108,17 @@ void loop() {
                 float hoztVect = -defenderHozt.update(defHeading, 0.0);
                 moveDir = floatMod(atan2f(hoztVect, vertVect)*RAD_TO_DEG, 360);
                 moveSpeed = sqrtf(powf(vertVect, 2) + powf(hoztVect, 2));
-                // if(cam.getDefendGoalVisible()) {
-                //     float target = floatMod(cam.getDefendGoalAngle() + 180.0, 360.0);
-                //     float goalHeading = target > 180 ? target - 360.0 : target;
-                //     correction = camDefendCorrection.update(goalHeading, 0.0);
-                // }
+                // #if SECOND_ROBOT
+                //     if(cam.getDefendGoalVisible()) {
+                //         float target = floatMod(cam.getDefendGoalAngle() + 180.0, 360.0);
+                //         Serial.print(target);
+                //         Serial.print(" ");
+                //         float goalHeading = target > 180 ? target - 360.0 : target;
+                //         Serial.print(goalHeading);
+                //         Serial.print(" ");
+                //         correction = camDefendCorrection.update(goalHeading, 0.0);
+                //     }
+                // #endif
             }
         } else if(ls.getLineState() == 0) {
             moveDir = 180;
@@ -137,11 +149,27 @@ void loop() {
         } else {
             batteryTimer.resetTime();
         }
-    #endif;
+    #endif
+
+    // Serial.println(bearing.orientation.x);
+    correction = -bearingCorrection.update(heading, 0.0);
     
     if(motorSwitch && commEnable) {
-        motors.run(moveSpeed, moveDir, correction);
+        motors.run(0, 0, correction);
     } else {
         motors.run(0, 0, 0);
-    }
+    };
+    
+    // bool goForward = true;
+
+    // if (testMot.timeHasPassedNoUpdate()) {
+    //     goForward = !goForward; // Toggle direction
+    // }
+
+    // if (goForward) {
+    //     motors.run(100, 0, 0); // Forward
+    // } else {
+    //     motors.run(100, 180, 0); // Backward
+    // }
+
 }

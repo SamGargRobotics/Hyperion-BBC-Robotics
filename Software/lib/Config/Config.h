@@ -17,14 +17,14 @@
 
 // --[MASTER Values]--
     //! @def SURGE_SPEED @brief Speed that is set for surging
-    #define  SURGE_SPEED 125
+    #define  SURGE_SPEED 75
     //! @def BASE_SPEED @brief Speed that is set for minimum
-    #define  BASE_SPEED 40
+    #define  BASE_SPEED 50
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
     //!                          tuned.
     #define SECOND_ROBOT true
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
-    #define COMPETITION_MODE true
+    #define COMPETITION_MODE false
 
 // --[PID Values]--
 #if not SECOND_ROBOT
@@ -43,11 +43,11 @@
     #define KD_CAM_ATTACK 0.0
 
     //! @def KP_CAM_DEFEND @brief Proportional value for the Goal Track Def PID
-    #define KP_CAM_DEFEND 0.05
+    #define KP_CAM_DEFEND 1.0
     //! @def KI_CAM_DEFEND @brief Intergral value for the Goal Track Def PID
     #define KI_CAM_DEFEND 0.0
     //! @def KD_CAM_DEFEND @brief Derivative value for the Goal Track Def PID
-    #define KD_CAM_DEFEND 1.0
+    #define KD_CAM_DEFEND 0.05
 
  //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
     #define KP_DEFEND_VERT 80.0
@@ -140,10 +140,10 @@
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches
     // strats for orbit
-    #define ORBIT_STRENGTH_RADIUS 65
+    #define ORBIT_STRENGTH_RADIUS 60
     //! @def BALL_CLOSE_VAL @brief Ball Strength Value for when ball is close.
     #define BALL_CLOSE_VAL 107
-    #define DEFEND_SURGE 50
+    #define DEFEND_SURGE 45
 #endif
 
 // --[LIGHT SENSOR Values]--
@@ -201,7 +201,7 @@
 // --[DEBUG TOGGLES]--
     //! @def DEBUG_BLUETOOTH @brief Allows printing and debugging of bluetooth
     //!                             values.
-    #define DEBUG_BLUETOOTH true
+    #define DEBUG_BLUETOOTH false
     //! @def DEBUG_CAMERA @brief Allows printing and debugging of camera values.
     #define DEBUG_CAMERA false
     //! @def DEBUG_MOTORS @brief Allows printing and debugging of sent motor
@@ -229,3 +229,6 @@
     //!                      for testing and comparison.
     #define DEBUG_VD false
 #endif
+
+// sensor at 90 is cooked
+// 135 degrees it jumps between 85 and around 104

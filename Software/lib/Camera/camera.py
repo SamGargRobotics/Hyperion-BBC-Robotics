@@ -7,7 +7,7 @@ import time
 from pyb import UART, LED
 
 #              Yellow                          Blue
-Both = [(29, 87, -27, 5, 30, 127),(25, 31, -16, -5, -23, -2)]
+Both = [(29, 87, -27, 5, 30, 127),(7, 26, -19, -1, -33, 2)]
 LED(1).on()
 sensor.reset()  # Reset and initialize the sensor.
 sensor.set_pixformat(sensor.RGB565)
@@ -64,7 +64,7 @@ while True:
     uart.writechar(Temp2[1])
 
 
-    # print(TRI)
+    print(Temp1)
     # img.draw_line((0, 0, TRI[0][0], TRI[0][1]))
     # img.draw_line((0, 0, TRI[1][0], TRI[1][1]))
     # print(clock.fps())
