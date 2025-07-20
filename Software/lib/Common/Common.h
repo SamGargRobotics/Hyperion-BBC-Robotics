@@ -60,7 +60,7 @@ float midAngleBetween(float angleCounterClockwise, float angleClockwise);
 
 #if SECOND_ROBOT
 #else
-    #define TOFFSET1 10
+    #define TOFFSET1 0
     #define TOFFSET2 0
     #define TOFFSET3 0
     #define TOFFSET4 0
@@ -74,6 +74,6 @@ float midAngleBetween(float angleCounterClockwise, float angleClockwise);
     #define TOFFSET12 0
     #define TOFFSET13 0
     #define TOFFSET14 0
-    #define TOFFSET15 0
+    #define TOFFSET15 -10
     #define TOFFSET16 0
 #endif

@@ -17,14 +17,14 @@
 
 // --[MASTER Values]--
     //! @def SURGE_SPEED @brief Speed that is set for surging
-    #define  SURGE_SPEED 75
+    #define  SURGE_SPEED 120
     //! @def BASE_SPEED @brief Speed that is set for minimum
-    #define  BASE_SPEED 50
+    #define  BASE_SPEED 80
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
     //!                          tuned.
     #define SECOND_ROBOT true
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
-    #define COMPETITION_MODE false
+    #define COMPETITION_MODE true
 
 // --[PID Values]--
 #if not SECOND_ROBOT
@@ -64,7 +64,7 @@
     #define KD_DEFEND_HOZT 0.0
 
 //! @def KP_LINE_AVOID @brief Proportional value for the line avoid PID
-    #define KP_LINE_AVOID 200
+    #define KP_LINE_AVOID 200.0
 //! @def KI_LINE_AVOID @brief Intergral value for the line avoid PID
     #define KI_LINE_AVOID 0.0
 //! @def KD_LINE_AVOID @brief Derivative value for the line avoid PID
@@ -78,7 +78,7 @@
     #define KD_CENTERING 0.0
 #else
     //! @def KP_IMU @brief Proportional value for the IMU PID
-    #define KP_IMU 0.75 //0.6
+    #define KP_IMU 1.0 //0.6
     //! @def KI_IMU @brief Intergral value for the IMU PID
     #define KI_IMU 0.0
     //! @def KD_IMU @brief Derivative value for the IMU PID
@@ -99,21 +99,21 @@
     #define KD_CAM_DEFEND 1.0
 
  //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
-    #define KP_DEFEND_VERT 80.0
+    #define KP_DEFEND_VERT 120.0
  //! @def KI_DEFEND_VERT @brief Intergral value for the Def Vert Goal Pos PID
     #define KI_DEFEND_VERT 0.0
  //! @def KD_DEFEND_VERT @brief Derivative value for the Def Vert Goal Pos PID
     #define KD_DEFEND_VERT 0.0
 
 //! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
-    #define KP_DEFEND_HOZT 1.5
+    #define KP_DEFEND_HOZT 3.0
 //! @def KI_DEFEND_HOZT @brief Intergral value for the Def Hozt Goal Pos PID
     #define KI_DEFEND_HOZT 0.0
 //! @def KD_DEFEND_HOZT @brief Derivative value for the Def Hozt Goal Pos PID
     #define KD_DEFEND_HOZT 0.0
 
 //! @def KP_LINE_AVOID @brief Proportional value for the line avoid PID
-    #define KP_LINE_AVOID 200
+    #define KP_LINE_AVOID 200.0
 //! @def KI_LINE_AVOID @brief Intergral value for the line avoid PID
     #define KI_LINE_AVOID 0.0
 //! @def KD_LINE_AVOID @brief Derivative value for the line avoid PID
@@ -149,7 +149,7 @@
 // --[LIGHT SENSOR Values]--
     //! @def LS_CLB_THRESH @brief Threshold to determine if a sensor is
     //!                           detecting white.
-    #define LS_CLB_THRESH 50 // 50
+    #define LS_CLB_THRESH 100 // 50
     //! @def LS_FLIP_THRESH @brief Threshold to determine when the robot
     //!                            flips from state 1 to 2, or 2 to 1.
     #define LS_FLIP_THRESH 90
@@ -224,7 +224,7 @@
     #define DEBUG_TSSP_VALS  false
     //! @def DEBUG_TSSP @brief Allows printing and debugging of the tssp sensor
     //!                        final values for testing.
-    #define DEBUG_TSSP false
+    #define DEBUG_TSSP true
     //! @def DEBUG_VD @brief Allows printing and debuggin of the voltage divider
     //!                      for testing and comparison.
     #define DEBUG_VD false

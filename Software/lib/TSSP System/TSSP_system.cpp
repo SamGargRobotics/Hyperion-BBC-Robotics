@@ -56,9 +56,9 @@ void Tssp_system::update() {
     #if DEBUG_TSSP_VALS 
         for(uint8_t i = 0; i < TSSPNUM; i++) {
             Serial.print(readTssp[i]);
-            Serial.print("\t");
+            Serial.print(" ");
         }
-        Serial.println();
+        // Serial.println();
     #endif
 
     // for(uint8_t i = 0; i < TSSPNUM; i++) {
