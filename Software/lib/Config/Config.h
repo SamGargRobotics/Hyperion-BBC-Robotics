@@ -135,7 +135,12 @@
     #define ORBIT_STRENGTH_RADIUS 60
     //! @def BALL_CLOSE_VAL @brief Ball Strength Value for when ball is close.
     #define BALL_CLOSE_VAL 107
+    //! @def DEFEND_SURGE @brief The ball strength at which the defender
+    //!                          switches to attacker.
     #define DEFEND_SURGE 50
+    //! @def DEFEND_NOLINE_MSPD @brief Movement at which the defender moves at
+    //!                                when not seeing the line.
+    #define DEFEND_NOLINE_MSPD 50
 #else
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches
@@ -143,7 +148,12 @@
     #define ORBIT_STRENGTH_RADIUS 60
     //! @def BALL_CLOSE_VAL @brief Ball Strength Value for when ball is close.
     #define BALL_CLOSE_VAL 107
+    //! @def DEFEND_SURGE @brief The ball strength at which the defender
+    //!                          switches to attacker.
     #define DEFEND_SURGE 45
+    //! @def DEFEND_NOLINE_MSPD @brief Movement at which the defender moves at
+    //!                                when not seeing the line.
+    #define DEFEND_NOLINE_MSPD 50
 #endif
 
 // --[LIGHT SENSOR Values]--

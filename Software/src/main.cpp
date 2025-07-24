@@ -70,7 +70,6 @@ void loop() {
     float moveDir = 0.0;
     float moveSpeed = 0.0;
     float correction = -bearingCorrection.update(heading, 0.0);
-    // float correction = 0;
 
     float modBallDir = tssp.getBallDir() > 180 ? tssp.getBallDir() - 360
                             : tssp.getBallDir();
@@ -80,25 +79,25 @@ void loop() {
     float moveOffset = moveScaler * min(0.4 * expf(0.25 * abs(modBallDir))
                     - 0.4, 90.0);
     
-    if(true) {//bt.getRole()) {
+    if(bt.getRole()) {
         if(tssp.getBallStr() != 0) {
             moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
-            // moveDir = (tssp.getBallDir() > 180)?(tssp.getBallDir() + (-min(0.04*(expf(-4.5*(tssp.getBallDir()-360)) - 1), 80))):(tssp.getBallDir() + (min(0.04*(expf(-4.5*(tssp.getBallDir()-360)) - 1), 80)));
-            // moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
-            moveSpeed = BASE_SPEED;
+            //OLD ORBIT: moveDir = (tssp.getBallDir() > 180)?(tssp.getBallDir() + (-min(0.04*(expf(-4.5*(tssp.getBallDir()-360)) - 1), 80))):(tssp.getBallDir() + (min(0.04*(expf(-4.5*(tssp.getBallDir()-360)) - 1), 80)));
+            moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
+            //OLD MOVESPD: moveSpeed = BASE_SPEED;
+
+            //HARD CODING SURGE: (REMOVE ONCE ORBIT IS TUNED)
             if(tssp.getBallDir() > 320 || tssp.getBallDir() < 40) {
                 moveDir = tssp.getBallDir();
                 moveSpeed = 100;
             }
+
             // if(cam.getAttackGoalVisible()) {
             //     float goalHeading = cam.getAttackGoalAngle() > 180 ?
             //                         cam.getAttackGoalAngle() - 360 :
             //                         cam.getAttackGoalAngle();
             //     correction = camAttackCorrection.update(goalHeading, 0.0);
             // }
-            // Serial.print(moveDir);
-            // Serial.print("\t");
-            // Serial.println(tssp.getBallDir());
         }
     } else {
         if(tssp.getBallStr() != 0) {
@@ -108,26 +107,25 @@ void loop() {
             } else {
                 float vertVect = 0;
                 if(ls.getLineState() == 0) {
-                    vertVect = -30;
+                    vertVect = -DEFEND_NOLINE_MSPD;
                 }
                 float defHeading = (tssp.getBallDir() > 180) ? tssp.getBallDir() - 360 :
                                     tssp.getBallDir();
                 float hoztVect = -defenderHozt.update(defHeading, 0.0);
                 moveDir = floatMod(atan2f(hoztVect, vertVect)*RAD_TO_DEG, 360);
                 moveSpeed = sqrtf(powf(vertVect, 2) + powf(hoztVect, 2));
-                // #if SECOND_ROBOT
-                //     if(cam.getDefendGoalVisible()) {
-                //         float target = floatMod(cam.getDefendGoalAngle() + 180.0, 360.0);
-                //         float goalHeading = target > 180 ? target - 360.0 : target;
-                //         correction = camDefendCorrection.update(goalHeading, 0.0);
-                //     }
-                // #endif
+                if(cam.getDefendGoalVisible()) {
+                    float target = floatMod(cam.getDefendGoalAngle() + 180.0, 360.0);
+                    float goalHeading = target > 180 ? target - 360.0 : target;
+                    correction = camDefendCorrection.update(goalHeading, 0.0);
+                }
             }
         } else if(ls.getLineState() == 0) {
             moveDir = 180;
-            moveSpeed = 50;
+            moveSpeed = DEFEND_NOLINE_MSPD;
         }
     }
+    
     if(ls.getLineState() > 0.5) {
         moveDir = floatMod(ls.getLineDirection() + 180, 360.0);
         moveSpeed = -avoidLine.update(ls.getLineState(), 0.0);
@@ -153,9 +151,6 @@ void loop() {
             batteryTimer.resetTime();
         }
     #endif
-
-    // Serial.println(bearing.orientation.x);
-    // correction = -bearingCorrection.update(heading, 0.0);
     
     if(motorSwitch && commEnable) {
         if(abs(correction) < 20) {
@@ -166,17 +161,4 @@ void loop() {
     } else {
         motors.run(0, 0, 0);
     };
-    
-    // bool goForward = true;
-
-    // if (testMot.timeHasPassedNoUpdate()) {
-    //     goForward = !goForward; // Toggle direction
-    // }
-
-    // if (goForward) {
-    //     motors.run(100, 0, 0); // Forward
-    // } else {
-    //     motors.run(100, 180, 0); // Backward
-    // }
-
 }
