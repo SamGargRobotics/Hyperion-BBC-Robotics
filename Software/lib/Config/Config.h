@@ -17,9 +17,9 @@
 
 // --[MASTER Values]--
     //! @def SURGE_SPEED @brief Speed that is set for surging
-    #define  SURGE_SPEED 120
+    #define  SURGE_SPEED 100
     //! @def BASE_SPEED @brief Speed that is set for minimum
-    #define  BASE_SPEED 80
+    #define  BASE_SPEED 60
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
     //!                          tuned.
     #define SECOND_ROBOT true
