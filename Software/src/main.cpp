@@ -69,7 +69,8 @@ void loop() {
 
     float moveDir = 0.0;
     float moveSpeed = 0.0;
-    float correction = -bearingCorrection.update(heading, 0.0);
+    float bearingCor = -bearingCorrection.update(heading, 0.0);
+    float correction = bearingCor;
 
     float modBallDir = tssp.getBallDir() > 180 ? tssp.getBallDir() - 360
                             : tssp.getBallDir();
@@ -86,18 +87,20 @@ void loop() {
             moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
             //OLD MOVESPD: moveSpeed = BASE_SPEED;
 
-            //HARD CODING SURGE: (REMOVE ONCE ORBIT IS TUNED)
+            //HARD CODING SURGE (not intergrated): (REMOVE ONCE ORBIT IS TUNED)
             if(tssp.getBallDir() > 320 || tssp.getBallDir() < 40) {
                 moveDir = tssp.getBallDir();
                 moveSpeed = 100;
             }
 
-            // if(cam.getAttackGoalVisible()) {
-            //     float goalHeading = cam.getAttackGoalAngle() > 180 ?
-            //                         cam.getAttackGoalAngle() - 360 :
-            //                         cam.getAttackGoalAngle();
-            //     correction = camAttackCorrection.update(goalHeading, 0.0);
-            // }
+            #if GOAL_TRACKING_TOGGLE
+                if(cam.getAttackGoalVisible()) {
+                    float goalHeading = cam.getAttackGoalAngle() > 180 ?
+                                        cam.getAttackGoalAngle() - 360 :
+                                        cam.getAttackGoalAngle();
+                    correction = camAttackCorrection.update(goalHeading, 0.0);
+                }
+            #endif
         }
     } else {
         if(tssp.getBallStr() != 0) {
@@ -114,11 +117,13 @@ void loop() {
                 float hoztVect = -defenderHozt.update(defHeading, 0.0);
                 moveDir = floatMod(atan2f(hoztVect, vertVect)*RAD_TO_DEG, 360);
                 moveSpeed = sqrtf(powf(vertVect, 2) + powf(hoztVect, 2));
-                if(cam.getDefendGoalVisible()) {
-                    float target = floatMod(cam.getDefendGoalAngle() + 180.0, 360.0);
-                    float goalHeading = target > 180 ? target - 360.0 : target;
-                    correction = camDefendCorrection.update(goalHeading, 0.0);
-                }
+                #if GOAL_TRACKING_TOGGLE
+                    if(cam.getDefendGoalVisible()) {
+                        float target = floatMod(cam.getDefendGoalAngle() + 180.0, 360.0);
+                        float goalHeading = target > 180 ? target - 360.0 : target;
+                        correction = camDefendCorrection.update(goalHeading, 0.0);
+                    }
+                #endif
             }
         } else if(ls.getLineState() == 0) {
             moveDir = 180;
@@ -151,14 +156,19 @@ void loop() {
             batteryTimer.resetTime();
         }
     #endif
+    #if not GOAL_TRACKING_TOGGLE
+        correction = bearingCor;
+    #endif
     
     if(motorSwitch && commEnable) {
-        if(abs(correction) < 20) {
-            motors.run(moveSpeed, moveDir, 0);
-        } else{ 
-            motors.run(moveSpeed, moveDir, correction);
-        }
+        // Correcting only when absoloutely needed: remove after testing
+        // if(abs(correction) < 20) {
+        //     motors.run(moveSpeed, moveDir, 0);
+        // } else { 
+        //     motors.run(moveSpeed, moveDir, correction);
+        // }
+        motors.run(moveSpeed, moveDir, correction);
     } else {
         motors.run(0, 0, 0);
-    };
+    }
 }

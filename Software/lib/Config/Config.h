@@ -127,33 +127,39 @@
     #define KD_CENTERING 0.0
 #endif
 
-// --[ATTACK LOGIC Values]
+// --[LOGIC Values]
 #if not SECOND_ROBOT
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches
     // strats for orbit
     #define ORBIT_STRENGTH_RADIUS 60
-    //! @def BALL_CLOSE_VAL @brief Ball Strength Value for when ball is close.
-    #define BALL_CLOSE_VAL 107
     //! @def DEFEND_SURGE @brief The ball strength at which the defender
     //!                          switches to attacker.
     #define DEFEND_SURGE 50
     //! @def DEFEND_NOLINE_MSPD @brief Movement at which the defender moves at
     //!                                when not seeing the line.
     #define DEFEND_NOLINE_MSPD 50
+    //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
+    //!                         avoid PID.
+    #define ATK_LINE_SP 0.1
+    //! @def DEF_VERT_SP @brief The set line state which the defender follows.
+    #define DEF_VERT_SP 0.5
 #else
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches
     // strats for orbit
     #define ORBIT_STRENGTH_RADIUS 60
-    //! @def BALL_CLOSE_VAL @brief Ball Strength Value for when ball is close.
-    #define BALL_CLOSE_VAL 107
     //! @def DEFEND_SURGE @brief The ball strength at which the defender
     //!                          switches to attacker.
     #define DEFEND_SURGE 45
     //! @def DEFEND_NOLINE_MSPD @brief Movement at which the defender moves at
     //!                                when not seeing the line.
     #define DEFEND_NOLINE_MSPD 50
+    //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
+    //!                         avoid PID.
+    #define ATK_LINE_SP 0.1
+    //! @def DEF_VERT_SP @brief The set line state which the defender follows.
+    #define DEF_VERT_SP 0.5
 #endif
 
 // --[LIGHT SENSOR Values]--
@@ -163,14 +169,6 @@
     //! @def LS_FLIP_THRESH @brief Threshold to determine when the robot
     //!                            flips from state 1 to 2, or 2 to 1.
     #define LS_FLIP_THRESH 90
-    //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
-    //!                         avoid PID.
-    #define ATK_LINE_SP 0.1
-    //! @def LINE_STRICT_AVOID @brief The set line state where the robot will
-    //!                               strictly line avoid at full speed.
-    #define LINE_STRICT_AVOID 0.75
-    //! @def DEF_VERT_SP @brief The set line state which the defender follows.
-    #define DEF_VERT_SP 0.5
 
 // --[BLUETOOTH Values]
     //! @def BT_SERIAL @brief Serial used to transfer data from the
@@ -202,9 +200,8 @@
     //! @def BATTERY1_DIVIDER @brief The divider of the analogue value to 
     //!                              achieve a battery level in volts.
     #define BATTERY1_DIVIDER 71
+
 // --[PHYSICAL DEBUG TOGGLES]
-    //! @def DEBUG_ROBOT @brief Testing space for individual items
-    #define DEBUG_ROBOT false
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
     #define GOAL_TRACKING_TOGGLE true
 
@@ -234,11 +231,8 @@
     #define DEBUG_TSSP_VALS  false
     //! @def DEBUG_TSSP @brief Allows printing and debugging of the tssp sensor
     //!                        final values for testing.
-    #define DEBUG_TSSP true
+    #define DEBUG_TSSP false
     //! @def DEBUG_VD @brief Allows printing and debuggin of the voltage divider
     //!                      for testing and comparison.
     #define DEBUG_VD false
 #endif
-
-// sensor at 90 is cooked
-// 135 degrees it jumps between 85 and around 104
