@@ -80,7 +80,7 @@ void loop() {
     float moveOffset = moveScaler * min(0.4 * expf(0.25 * abs(modBallDir))
                     - 0.4, 90.0);
     
-    if(bt.getRole()) {
+    if(true) {
         if(tssp.getBallStr() != 0) {
             moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
             //OLD ORBIT: moveDir = (tssp.getBallDir() > 180)?(tssp.getBallDir() + (-min(0.04*(expf(-4.5*(tssp.getBallDir()-360)) - 1), 80))):(tssp.getBallDir() + (min(0.04*(expf(-4.5*(tssp.getBallDir()-360)) - 1), 80)));
@@ -93,15 +93,15 @@ void loop() {
                 moveSpeed = 100;
             }
 
-            #if GOAL_TRACKING_TOGGLE
-                if(cam.getAttackGoalVisible()) {
-                    float goalHeading = cam.getAttackGoalAngle() > 180 ?
-                                        cam.getAttackGoalAngle() - 360 :
-                                        cam.getAttackGoalAngle();
-                    correction = camAttackCorrection.update(goalHeading, 0.0);
-                }
-            #endif
         }
+        #if GOAL_TRACKING_TOGGLE
+            if(cam.getAttackGoalVisible()) {
+                float goalHeading = cam.getAttackGoalAngle() > 180 ?
+                                    cam.getAttackGoalAngle() - 360 :
+                                    cam.getAttackGoalAngle();
+                correction = camAttackCorrection.update(goalHeading, 0.0);
+            }
+        #endif
     } else {
         if(tssp.getBallStr() != 0) {
             if((tssp.getBallDir() > 90 && tssp.getBallDir() <= 270) || ((tssp.getBallDir() < 15 || tssp.getBallDir() > 345) && tssp.getBallStr() > DEFEND_SURGE)) {
@@ -131,18 +131,18 @@ void loop() {
         }
     }
     
-    if(ls.getLineState() > 0.5) {
-        moveDir = floatMod(ls.getLineDirection() + 180, 360.0);
-        moveSpeed = -avoidLine.update(ls.getLineState(), 0.0);
-    } else if(ls.getLineState() > 0 && smallestAngleBetween(moveDir, ls.getLineDirection()) < 45) {
-        if(smallestAngleBetween(floatMod(ls.getLineDirection() - 90, 360.0), moveDir) < smallestAngleBetween(floatMod(ls.getLineDirection() + 90, 360.0), moveDir)) {
-            moveDir = floatMod(ls.getLineDirection() - 90, 360.0);
+    // if(ls.getLineState() > 0.5) {
+    //     moveDir = floatMod(ls.getLineDirection() + 180, 360.0);
+    //     moveSpeed = -avoidLine.update(ls.getLineState(), 0.0);
+    // } else if(ls.getLineState() > 0 && smallestAngleBetween(moveDir, ls.getLineDirection()) < 45) {
+    //     if(smallestAngleBetween(floatMod(ls.getLineDirection() - 90, 360.0), moveDir) < smallestAngleBetween(floatMod(ls.getLineDirection() + 90, 360.0), moveDir)) {
+    //         moveDir = floatMod(ls.getLineDirection() - 90, 360.0);
             
-        } else {
-            moveDir = floatMod(ls.getLineDirection() + 90, 360.0);
-        }
-        moveSpeed *= sinf(smallestAngleBetween(ls.getLineDirection(), moveDir));
-    }
+    //     } else {
+    //         moveDir = floatMod(ls.getLineDirection() + 90, 360.0);
+    //     }
+    //     moveSpeed *= sinf(smallestAngleBetween(ls.getLineDirection(), moveDir));
+    // }
 
 
     #if not COMPETITION_MODE

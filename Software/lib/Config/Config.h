@@ -17,14 +17,14 @@
 
 // --[MASTER Values]--
     //! @def SURGE_SPEED @brief Speed that is set for surging
-    #define  SURGE_SPEED 100
+    #define  SURGE_SPEED 140
     //! @def BASE_SPEED @brief Speed that is set for minimum
-    #define  BASE_SPEED 60
+    #define  BASE_SPEED 100
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
     //!                          tuned.
-    #define SECOND_ROBOT true
+    #define SECOND_ROBOT false
     //! @def COMPETITION_MODE @brief If the robot is or is not in competition
-    #define COMPETITION_MODE true
+    #define COMPETITION_MODE false
 
 // --[PID Values]--
 #if not SECOND_ROBOT
@@ -36,11 +36,11 @@
     #define KD_IMU 0.05 //0.21 0.67
 
     //! @def KP_CAM_ATTACK @brief Proportional value for the Goal Track Atk PID
-    #define KP_CAM_ATTACK 0.815
+    #define KP_CAM_ATTACK 1.0
     //! @def KI_CAM_ATTACK @brief Intergral value for the Goal Track Atk PID
     #define KI_CAM_ATTACK 0.0
     //! @def KD_CAM_ATTACK @brief Derivative value for the Goal Track Atk PID
-    #define KD_CAM_ATTACK 0.0
+    #define KD_CAM_ATTACK 0.05
 
     //! @def KP_CAM_DEFEND @brief Proportional value for the Goal Track Def PID
     #define KP_CAM_DEFEND 1.0
@@ -165,7 +165,7 @@
 // --[LIGHT SENSOR Values]--
     //! @def LS_CLB_THRESH @brief Threshold to determine if a sensor is
     //!                           detecting white.
-    #define LS_CLB_THRESH 100 // 50
+    #define LS_CLB_THRESH 200 // 50
     //! @def LS_FLIP_THRESH @brief Threshold to determine when the robot
     //!                            flips from state 1 to 2, or 2 to 1.
     #define LS_FLIP_THRESH 90
@@ -203,7 +203,7 @@
 
 // --[PHYSICAL DEBUG TOGGLES]
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
-    #define GOAL_TRACKING_TOGGLE true
+    #define GOAL_TRACKING_TOGGLE false
 
 // --[DEBUG TOGGLES]--
     //! @def DEBUG_BLUETOOTH @brief Allows printing and debugging of bluetooth
