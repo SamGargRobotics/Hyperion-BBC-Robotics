@@ -55,10 +55,25 @@ float midAngleBetween(float angleCounterClockwise, float angleClockwise);
 //! @def NUMBER_MUX @brief Number of multiplexers.
 #define NUMBER_MUX 2
 
-
-#endif
+#define TSSP_SMOOTHING_VAL 0.3
 
 #if SECOND_ROBOT
+    #define TOFFSET1 0
+    #define TOFFSET2 0
+    #define TOFFSET3 0
+    #define TOFFSET4 0
+    #define TOFFSET5 0
+    #define TOFFSET6 0
+    #define TOFFSET7 0
+    #define TOFFSET8 0
+    #define TOFFSET9 0
+    #define TOFFSET10 0
+    #define TOFFSET11 0
+    #define TOFFSET12 0
+    #define TOFFSET13 0
+    #define TOFFSET14 0
+    #define TOFFSET15 0
+    #define TOFFSET16 0
 #else
     #define TOFFSET1 0
     #define TOFFSET2 0
@@ -76,4 +91,7 @@ float midAngleBetween(float angleCounterClockwise, float angleClockwise);
     #define TOFFSET14 0
     #define TOFFSET15 -10
     #define TOFFSET16 0
+#endif
+
+
 #endif

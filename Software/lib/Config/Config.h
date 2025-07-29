@@ -23,7 +23,7 @@
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
     //!                          tuned.
     #define SECOND_ROBOT false
-    //! @def COMPETITION_MODE @brief If the robot is or is not in competition
+    //! @def COMPETITION_MODE @brief If the robot is in international comp
     #define COMPETITION_MODE false
 
 // --[PID Values]--

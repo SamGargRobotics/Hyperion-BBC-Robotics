@@ -88,7 +88,7 @@ void loop() {
             //OLD MOVESPD: moveSpeed = BASE_SPEED;
 
             //HARD CODING SURGE (not intergrated): (REMOVE ONCE ORBIT IS TUNED)
-            if(tssp.getBallDir() > 320 || tssp.getBallDir() < 40) {
+            if(tssp.getBallDir() > 340 || tssp.getBallDir() < 20) {
                 moveDir = tssp.getBallDir();
                 moveSpeed = 100;
             }
@@ -161,12 +161,6 @@ void loop() {
     #endif
     
     if(motorSwitch && commEnable) {
-        // Correcting only when absoloutely needed: remove after testing
-        // if(abs(correction) < 20) {
-        //     motors.run(moveSpeed, moveDir, 0);
-        // } else { 
-        //     motors.run(moveSpeed, moveDir, correction);
-        // }
         motors.run(moveSpeed, moveDir, correction);
     } else {
         motors.run(0, 0, 0);

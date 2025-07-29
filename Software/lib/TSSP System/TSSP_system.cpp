@@ -105,8 +105,16 @@ void Tssp_system::update() {
     //                there.
     // ballDir: Using vector calculations, a certain radian value can be found 
     //          and then that is converted to degrees.
-    ballStr = ((3 * tsspSortedValues[0]) + (2 * tsspSortedValues[1]) + \
-              tsspSortedValues[2] + tsspSortedValues[3]) / 7;
+    static bool firstRun = true;
+    float newBallStr = ((3 * tsspSortedValues[0]) + (2 * tsspSortedValues[1]) + 
+                        tsspSortedValues[2] + tsspSortedValues[3]) / 7.0;
+    const float smoothStrVal = TSSP_SMOOTHING_VAL;
+    if (firstRun) {
+        ballStr = newBallStr;
+        firstRun = false;
+    } else {
+        ballStr = (smoothStrVal * newBallStr) + ((1 - smoothStrVal) * ballStr);
+    }
     ballDir = (ballStr != 0) ? 360 - \
                             floatMod((RAD_TO_DEG * (atan2f(y, x)))-90, 360) : 0;
     #if DEBUG_TSSP
