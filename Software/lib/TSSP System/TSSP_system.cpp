@@ -108,12 +108,11 @@ void Tssp_system::update() {
     static bool firstRun = true;
     float newBallStr = ((3 * tsspSortedValues[0]) + (2 * tsspSortedValues[1]) + 
                         tsspSortedValues[2] + tsspSortedValues[3]) / 7.0;
-    const float smoothStrVal = TSSP_SMOOTHING_VAL;
     if (firstRun) {
         ballStr = newBallStr;
         firstRun = false;
     } else {
-        ballStr = (smoothStrVal * newBallStr) + ((1 - smoothStrVal) * ballStr);
+        ballStr = (TSSP_SMOOTHING_VAL * newBallStr) + ((1 - TSSP_SMOOTHING_VAL) * ballStr);
     }
     ballDir = (ballStr != 0) ? 360 - \
                             floatMod((RAD_TO_DEG * (atan2f(y, x)))-90, 360) : 0;
