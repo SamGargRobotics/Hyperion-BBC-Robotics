@@ -30,7 +30,7 @@ void Tssp_system::update() {
     uint8_t tsspSortedIndex[TSSPNUM] = {0}; 
 
     // Read the tssps themselves.
-    for(uint8_t i = 0; i < 100; i++) {
+    for(uint8_t i = 0; i < 255; i++) {
         for(uint8_t j = 0; j < TSSPNUM; j++) {
             readTssp[j] += 1 - digitalRead(tsspPins[j]);
             delayMicroseconds(1);

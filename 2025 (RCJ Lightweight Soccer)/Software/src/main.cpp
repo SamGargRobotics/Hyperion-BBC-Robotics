@@ -92,7 +92,10 @@ void loop() {
                 moveDir = tssp.getBallDir();
                 moveSpeed = 100;
             }
-
+        } else {
+            // allows the robot to centre on the field when not seeing the ball
+            moveDir = (heading < 0)? 270: 90;
+            moveSpeed = centeringPID.update(heading, 0.0);
         }
         #if GOAL_TRACKING_TOGGLE
             if(cam.getAttackGoalVisible()) {
@@ -108,15 +111,20 @@ void loop() {
                 moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
                 moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
             } else {
-                float vertVect = 0;
-                if(ls.getLineState() == 0) {
-                    vertVect = -DEFEND_NOLINE_MSPD;
-                }
-                float defHeading = (tssp.getBallDir() > 180) ? tssp.getBallDir() - 360 :
-                                    tssp.getBallDir();
-                float hoztVect = -defenderHozt.update(defHeading, 0.0);
-                moveDir = floatMod(atan2f(hoztVect, vertVect)*RAD_TO_DEG, 360);
-                moveSpeed = sqrtf(powf(vertVect, 2) + powf(hoztVect, 2));
+                // if(cam.getDefendGoalVisible()) {
+                //     float vertVect = 0;
+                //     float defHeading = (tssp.getBallDir() > 180) ? tssp.getBallDir() - 360 : tssp.getBallDir();
+                //     float hoztVect = -defenderHozt.update(defHeading, 0.0);
+                // }
+
+                // if(ls.getLineState() == 0) {
+                //     vertVect = -DEFEND_NOLINE_MSPD;
+                // }
+                // float defHeading = (tssp.getBallDir() > 180) ? tssp.getBallDir() - 360 :
+                //                     tssp.getBallDir();
+                // float hoztVect = -defenderHozt.update(defHeading, 0.0);
+                // moveDir = floatMod(atan2f(hoztVect, vertVect)*RAD_TO_DEG, 360);
+                // moveSpeed = sqrtf(powf(vertVect, 2) + powf(hoztVect, 2));
                 #if GOAL_TRACKING_TOGGLE
                     if(cam.getDefendGoalVisible()) {
                         float target = floatMod(cam.getDefendGoalAngle() + 180.0, 360.0);
@@ -131,18 +139,18 @@ void loop() {
         }
     }
     
-    // if(ls.getLineState() > 0.5) {
-    //     moveDir = floatMod(ls.getLineDirection() + 180, 360.0);
-    //     moveSpeed = -avoidLine.update(ls.getLineState(), 0.0);
-    // } else if(ls.getLineState() > 0 && smallestAngleBetween(moveDir, ls.getLineDirection()) < 45) {
-    //     if(smallestAngleBetween(floatMod(ls.getLineDirection() - 90, 360.0), moveDir) < smallestAngleBetween(floatMod(ls.getLineDirection() + 90, 360.0), moveDir)) {
-    //         moveDir = floatMod(ls.getLineDirection() - 90, 360.0);
+    if(ls.getLineState() > 0.5) {
+        moveDir = floatMod(ls.getLineDirection() + 180, 360.0);
+        moveSpeed = -avoidLine.update(ls.getLineState(), 0.0);
+    } else if(ls.getLineState() > 0 && smallestAngleBetween(moveDir, ls.getLineDirection()) < 45) {
+        if(smallestAngleBetween(floatMod(ls.getLineDirection() - 90, 360.0), moveDir) < smallestAngleBetween(floatMod(ls.getLineDirection() + 90, 360.0), moveDir)) {
+            moveDir = floatMod(ls.getLineDirection() - 90, 360.0);
             
-    //     } else {
-    //         moveDir = floatMod(ls.getLineDirection() + 90, 360.0);
-    //     }
-    //     moveSpeed *= sinf(smallestAngleBetween(ls.getLineDirection(), moveDir));
-    // }
+        } else {
+            moveDir = floatMod(ls.getLineDirection() + 90, 360.0);
+        }
+        moveSpeed *= sinf(smallestAngleBetween(ls.getLineDirection(), moveDir));
+    }
 
 
     #if not COMPETITION_MODE
