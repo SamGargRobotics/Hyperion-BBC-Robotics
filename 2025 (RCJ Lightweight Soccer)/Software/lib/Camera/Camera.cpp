@@ -29,13 +29,18 @@ void Camera::update(bool attackBlue) {
             int goal_x_blue = cameraSerial.read();
             int goal_y_blue = cameraSerial.read();
             if(goal_x_yellow != 0) {
-                goal_x_yellow -= 60;
-                goal_y_yellow -= 60;
+                goal_x_yellow -= 120;
+                goal_y_yellow -= 120;
             }
             if(goal_x_blue != 0) {
-                goal_x_blue -= 60;
-                goal_y_yellow -= 60;
+                goal_x_blue -= 120;
+                goal_y_yellow -= 120;
             }
+            // Serial.print(goal_x_yellow);
+            // Serial.print("\t");
+            // Serial.print(goal_y_yellow);
+            // Serial.print("\t");
+            // Serial.println(atan2(goal_y_yellow, goal_x_yellow) * RAD_TO_DEG);
             if (attackBlue) {
                 attackGoalAngle = calculateAngleDistance(goal_y_blue, goal_x_blue);
                 attackGoalDist = calcDistance(goal_x_blue, goal_y_blue);
@@ -52,6 +57,7 @@ void Camera::update(bool attackBlue) {
                 seeingAttackingGoal = (goal_y_yellow != 0);
                 seeingDefendingGoal = (goal_y_blue != 0);
                 attackGoalX = goal_y_blue;
+                // Serial.println(attackGoalAngle);
             }
         }
     }

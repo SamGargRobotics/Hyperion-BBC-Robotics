@@ -17,9 +17,9 @@
 
 // --[MASTER Values]--
     //! @def SURGE_SPEED @brief Speed that is set for surging
-    #define  SURGE_SPEED 140
+    #define  SURGE_SPEED 150
     //! @def BASE_SPEED @brief Speed that is set for minimum
-    #define  BASE_SPEED 100
+    #define  BASE_SPEED 80
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
     //!                          tuned.
     #define SECOND_ROBOT false
@@ -33,14 +33,14 @@
     //! @def KI_IMU @brief Intergral value for the IMU PID
     #define KI_IMU 0.0
     //! @def KD_IMU @brief Derivative value for the IMU PID
-    #define KD_IMU 0.05 //0.21 0.67
+    #define KD_IMU 0.08 //0.21 0.67
 
     //! @def KP_CAM_ATTACK @brief Proportional value for the Goal Track Atk PID
     #define KP_CAM_ATTACK 1.0
     //! @def KI_CAM_ATTACK @brief Intergral value for the Goal Track Atk PID
     #define KI_CAM_ATTACK 0.0
     //! @def KD_CAM_ATTACK @brief Derivative value for the Goal Track Atk PID
-    #define KD_CAM_ATTACK 0.05
+    #define KD_CAM_ATTACK 0.0
 
     //! @def KP_CAM_DEFEND @brief Proportional value for the Goal Track Def PID
     #define KP_CAM_DEFEND 1.0
@@ -71,7 +71,7 @@
     #define KD_LINE_AVOID 0.0
 
 //! @def KP_CENTERING @brief Proportional value for the field centering PID
-    #define KP_CENTERING 1.0
+    #define KP_CENTERING 2.0
 //! @def KI_CENTERING @brief Intergral value for the field centering PID
     #define KI_CENTERING 0.0
 //! @def KD_CENTERING @brief Derivative value for the field centering PID
@@ -120,7 +120,7 @@
     #define KD_LINE_AVOID 0.0
 
 //! @def KP_CENTERING @brief Proportional value for the field centering PID
-    #define KP_CENTERING 1.0
+    #define KP_CENTERING 20.0
 //! @def KI_CENTERING @brief Intergral value for the field centering PID
     #define KI_CENTERING 0.0
 //! @def KD_CENTERING @brief Derivative value for the field centering PID
@@ -141,7 +141,7 @@
     #define DEFEND_NOLINE_MSPD 50
     //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
     //!                         avoid PID.
-    #define ATK_LINE_SP 0.1
+    #define ATK_LINE_SP 0.4
     //! @def DEF_VERT_SP @brief The set line state which the defender follows.
     #define DEF_VERT_SP 0.5
 #else
@@ -203,7 +203,7 @@
 
 // --[PHYSICAL DEBUG TOGGLES]
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
-    #define GOAL_TRACKING_TOGGLE false
+    #define GOAL_TRACKING_TOGGLE true
 
 // --[DEBUG TOGGLES]--
     //! @def DEBUG_BLUETOOTH @brief Allows printing and debugging of bluetooth

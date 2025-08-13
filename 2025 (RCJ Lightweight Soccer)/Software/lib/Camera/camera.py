@@ -7,16 +7,16 @@ import time
 from pyb import UART, LED
 
 #              Yellow                          Blue
-Both = [(29, 87, -27, 5, 30, 127),(7, 26, -19, -1, -33, 2)]
+Both = [(35, 100, -30, -3, 31, 83),(16, 37, -18, 2, -63, -11)]
 LED(1).on()
 sensor.reset()  # Reset and initialize the sensor.
 sensor.set_pixformat(sensor.RGB565)
-sensor.set_framesize(sensor.QQVGA)
+sensor.set_framesize(sensor.QVGA)
 sensor.skip_frames(time=2000)  # Wait for settings take effect.
 sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
 sensor.set_auto_exposure(False, exposure_us=8000)
-sensor.set_windowing((120,120))
+sensor.set_windowing((240,240))
 LED(1).off()
 clock = time.clock()  # Create a clock object to track the FPS.
 
@@ -34,7 +34,7 @@ def GoalFind():
     """
     Temp1 = [0, 0]
     Temp2 = [0, 0]
-    blobs = img.find_blobs(Both,  pixels_threshold=200, area_threshold=200, merge=True, x_stride = 5, y_stride = 5, margin=23)
+    blobs = img.find_blobs(Both,  pixels_threshold=10, area_threshold=10, merge=True, x_stride = 2, y_stride = 2, margin=0)
     blobs = sorted(blobs, key=lambda blob: -blob.area())
     for blob in blobs:
         if(blob.code() == 1 and Temp1[0] == 0):
@@ -48,12 +48,14 @@ while True:
     img = sensor.snapshot()
     Temp1 = [0, 0]
     Temp2 = [0, 0]
-    blobs = img.find_blobs(Both,  pixels_threshold=200, area_threshold=200, merge=True, x_stride = 5, y_stride = 5, margin=23)
+    blobs = img.find_blobs(Both,  pixels_threshold=10, area_threshold=10, merge=True, x_stride = 2, y_stride = 2, margin=0)
     blobs = sorted(blobs, key=lambda blob: -blob.area())
     for blob in blobs:
         if(blob.code() == 1 and Temp1[0] == 0):
+            img.draw_rectangle(blob.rect(),color=(255,255,0))
             Temp1 = [blob.cx(),blob.cy()]
         elif(blob.code() == 2 and Temp2[0] == 0):
+            img.draw_rectangle(blob.rect(),color=(0,0,255))
             Temp2 = [blob.cx(),blob.cy()]
 
     uart.writechar(200)
@@ -64,7 +66,7 @@ while True:
     uart.writechar(Temp2[1])
 
 
-    print(Temp1)
-    # img.draw_line((0, 0, TRI[0][0], TRI[0][1]))
-    # img.draw_line((0, 0, TRI[1][0], TRI[1][1]))
+    print(Temp2)
+    # img.draw_line((0, 0, Temp1[0][0], Temp1[0][1]))
+    # img.draw_line((0, 0, Temp2[1][0], Temp2[1][1]))
     # print(clock.fps())

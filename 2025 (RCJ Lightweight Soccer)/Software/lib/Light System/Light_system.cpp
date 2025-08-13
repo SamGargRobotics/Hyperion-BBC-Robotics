@@ -136,7 +136,9 @@ void Light_system::update(float rot, bool motorOn) {
                 break;
             }
         }
-    }
+    } //else if(clusterAmount == 4) {
+    //     lineDirection = 0;
+    // }
     calculateLineState(rot, lineDirection, linePos);
     if(!motorOn) {
         lineDir = -1;

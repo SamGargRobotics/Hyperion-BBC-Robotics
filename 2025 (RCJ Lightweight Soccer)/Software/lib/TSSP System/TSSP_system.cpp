@@ -58,7 +58,7 @@ void Tssp_system::update() {
             Serial.print(readTssp[i]);
             Serial.print(" ");
         }
-        // Serial.println();
+        Serial.println();
     #endif
 
     // for(uint8_t i = 0; i < TSSPNUM; i++) {
@@ -89,31 +89,31 @@ void Tssp_system::update() {
 
     // Average the top 4 readings from each of the sensors by their
     // corresponding x and y components
+
     float x = ((tsspSortedValues[0] * tsspX[tsspSortedIndex[0]]) + \
               (tsspSortedValues[1] * tsspX[tsspSortedIndex[1]]) + \
               (tsspSortedValues[2] * tsspX[tsspSortedIndex[2]]) + \
-              (tsspSortedValues[3] * tsspX[tsspSortedIndex[3]]) + \
-              (tsspSortedValues[4] * tsspX[tsspSortedIndex[4]])) / 5;
+              (tsspSortedValues[3] * tsspX[tsspSortedIndex[3]])) / 4;
     float y = ((tsspSortedValues[0] * tsspY[tsspSortedIndex[0]]) + \
               (tsspSortedValues[1] * tsspY[tsspSortedIndex[1]]) + \
               (tsspSortedValues[2] * tsspY[tsspSortedIndex[2]]) + \
-              (tsspSortedValues[3] * tsspY[tsspSortedIndex[3]]) + \
-              (tsspSortedValues[4] * tsspY[tsspSortedIndex[4]])) / 5;
+              (tsspSortedValues[3] * tsspY[tsspSortedIndex[3]])) / 4;
     
     // ballStr: Weighted average of the top 4 sensors.
     // detectingBall: If ball strength is 0 (all sensors read 0), then ball isnt 
     //                there.
     // ballDir: Using vector calculations, a certain radian value can be found 
     //          and then that is converted to degrees.
-    static bool firstRun = true;
+    // static bool firstRun = true;
     float newBallStr = ((3 * tsspSortedValues[0]) + (2 * tsspSortedValues[1]) + 
                         tsspSortedValues[2] + tsspSortedValues[3]) / 7.0;
-    if (firstRun) {
-        ballStr = newBallStr;
-        firstRun = false;
-    } else {
-        ballStr = (TSSP_SMOOTHING_VAL * newBallStr) + ((1 - TSSP_SMOOTHING_VAL) * ballStr);
-    }
+    ballStr = newBallStr;
+    // if (firstRun) {
+    //     ballStr = newBallStr;
+    //     firstRun = false;
+    // } else {
+    //     ballStr = (TSSP_SMOOTHING_VAL * newBallStr) + ((1 - TSSP_SMOOTHING_VAL) * ballStr);
+    // }
     ballDir = (ballStr != 0) ? 360 - \
                             floatMod((RAD_TO_DEG * (atan2f(y, x)))-90, 360) : 0;
     #if DEBUG_TSSP

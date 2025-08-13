@@ -29,10 +29,10 @@ void Drive_system::init() {
  */
 void Drive_system::run(float speed, float angle, float correction) {
     for(uint8_t i = 0; i < MOTORNUM; i++) {
-        values[i] = cosf(DEG_TO_RAD * (- angle - motorAngles[i])) * speed + correction;
+        values[i] = cosf(DEG_TO_RAD * ( - angle - motorAngles[i])) * speed + correction;
     }
 
-    float largestSpeed = 0;
+    int largestSpeed = 0;
 
     for(uint8_t i = 0; i < MOTORNUM; i++) {
         if(abs(values[i]) > largestSpeed) {
@@ -40,18 +40,18 @@ void Drive_system::run(float speed, float angle, float correction) {
         }
     }
 
-    if(largestSpeed > 255.0f) {
+    if(largestSpeed > 255) {
         for(uint8_t i = 0; i < MOTORNUM; i++) {
-            values[i] *= (255.0f / largestSpeed);
+            values[i] *= (255 / largestSpeed);
         }
     }
 
     #if DEBUG_MOTORS
         for(uint8_t i = 0; i < MOTORNUM; i++) {
             Serial.print(values[i]);
-            Serial.print(" ");
+            Serial.print("\t");
         }
-        Serial.println();
+        // Serial.println();
     #endif
 
     for(uint8_t i = 0; i < MOTORNUM; i++) {
