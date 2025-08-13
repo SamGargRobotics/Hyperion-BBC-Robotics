@@ -57,7 +57,7 @@
     #define KD_DEFEND_VERT 0.0
 
 //! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
-    #define KP_DEFEND_HOZT 1.5
+    #define KP_DEFEND_HOZT 80.0
 //! @def KI_DEFEND_HOZT @brief Intergral value for the Def Hozt Goal Pos PID
     #define KI_DEFEND_HOZT 0.0
 //! @def KD_DEFEND_HOZT @brief Derivative value for the Def Hozt Goal Pos PID
@@ -135,7 +135,7 @@
     #define ORBIT_STRENGTH_RADIUS 60
     //! @def DEFEND_SURGE @brief The ball strength at which the defender
     //!                          switches to attacker.
-    #define DEFEND_SURGE 50
+    #define DEFEND_SURGE 255
     //! @def DEFEND_NOLINE_MSPD @brief Movement at which the defender moves at
     //!                                when not seeing the line.
     #define DEFEND_NOLINE_MSPD 50
