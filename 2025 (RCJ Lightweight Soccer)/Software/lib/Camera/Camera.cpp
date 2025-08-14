@@ -34,13 +34,14 @@ void Camera::update(bool attackBlue) {
             }
             if(goal_x_blue != 0) {
                 goal_x_blue -= 120;
-                goal_y_yellow -= 120;
+                goal_y_blue -= 120;
             }
-            // Serial.print(goal_x_yellow);
+            // Serial.print(goal_x_blue);
             // Serial.print("\t");
-            // Serial.print(goal_y_yellow);
+            // Serial.print(goal_y_blue);
             // Serial.print("\t");
-            // Serial.println(atan2(goal_y_yellow, goal_x_yellow) * RAD_TO_DEG);
+            // Serial.print(90 - atan2(goal_y_blue, goal_x_blue) * RAD_TO_DEG);
+            // Serial.print("\t");
             if (attackBlue) {
                 attackGoalAngle = calculateAngleDistance(goal_y_blue, goal_x_blue);
                 attackGoalDist = calcDistance(goal_x_blue, goal_y_blue);
@@ -57,7 +58,7 @@ void Camera::update(bool attackBlue) {
                 seeingAttackingGoal = (goal_y_yellow != 0);
                 seeingDefendingGoal = (goal_y_blue != 0);
                 attackGoalX = goal_y_blue;
-                // Serial.println(attackGoalAngle);
+                Serial.println(defendGoalAngle);
             }
         }
     }

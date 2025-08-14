@@ -25,6 +25,8 @@
     #define SECOND_ROBOT false
     //! @def COMPETITION_MODE @brief If the robot is in international comp
     #define COMPETITION_MODE false
+    //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
+    #define GOAL_TRACKING_TOGGLE true
 
 // --[PID Values]--
 #if not SECOND_ROBOT
@@ -43,21 +45,21 @@
     #define KD_CAM_ATTACK 0.0
 
     //! @def KP_CAM_DEFEND @brief Proportional value for the Goal Track Def PID
-    #define KP_CAM_DEFEND 1.0
+    #define KP_CAM_DEFEND 1.2
     //! @def KI_CAM_DEFEND @brief Intergral value for the Goal Track Def PID
     #define KI_CAM_DEFEND 0.0
     //! @def KD_CAM_DEFEND @brief Derivative value for the Goal Track Def PID
     #define KD_CAM_DEFEND 0.05
 
  //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
-    #define KP_DEFEND_VERT 80.0
+    #define KP_DEFEND_VERT 6.0
  //! @def KI_DEFEND_VERT @brief Intergral value for the Def Vert Goal Pos PID
     #define KI_DEFEND_VERT 0.0
  //! @def KD_DEFEND_VERT @brief Derivative value for the Def Vert Goal Pos PID
     #define KD_DEFEND_VERT 0.0
 
 //! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
-    #define KP_DEFEND_HOZT 80.0
+    #define KP_DEFEND_HOZT 10.0
 //! @def KI_DEFEND_HOZT @brief Intergral value for the Def Hozt Goal Pos PID
     #define KI_DEFEND_HOZT 0.0
 //! @def KD_DEFEND_HOZT @brief Derivative value for the Def Hozt Goal Pos PID
@@ -135,7 +137,7 @@
     #define ORBIT_STRENGTH_RADIUS 60
     //! @def DEFEND_SURGE @brief The ball strength at which the defender
     //!                          switches to attacker.
-    #define DEFEND_SURGE 255
+    #define DEFEND_SURGE 110
     //! @def DEFEND_NOLINE_MSPD @brief Movement at which the defender moves at
     //!                                when not seeing the line.
     #define DEFEND_NOLINE_MSPD 50
@@ -200,10 +202,6 @@
     //! @def BATTERY1_DIVIDER @brief The divider of the analogue value to 
     //!                              achieve a battery level in volts.
     #define BATTERY1_DIVIDER 71
-
-// --[PHYSICAL DEBUG TOGGLES]
-    //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
-    #define GOAL_TRACKING_TOGGLE true
 
 // --[DEBUG TOGGLES]--
     //! @def DEBUG_BLUETOOTH @brief Allows printing and debugging of bluetooth

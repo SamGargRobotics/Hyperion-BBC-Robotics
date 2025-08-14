@@ -79,7 +79,8 @@ void loop() {
     moveScaler = constrain((0.02 * moveScaler * expf(4.5 * moveScaler)), 0, 1);
     float moveOffset = moveScaler * min(0.4 * expf(0.25 * abs(modBallDir))
                     - 0.4, 90.0);
-    if(true) {
+    
+    if(false) {
         if(tssp.getBallStr() != 0) {
             // moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
             moveDir = (tssp.getBallDir() > 180)?(tssp.getBallDir() + (-min(0.04*(expf(-4.5*(tssp.getBallDir()-360)) - 1), ORBIT_STRENGTH_RADIUS))):(tssp.getBallDir() + (min(0.04*(expf(-4.5*(tssp.getBallDir()-360)) - 1), ORBIT_STRENGTH_RADIUS)));
@@ -92,14 +93,16 @@ void loop() {
                 // moveDir = cam.getAttackGoalAngle();
                 moveDir = tssp.getBallDir();
                 moveSpeed = SURGE_SPEED;
-                if(cam.getAttackGoalVisible()) {
-                    // float headingMulti = 0.0011985*pow(1.08226, cam.getAttackGoalDist());
-                    float goalHeading = cam.getAttackGoalAngle() > 180 ?
-                                        cam.getAttackGoalAngle() - 360 :
-                                        cam.getAttackGoalAngle();
-                    // goalHeading *= headingMulti;
-                    correction = camAttackCorrection.update(goalHeading, 0.0);
-                }
+                #if GOAL_TRACKING_TOGGLE
+                    if(cam.getAttackGoalVisible()) {
+                        // float headingMulti = 0.0011985*pow(1.08226, cam.getAttackGoalDist());
+                        float goalHeading = cam.getAttackGoalAngle() > 180 ?
+                                            cam.getAttackGoalAngle() - 360 :
+                                            cam.getAttackGoalAngle();
+                        // goalHeading *= headingMulti;
+                        correction = camAttackCorrection.update(goalHeading, 0.0);
+                    }
+                #endif
             }
         } else {
             // allows the robot to centre on the field when not seeing the ball
@@ -124,30 +127,37 @@ void loop() {
             moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
         } else {
             if(cam.getDefendGoalVisible()) {
-                float vertVect = -defenderVert.update(abs(cam.getDefendGoalDist()), 75.0);
-                float defHeading = (tssp.getBallDir() > 180) ? tssp.getBallDir() - 360 : tssp.getBallDir();
-                float hoztVect = -defenderHozt.update(defHeading, 0.0);
+                float vertVect = 0.0;
+                if(cam.getDefendGoalDist() < 40 && cam.getDefendGoalDist() > 30) {
+                    moveSpeed = 0;
+                } else if(cam.getDefendGoalDist() < 30) {
+                    vertVect = defenderVert.update(cam.getDefendGoalDist(), 200.0);
+                } else if(cam.getDefendGoalDist() > 80) {
+                    moveSpeed = 200.0;
+                    moveDir = 180.0;
+                } else {
+                    vertVect = -defenderVert.update(cam.getDefendGoalDist(), 200.0);
+                }
+                float hoztVect = -defenderHozt.update((tssp.getBallDir() > 180) ? tssp.getBallDir() - 360 : tssp.getBallDir(), 0.0);
                 moveDir = floatMod(atan2(hoztVect, vertVect)*RAD_TO_DEG, 360.0);
-                moveSpeed = sqrt(pow(vertVect, 2)+pow(hoztVect, 2));
+                moveSpeed = sqrt(pow(vertVect, 2)+pow(hoztVect, 2)); 
                 if(moveSpeed > SURGE_SPEED) {
                     moveSpeed = SURGE_SPEED;
                 }
-                Serial.print(moveDir);
-                Serial.print("\t");
-                Serial.print(moveSpeed);
-                Serial.print("\t");
             }
             #if GOAL_TRACKING_TOGGLE
                 if(cam.getDefendGoalVisible()) {
-                    // float target = floatMod(cam.getDefendGoalAngle() + 180.0, 360.0);
-                    // float goalHeading = target > 180 ? target - 360.0 : target;
-                    // correction = camDefendCorrection.update(goalHeading, 0.0);
-                    float goalHeading = cam.getAttackGoalAngle() > 180 ?
-                                        cam.getAttackGoalAngle() - 360 :
-                                        cam.getAttackGoalAngle();
-                    correction = camDefendCorrection.update(goalHeading, 180.0);
+                    float target = floatMod(cam.getDefendGoalAngle() - 180.0, 360.0);
+                    if(target > 180) {
+                        target -= 360;
+                    }
+            
+                    correction = camDefendCorrection.update(target, 0.0);
+                } else {
+                    correction = bearingCor;
                 }
             #endif
+
         }
     }
     
@@ -156,10 +166,10 @@ void loop() {
         moveSpeed = -avoidLine.update(ls.getLineState(), 0.0);
     }
 
-    float modGoalAngle = cam.getAttackGoalAngle() > 180?cam.getAttackGoalAngle() - 360 : cam.getAttackGoalAngle();
-    if(abs(modGoalAngle) > 15) {
-        moveSpeed = moveSpeed/1.2;
-    }
+    // float modGoalAngle = cam.getAttackGoalAngle() > 180?cam.getAttackGoalAngle() - 360 : cam.getAttackGoalAngle();
+    // if(abs(modGoalAngle) > 15) {
+    //     moveSpeed = moveSpeed/1.2;
+    // }
 
 
     #if not COMPETITION_MODE
@@ -179,11 +189,15 @@ void loop() {
     if(ls.getLineDirection() != -1) {
         correction = bearingCor;
     }
-    Serial.print(moveDir);
-    Serial.print("\t");
-    Serial.println(moveSpeed);
+    // Serial.print("goalAng: ");
+    // Serial.print(cam.getDefendGoalAngle());
+    // Serial.print(" moveDir: ");
+    // Serial.print(moveDir);
+    // Serial.print(" moveSpd: ");
+    // Serial.println(moveSpeed);
     if(motorSwitch && commEnable) {
         motors.run(moveSpeed, moveDir, correction);
+        // motors.run(0, 0, defend_correction);
         // motors.run(80, 0, 0);
     } else {
         motors.run(0, 0, 0);
