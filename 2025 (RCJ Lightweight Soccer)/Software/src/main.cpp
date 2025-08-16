@@ -14,7 +14,7 @@ Bluetooth bt;
 Camera cam;
 Drive_system motors;
 Light_system ls;
-PID bearingCorrection(KP_IMU, KI_IMU, KD_IMU);
+PID bearingCorrection(KP_IMU, KI_IMU, KD_IMU, 100.0);
 PID camAttackCorrection(KP_CAM_ATTACK, KI_CAM_ATTACK, KD_CAM_ATTACK);
 PID camDefendCorrection(KP_CAM_DEFEND, KI_CAM_DEFEND, KD_CAM_DEFEND);
 PID defenderVert(KP_DEFEND_VERT, KI_DEFEND_VERT, KD_DEFEND_VERT);
@@ -208,6 +208,7 @@ void loop() {
     // Serial.print(moveDir);
     // Serial.print(" moveSpd: ");
     // Serial.println(moveSpeed);
+    Serial.println(correction);
     if(motorSwitch && commEnable) {
         motors.run(moveSpeed, moveDir, correction);
         // motors.run(0, 0, correction);
@@ -223,5 +224,5 @@ void loop() {
     //     motors.run(i, 180, 0);
     //     delay(50);
     // }
-    Serial.println(bearing.orientation.x);
+    // Serial.println(bearing.orientation.x);
 }
