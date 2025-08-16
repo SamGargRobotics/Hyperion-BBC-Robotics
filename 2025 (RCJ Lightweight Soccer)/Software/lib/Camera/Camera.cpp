@@ -58,7 +58,6 @@ void Camera::update(bool attackBlue) {
                 seeingAttackingGoal = (goal_y_yellow != 0);
                 seeingDefendingGoal = (goal_y_blue != 0);
                 attackGoalX = goal_y_blue;
-                Serial.println(defendGoalAngle);
             }
         }
     }

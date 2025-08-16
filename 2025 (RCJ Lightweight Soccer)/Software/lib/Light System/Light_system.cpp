@@ -140,10 +140,10 @@ void Light_system::update(float rot, bool motorOn) {
     //     lineDirection = 0;
     // }
     calculateLineState(rot, lineDirection, linePos);
-    if(!motorOn) {
-        lineDir = -1;
-        lineState = 0.0;
-    }
+    // if(!motorOn) {
+    //     lineDir = -1;
+    //     lineState = 0.0;
+    // }
     #if DEBUG_LS
         Serial.print("LineDir: ");
         Serial.print(lineDir);

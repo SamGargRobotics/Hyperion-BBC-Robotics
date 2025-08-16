@@ -17,16 +17,16 @@
 
 // --[MASTER Values]--
     //! @def SURGE_SPEED @brief Speed that is set for surging
-    #define  SURGE_SPEED 150
+    #define  SURGE_SPEED 120-40
     //! @def BASE_SPEED @brief Speed that is set for minimum
-    #define  BASE_SPEED 80
+    #define  BASE_SPEED 100-40
     //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
     //!                          tuned.
     #define SECOND_ROBOT false
     //! @def COMPETITION_MODE @brief If the robot is in international comp
     #define COMPETITION_MODE false
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
-    #define GOAL_TRACKING_TOGGLE true
+    #define GOAL_TRACKING_TOGGLE false
 
 // --[PID Values]--
 #if not SECOND_ROBOT
@@ -42,7 +42,7 @@
     //! @def KI_CAM_ATTACK @brief Intergral value for the Goal Track Atk PID
     #define KI_CAM_ATTACK 0.0
     //! @def KD_CAM_ATTACK @brief Derivative value for the Goal Track Atk PID
-    #define KD_CAM_ATTACK 0.0
+    #define KD_CAM_ATTACK 0.03
 
     //! @def KP_CAM_DEFEND @brief Proportional value for the Goal Track Def PID
     #define KP_CAM_DEFEND 1.2
@@ -59,14 +59,14 @@
     #define KD_DEFEND_VERT 0.0
 
 //! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
-    #define KP_DEFEND_HOZT 10.0
+    #define KP_DEFEND_HOZT 12.0
 //! @def KI_DEFEND_HOZT @brief Intergral value for the Def Hozt Goal Pos PID
     #define KI_DEFEND_HOZT 0.0
 //! @def KD_DEFEND_HOZT @brief Derivative value for the Def Hozt Goal Pos PID
     #define KD_DEFEND_HOZT 0.0
 
 //! @def KP_LINE_AVOID @brief Proportional value for the line avoid PID
-    #define KP_LINE_AVOID 200.0
+    #define KP_LINE_AVOID 500.0
 //! @def KI_LINE_AVOID @brief Intergral value for the line avoid PID
     #define KI_LINE_AVOID 0.0
 //! @def KD_LINE_AVOID @brief Derivative value for the line avoid PID
@@ -134,18 +134,18 @@
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches
     // strats for orbit
-    #define ORBIT_STRENGTH_RADIUS 60
+    #define ORBIT_STRENGTH_RADIUS 55
     //! @def DEFEND_SURGE @brief The ball strength at which the defender
     //!                          switches to attacker.
-    #define DEFEND_SURGE 110
+    #define DEFEND_SURGE 255
     //! @def DEFEND_NOLINE_MSPD @brief Movement at which the defender moves at
     //!                                when not seeing the line.
     #define DEFEND_NOLINE_MSPD 50
     //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
     //!                         avoid PID.
-    #define ATK_LINE_SP 0.4
-    //! @def DEF_VERT_SP @brief The set line state which the defender follows.
-    #define DEF_VERT_SP 0.5
+    #define ATK_LINE_SP 0.0 
+    //! @def DEF_LINE_SP @brief The set line state which the defender avoids the line.
+    #define DEF_LINE_SP 0.0
 #else
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches
@@ -223,7 +223,7 @@
     #define DEBUG_LS_CALCS false
     //! @def DEBUG_LS @brief Allows printing and debugging of the light sensor
     //!                      final values for testing.
-    #define DEBUG_LS false
+    #define DEBUG_LS true
     //! @def DEBUG_TSSP_SENSOR_VAL @brief Allows printing of tssp values for
     //!                                   testing.
     #define DEBUG_TSSP_VALS  false

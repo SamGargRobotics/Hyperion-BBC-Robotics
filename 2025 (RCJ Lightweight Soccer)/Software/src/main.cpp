@@ -9,8 +9,6 @@
 #include <Bluetooth.h>
 
 
-
-
 Adafruit_BNO055 bno;
 Bluetooth bt;
 Camera cam;
@@ -62,16 +60,19 @@ void loop() {
     bt.update(tssp.getBallDir(), tssp.getBallStr(), (motorSwitch && commEnable));
 
     bno.getEvent(&bearing);
+    // cam.update(digitalRead(GOAL_PIN));
+    cam.update(true);
+    ls.update(bearing.orientation.x, (motorSwitch && commEnable));
+
     float heading = (bearing.orientation.x > 180) ? bearing.orientation.x - 360
                     : bearing.orientation.x;
-    cam.update(digitalRead(GOAL_PIN));
-    ls.update(bearing.orientation.x, (motorSwitch && commEnable));
+    float bearingCor = -bearingCorrection.update(heading, 0.0);
 
     float moveDir = 0.0;
     float moveSpeed = 0.0;
-    float bearingCor = -bearingCorrection.update(heading, 0.0);
     float correction = bearingCor;
 
+    // ORBIT MOVESPEED CALC
     float modBallDir = tssp.getBallDir() > 180 ? tssp.getBallDir() - 360
                             : tssp.getBallDir();
     float moveScaler = constrain(tssp.getBallStr() /
@@ -80,111 +81,123 @@ void loop() {
     float moveOffset = moveScaler * min(0.4 * expf(0.25 * abs(modBallDir))
                     - 0.4, 90.0);
     
-    if(false) {
+    if(true) {
         if(tssp.getBallStr() != 0) {
-            // moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
+            // ORBIT MOVEMENT
             moveDir = (tssp.getBallDir() > 180)?(tssp.getBallDir() + (-min(0.04*(expf(-4.5*(tssp.getBallDir()-360)) - 1), ORBIT_STRENGTH_RADIUS))):(tssp.getBallDir() + (min(0.04*(expf(-4.5*(tssp.getBallDir()-360)) - 1), ORBIT_STRENGTH_RADIUS)));
             moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
-            //OLD MOVESPD: moveSpeed = BASE_SPEED;
-            correction = bearingCor;
 
-            //HARD CODING SURGE (not intergrated): (REMOVE ONCE ORBIT IS TUNED)
-            if(tssp.getBallDir() > 340 || tssp.getBallDir() < 20) {
-                // moveDir = cam.getAttackGoalAngle();
+            // SURGE CASE (ATTACK)
+            if((tssp.getBallDir() > 335 || tssp.getBallDir() < 25)) {
                 moveDir = tssp.getBallDir();
                 moveSpeed = SURGE_SPEED;
                 #if GOAL_TRACKING_TOGGLE
-                    if(cam.getAttackGoalVisible()) {
-                        // float headingMulti = 0.0011985*pow(1.08226, cam.getAttackGoalDist());
-                        float goalHeading = cam.getAttackGoalAngle() > 180 ?
-                                            cam.getAttackGoalAngle() - 360 :
-                                            cam.getAttackGoalAngle();
-                        // goalHeading *= headingMulti;
-                        correction = camAttackCorrection.update(goalHeading, 0.0);
-                    }
+                    correction = cam.getAttackGoalVisible() ? (
+                                 camAttackCorrection.update(
+                                 cam.getAttackGoalAngle() > 180 ?
+                                 cam.getAttackGoalAngle() - 360 :
+                                 cam.getAttackGoalAngle(), 0.0)) : bearingCor;
                 #endif
             }
+            // SPEED ZONES
+            if(abs(cam.getAttackGoalAngle() > 180?cam.getAttackGoalAngle() - 360 : cam.getAttackGoalAngle()) > 15) {
+                moveSpeed /= 1.4;
+            }
         } else {
-            // allows the robot to centre on the field when not seeing the ball
-            // moveDir = (heading > 0)? 90 : 270;
-            // moveSpeed = centeringPID.update(heading, 0.0);
-            // moveSpeed = (moveSpeed > SURGE_SPEED)?SURGE_SPEED:moveSpeed;
-            // Serial.println(moveSpeed);
+            // robot stops if it doesn't see anything on the field
             moveDir = 0;
             moveSpeed = 0;
         }
-        #if GOAL_TRACKING_TOGGLE
-            // if(cam.getAttackGoalVisible()) {
-            //     float goalHeading = cam.getAttackGoalAngle() > 180 ?
-            //                         cam.getAttackGoalAngle() - 360 :
-            //                         cam.getAttackGoalAngle();
-            //     correction = camAttackCorrection.update(goalHeading, 0.0);
-            // }
-        #endif
+        // if(ls.getLineDirection() != -1 || ls.getLineState() > 0.0) {
+        //     moveDir = floatMod(ls.getLineDirection() + 180, 360.0);
+        //     // moveSpeed = -avoidLine.update(ls.getLineState(), ATK_LINE_SP);
+        //     // moveSpeed = -avoidLine.update(ls.getLineState(), ATK_LINE_SP);
+        //     moveSpeed = 150.0;
+        // }
+        // if(ls.getLineDirection() != -1) {
+        //     moveDir = floatMod(ls.getLineDirection() + 180, 360.0);
+        //     moveSpeed = 200.0;
+        // }
     } else {
-        if((tssp.getBallDir() > 90 && tssp.getBallDir() <= 270) || ((tssp.getBallDir() < 15 || tssp.getBallDir() > 345) && tssp.getBallStr() > DEFEND_SURGE)) {
-            moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
-            moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
-        } else {
-            if(cam.getDefendGoalVisible()) {
-                float vertVect = 0.0;
-                if(cam.getDefendGoalDist() < 40 && cam.getDefendGoalDist() > 30) {
-                    moveSpeed = 0;
-                } else if(cam.getDefendGoalDist() < 30) {
-                    vertVect = defenderVert.update(cam.getDefendGoalDist(), 200.0);
-                } else if(cam.getDefendGoalDist() > 80) {
-                    moveSpeed = 200.0;
-                    moveDir = 180.0;
-                } else {
-                    vertVect = -defenderVert.update(cam.getDefendGoalDist(), 200.0);
+        // SURGE CASE (DEFEND)
+        // if((tssp.getBallDir() > 90 && tssp.getBallDir() <= 270) || ((tssp.getBallDir() < 15 || tssp.getBallDir() > 345) && tssp.getBallStr() > DEFEND_SURGE)) {
+        //     moveDir = (tssp.getBallDir() > 180)?(tssp.getBallDir() + (-min(0.04*(expf(-4.5*(tssp.getBallDir()-360)) - 1), ORBIT_STRENGTH_RADIUS))):(tssp.getBallDir() + (min(0.04*(expf(-4.5*(tssp.getBallDir()-360)) - 1), ORBIT_STRENGTH_RADIUS)));
+        //     moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
+        // } else {
+        //     if(cam.getDefendGoalVisible()) {
+        //         float vertVect = 0.0;
+        //         if(cam.getDefendGoalDist() < 65 && cam.getDefendGoalDist() > 55) {
+        //             moveSpeed = 0;
+        //         } else if(cam.getDefendGoalDist() < 55) {
+        //             vertVect = defenderVert.update(cam.getDefendGoalDist(), 200.0);
+        //         } else if(cam.getDefendGoalDist() > 80) {
+        //             moveSpeed = 200.0;
+        //             moveDir = 180.0;
+        //         } else {
+        //             vertVect = -defenderVert.update(cam.getDefendGoalDist(), 200.0);
+        //         }
+        //         float hoztVect = -defenderHozt.update((tssp.getBallDir() > 180) ? tssp.getBallDir() - 360 : tssp.getBallDir(), 0.0);
+        //         moveDir = floatMod(atan2(hoztVect, vertVect)*RAD_TO_DEG, 360.0);
+        //         moveSpeed = min(sqrt(pow(vertVect, 2)+pow(hoztVect, 2)), SURGE_SPEED); 
+        //     }
+        //     #if GOAL_TRACKING_TOGGLE
+        //         if(cam.getDefendGoalVisible()) {
+        //             float target = floatMod(cam.getDefendGoalAngle() - 180.0, 360.0);
+        //             correction = camDefendCorrection.update((target > 180) ? target - 360 : target, 0.0);
+        //         } else {
+        //             correction = bearingCor;
+        //         }
+        //     #endif
+        if(tssp.getBallStr() != 0) {
+            if((tssp.getBallDir() > 90 && tssp.getBallDir() <= 270) || ((tssp.getBallDir() < 15 || tssp.getBallDir() > 345) && tssp.getBallStr() > DEFEND_SURGE)) {
+                moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
+                moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
+            } else {
+                float vertVect = 0;
+                if(ls.getLineState() == 0) {
+                    vertVect = -100;
                 }
-                float hoztVect = -defenderHozt.update((tssp.getBallDir() > 180) ? tssp.getBallDir() - 360 : tssp.getBallDir(), 0.0);
-                moveDir = floatMod(atan2(hoztVect, vertVect)*RAD_TO_DEG, 360.0);
-                moveSpeed = sqrt(pow(vertVect, 2)+pow(hoztVect, 2)); 
-                if(moveSpeed > SURGE_SPEED) {
-                    moveSpeed = SURGE_SPEED;
-                }
+                float defHeading = (tssp.getBallDir() > 180) ? tssp.getBallDir() - 360 :
+                                    tssp.getBallDir();
+                float hoztVect = -defenderHozt.update(defHeading, 0.0);
+                moveDir = floatMod(atan2f(hoztVect, vertVect)*RAD_TO_DEG, 360);
+                moveSpeed = sqrtf(powf(vertVect, 2) + powf(hoztVect, 2));
+                // #if SECOND_ROBOT
+                //     if(cam.getDefendGoalVisible()) {
+                //         float target = floatMod(cam.getDefendGoalAngle() + 180.0, 360.0);
+                //         float goalHeading = target > 180 ? target - 360.0 : target;
+                //         correction = camDefendCorrection.update(goalHeading, 0.0);
+                //     }
+                // #endif
             }
-            #if GOAL_TRACKING_TOGGLE
-                if(cam.getDefendGoalVisible()) {
-                    float target = floatMod(cam.getDefendGoalAngle() - 180.0, 360.0);
-                    if(target > 180) {
-                        target -= 360;
-                    }
-            
-                    correction = camDefendCorrection.update(target, 0.0);
-                } else {
-                    correction = bearingCor;
-                }
-            #endif
-
+        } else if(ls.getLineState() == 0) {
+            moveDir = 180;
+            moveSpeed = 50;
         }
     }
-    
+
     if(ls.getLineState() > ATK_LINE_SP) {
         moveDir = floatMod(ls.getLineDirection() + 180, 360.0);
-        moveSpeed = -avoidLine.update(ls.getLineState(), 0.0);
+        moveSpeed = 150.0;
+    } else if(ls.getLineState() > 0 && smallestAngleBetween(moveDir, ls.getLineDirection()) < 45) {
+        if(smallestAngleBetween(floatMod(ls.getLineDirection() - 90, 360.0), moveDir) < smallestAngleBetween(floatMod(ls.getLineDirection() + 90, 360.0), moveDir)) {
+            moveDir = floatMod(ls.getLineDirection() - 90, 360.0);
+        } else {
+            moveDir = floatMod(ls.getLineDirection() + 90, 360.0);
+        }
+        moveSpeed *= sinf(smallestAngleBetween(ls.getLineDirection(), moveDir));
     }
 
-    // float modGoalAngle = cam.getAttackGoalAngle() > 180?cam.getAttackGoalAngle() - 360 : cam.getAttackGoalAngle();
-    // if(abs(modGoalAngle) > 15) {
-    //     moveSpeed = moveSpeed/1.2;
-    // }
-
-
     #if not COMPETITION_MODE
-        if(battery.update() <= BATTERY_CRITICAL) {
-            // When battery is low, spin in small circle (TESTING ONLY).
-            if(batteryTimer.timeHasPassedNoUpdate()) {
-                moveSpeed = 0;
-                correction = 20;
-            }
-        } else {
-            batteryTimer.resetTime();
-        }
-    #endif
-    #if not GOAL_TRACKING_TOGGLE
-        correction = bearingCor; 
+        // if(battery.update() <= BATTERY_CRITICAL) {
+        //     // When battery is low, spin in small circle (TESTING ONLY).
+        //     if(batteryTimer.timeHasPassedNoUpdate()) {
+        //         moveSpeed = 0;
+        //         correction = 20;
+        //     }
+        // } else {
+        //     batteryTimer.resetTime();
+        // }
     #endif
     if(ls.getLineDirection() != -1) {
         correction = bearingCor;
@@ -202,4 +215,5 @@ void loop() {
     } else {
         motors.run(0, 0, 0);
     }
+    Serial.println();
 }

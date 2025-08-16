@@ -33,7 +33,7 @@ void Tssp_system::update() {
     for(uint8_t i = 0; i < 255; i++) {
         for(uint8_t j = 0; j < TSSPNUM; j++) {
             readTssp[j] += 1 - digitalRead(tsspPins[j]);
-            delayMicroseconds(1);
+            delayMicroseconds(3);
         }
     }
 
