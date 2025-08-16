@@ -29,7 +29,7 @@ private:
     int motorInA[MOTORNUM] = {FRINA, FLINA, BLINA, BRINA};
     int motorInB[MOTORNUM] = {FRINB, FLINB, BLINB, BRINB};
     int motorPWM[MOTORNUM] = {FRPWM, FLPWM, BLPWM, BRPWM};
-    int motorAngles[MOTORNUM] = {45, 135, 225, 315};
+    float motorAngles[MOTORNUM] = {45.0, 135.0, 225.0, 315.0};
     float values[MOTORNUM] = {0};
 };
 

@@ -29,8 +29,16 @@ void Drive_system::init() {
  */
 void Drive_system::run(float speed, float angle, float correction) {
     for(int i = 0; i < MOTORNUM; i++) {
-        values[i] = cosf(DEG_TO_RAD * ( - angle - motorAngles[i])) * speed + correction;
+        values[i] = cosf(DEG_TO_RAD * (720 - angle - motorAngles[i])) * speed + correction;
     }
+
+    #if DEBUG_MOTORS
+        for(uint8_t i = 0; i < MOTORNUM; i++) {
+            Serial.print(values[i]);
+            Serial.print("\t");
+        }
+        // Serial.println();
+    #endif
 
     int largestSpeed = 0;
 
@@ -45,14 +53,6 @@ void Drive_system::run(float speed, float angle, float correction) {
             values[i] *= (255.0f / largestSpeed);
         }
     }
-
-    #if DEBUG_MOTORS
-        for(uint8_t i = 0; i < MOTORNUM; i++) {
-            Serial.print(values[i]);
-            Serial.print("\t");
-        }
-        // Serial.println();
-    #endif
 
     for(uint8_t i = 0; i < MOTORNUM; i++) {
         analogWrite(motorPWM[i], constrain(abs(round(values[i])), 0.0, 255.0));

@@ -211,7 +211,7 @@
     #define DEBUG_CAMERA false
     //! @def DEBUG_MOTORS @brief Allows printing and debugging of sent motor
     //!                          values.
-    #define DEBUG_MOTORS false
+    #define DEBUG_MOTORS true
     //! @def DEBUG_LS_VALS @brief Allows printing and debugging of individual
     //!                           sensor values for testing.
     #define DEBUG_LS_VALS false

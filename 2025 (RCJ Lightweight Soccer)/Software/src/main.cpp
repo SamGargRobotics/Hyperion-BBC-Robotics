@@ -18,7 +18,7 @@ PID bearingCorrection(KP_IMU, KI_IMU, KD_IMU, 100.0);
 PID camAttackCorrection(KP_CAM_ATTACK, KI_CAM_ATTACK, KD_CAM_ATTACK);
 PID camDefendCorrection(KP_CAM_DEFEND, KI_CAM_DEFEND, KD_CAM_DEFEND);
 PID defenderVert(KP_DEFEND_VERT, KI_DEFEND_VERT, KD_DEFEND_VERT);
-PID defenderHozt(KP_DEFEND_HOZT, KI_DEFEND_HOZT, KD_DEFEND_HOZT, 100);
+PID defenderHozt(KP_DEFEND_HOZT, KI_DEFEND_HOZT, KD_DEFEND_HOZT, 100.0);
 PID avoidLine(KP_LINE_AVOID, KI_LINE_AVOID, KD_LINE_AVOID, 255.0);
 PID centeringPID(KP_CENTERING, KI_CENTERING, KD_CENTERING);
 Timer batteryTimer(5000000);    
@@ -209,8 +209,8 @@ void loop() {
     // Serial.print(" moveSpd: ");
     // Serial.println(moveSpeed);
     if(motorSwitch && commEnable) {
-        // motors.run(moveSpeed, moveDir, correction);
-        motors.run(0, 0, correction);
+        motors.run(moveSpeed, moveDir, correction);
+        // motors.run(0, 0, correction);
         // motors.run(80, 0, 0);
     } else {
         motors.run(0, 0, 0);
@@ -223,5 +223,5 @@ void loop() {
     //     motors.run(i, 180, 0);
     //     delay(50);
     // }
-    // Serial.println(bearing.orientation.x);
+    Serial.println(bearing.orientation.x);
 }
