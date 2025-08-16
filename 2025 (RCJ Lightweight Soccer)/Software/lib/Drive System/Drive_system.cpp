@@ -28,21 +28,21 @@ void Drive_system::init() {
  * @param correction Rotation needed to ensure that the robot stays forward.
  */
 void Drive_system::run(float speed, float angle, float correction) {
-    for(uint8_t i = 0; i < MOTORNUM; i++) {
+    for(int i = 0; i < MOTORNUM; i++) {
         values[i] = cosf(DEG_TO_RAD * ( - angle - motorAngles[i])) * speed + correction;
     }
 
     int largestSpeed = 0;
 
-    for(uint8_t i = 0; i < MOTORNUM; i++) {
+    for(int i = 0; i < MOTORNUM; i++) {
         if(abs(values[i]) > largestSpeed) {
             largestSpeed = abs(values[i]);
         }
     }
 
-    if(largestSpeed > 255) {
-        for(uint8_t i = 0; i < MOTORNUM; i++) {
-            values[i] *= (255 / largestSpeed);
+    if(largestSpeed > 255.0f) {
+        for(int i = 0; i < MOTORNUM; i++) {
+            values[i] *= (255.0f / largestSpeed);
         }
     }
 
@@ -55,8 +55,8 @@ void Drive_system::run(float speed, float angle, float correction) {
     #endif
 
     for(uint8_t i = 0; i < MOTORNUM; i++) {
-        analogWrite(motorPWM[i], constrain(abs(round(values[i])), 0, 255));
-        digitalWrite(motorInA[i], (values[i] >= 0));
-        digitalWrite(motorInB[i], (values[i] <= 0));
+        analogWrite(motorPWM[i], constrain(abs(round(values[i])), 0.0, 255.0));
+        digitalWrite(motorInA[i], (values[i] > 0.0));
+        digitalWrite(motorInB[i], (values[i] < 0.0));
     }
 }

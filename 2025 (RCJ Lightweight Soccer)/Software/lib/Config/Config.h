@@ -223,7 +223,7 @@
     #define DEBUG_LS_CALCS false
     //! @def DEBUG_LS @brief Allows printing and debugging of the light sensor
     //!                      final values for testing.
-    #define DEBUG_LS true
+    #define DEBUG_LS false
     //! @def DEBUG_TSSP_SENSOR_VAL @brief Allows printing of tssp values for
     //!                                   testing.
     #define DEBUG_TSSP_VALS  false

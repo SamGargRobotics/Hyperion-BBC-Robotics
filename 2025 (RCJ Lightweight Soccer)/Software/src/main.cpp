@@ -41,10 +41,10 @@ void setup() {
     batteryTimer.resetTime();
     testMot.resetTime();
     cam.init();
-    bno.setExtCrystalUse(true);
     pinMode(GOAL_PIN, INPUT);
-    bno.begin();
     pinMode(COM_PIN, INPUT);
+    bno.begin();
+    bno.setExtCrystalUse(true);
 }
 
 void loop() {
@@ -176,17 +176,17 @@ void loop() {
         }
     }
 
-    if(ls.getLineState() > ATK_LINE_SP) {
-        moveDir = floatMod(ls.getLineDirection() + 180, 360.0);
-        moveSpeed = 150.0;
-    } else if(ls.getLineState() > 0 && smallestAngleBetween(moveDir, ls.getLineDirection()) < 45) {
-        if(smallestAngleBetween(floatMod(ls.getLineDirection() - 90, 360.0), moveDir) < smallestAngleBetween(floatMod(ls.getLineDirection() + 90, 360.0), moveDir)) {
-            moveDir = floatMod(ls.getLineDirection() - 90, 360.0);
-        } else {
-            moveDir = floatMod(ls.getLineDirection() + 90, 360.0);
-        }
-        moveSpeed *= sinf(smallestAngleBetween(ls.getLineDirection(), moveDir));
-    }
+    // if(ls.getLineState() > ATK_LINE_SP) {
+    //     moveDir = floatMod(ls.getLineDirection() + 180, 360.0);
+    //     moveSpeed = 150.0;
+    // } else if(ls.getLineState() > 0 && smallestAngleBetween(moveDir, ls.getLineDirection()) < 45) {
+    //     if(smallestAngleBetween(floatMod(ls.getLineDirection() - 90, 360.0), moveDir) < smallestAngleBetween(floatMod(ls.getLineDirection() + 90, 360.0), moveDir)) {
+    //         moveDir = floatMod(ls.getLineDirection() - 90, 360.0);
+    //     } else {
+    //         moveDir = floatMod(ls.getLineDirection() + 90, 360.0);
+    //     }
+    //     moveSpeed *= sinf(smallestAngleBetween(ls.getLineDirection(), moveDir));
+    // }
 
     #if not COMPETITION_MODE
         // if(battery.update() <= BATTERY_CRITICAL) {
@@ -209,11 +209,19 @@ void loop() {
     // Serial.print(" moveSpd: ");
     // Serial.println(moveSpeed);
     if(motorSwitch && commEnable) {
-        motors.run(moveSpeed, moveDir, correction);
-        // motors.run(0, 0, defend_correction);
+        // motors.run(moveSpeed, moveDir, correction);
+        motors.run(0, 0, correction);
         // motors.run(80, 0, 0);
     } else {
         motors.run(0, 0, 0);
     }
-    Serial.println();
+    // for(int i = 0; i < 255; i++) {
+    //     motors.run(i, 180, 0);
+    //     delay(50);
+    // }
+    // for(int i = 255; i > 0; i--) {
+    //     motors.run(i, 180, 0);
+    //     delay(50);
+    // }
+    // Serial.println(bearing.orientation.x);
 }
