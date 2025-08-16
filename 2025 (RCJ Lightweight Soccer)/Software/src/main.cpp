@@ -14,7 +14,7 @@ Bluetooth bt;
 Camera cam;
 Drive_system motors;
 Light_system ls;
-PID bearingCorrection(KP_IMU, KI_IMU, KD_IMU, 100.0);
+PID bearingCorrection(KP_IMU, KI_IMU, KD_IMU);
 PID camAttackCorrection(KP_CAM_ATTACK, KI_CAM_ATTACK, KD_CAM_ATTACK);
 PID camDefendCorrection(KP_CAM_DEFEND, KI_CAM_DEFEND, KD_CAM_DEFEND);
 PID defenderVert(KP_DEFEND_VERT, KI_DEFEND_VERT, KD_DEFEND_VERT);
@@ -199,9 +199,9 @@ void loop() {
         //     batteryTimer.resetTime();
         // }
     #endif
-    if(ls.getLineDirection() != -1) {
-        correction = bearingCor;
-    }
+    // if(ls.getLineDirection() != -1) {
+    //     correction = bearingCor;
+    // }
     // Serial.print("goalAng: ");
     // Serial.print(cam.getDefendGoalAngle());
     // Serial.print(" moveDir: ");
