@@ -26,9 +26,9 @@ public:
     void run(float speed, float angle, float correction);
     
 private: 
-    int motorInA[MOTORNUM] = {FRINA, FLINA, BLINA, BRINA};
-    int motorInB[MOTORNUM] = {FRINB, FLINB, BLINB, BRINB};
-    int motorPWM[MOTORNUM] = {FRPWM, FLPWM, BLPWM, BRPWM};
+    uint8_t motorInA[MOTORNUM] = {FRINA, FLINA, BLINA, BRINA};
+    uint8_t motorInB[MOTORNUM] = {FRINB, FLINB, BLINB, BRINB};
+    uint8_t motorPWM[MOTORNUM] = {FRPWM, FLPWM, BLPWM, BRPWM};
     float motorAngles[MOTORNUM] = {45.0, 135.0, 225.0, 315.0};
     float values[MOTORNUM] = {0};
 };
