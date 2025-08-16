@@ -30,7 +30,7 @@ private:
     uint8_t motorInB[MOTORNUM] = {FRINB, FLINB, BLINB, BRINB};
     uint8_t motorPWM[MOTORNUM] = {FRPWM, FLPWM, BLPWM, BRPWM};
     float motorAngles[MOTORNUM] = {45.0, 135.0, 225.0, 315.0};
-    float values[MOTORNUM] = {0};
+    float values[MOTORNUM] = {0.0};
 };
 
 #endif
