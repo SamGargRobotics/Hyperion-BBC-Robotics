@@ -7,6 +7,11 @@
  */
 #include "Tssp_system.h"
 
+Tssp_system::Tssp_system() :
+    defendHozt(KP_DEFEND_HOZT, KI_DEFEND_HOZT, KD_DEFEND_HOZT),
+    defendVert(KP_DEFEND_VERT, KI_DEFEND_HOZT, KD_DEFEND_HOZT)
+{}
+
 /*!
  * @brief Initialize all the tssp's accordingly.
  */
@@ -24,7 +29,7 @@ void Tssp_system::init() {
 /*! 
  * @brief Completes calculations for ballDir and ballStr by reading the Tssps.
  */
-void Tssp_system::update() {
+void Tssp_system::update(bool role, float goalDis) {
     uint8_t readTssp[TSSPNUM] = {0};
     uint8_t tsspSortedValues[TSSPNUM] = {0};
     uint8_t tsspSortedIndex[TSSPNUM] = {0}; 
@@ -37,14 +42,6 @@ void Tssp_system::update() {
         }
     }
 
-    
-    
-    // // If any sensors are broken, the average of the 2 sensors beside it become 
-    // // it's value
-    // for(uint8_t i = 0; i < TSSPNUM; i++) {
-    //     readTssp[i] = (readTssp[i] == 255 || readTssp[i] == -1) ?
-    //                             (readTssp[i+1] + readTssp[i-1])/2 : readTssp[i];
-    // }
 
     for(uint8_t i = 0; i < TSSPNUM; i++) {
         if(readTssp[i] > 0) {
@@ -60,15 +57,6 @@ void Tssp_system::update() {
         }
         Serial.println();
     #endif
-
-    // for(uint8_t i = 0; i < TSSPNUM; i++) {
-    //     if(highestVals[i] < readTssp[i]) {
-    //         highestVals[i] = readTssp[i];
-    //     }
-    //     Serial.print(highestVals[i]);
-    //     Serial.print("\t");
-    // }
-    // Serial.println();
 
     // tsspSortedValues: Sorts all readTssp values in descending order
     // tsspSortedIndex: Sorts index's of readTssp in descending
@@ -122,6 +110,50 @@ void Tssp_system::update() {
         Serial.print("\tBallStr: ");
         Serial.println(ballStr);
     #endif
+    if(role) {
+        if(ballStr != 0) {
+            float modBallDir = ballDir > 180 ? ballDir - 360 : ballDir;
+            float moveScaler = constrain(ballStr / ORBIT_STRENGTH_RADIUS, 0, 1);
+            moveScaler = constrain((0.02 * moveScaler * expf(4.5 * moveScaler)), 0, 1);
+            float moveOffset = moveScaler * min(0.4 * expf(0.25 * abs(modBallDir))
+                            - 0.4, 90.0);
+            moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + ballDir, 360.0);
+            moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
+            if((ballDir < 30.0 || ballDir > 330.0) && ballStr > 110.0) {
+                moveDir = ballDir;
+                moveSpeed = SURGE_SPEED+20;
+            };
+        } else {
+            moveDir = 0.0;
+            moveSpeed = 0.0;
+        }
+    } else {
+        if(ballStr >= ORBIT_STRENGTH_RADIUS) {
+            if(ballStr != 0) {
+                float modBallDir = ballDir > 180 ? ballDir - 360 : ballDir;
+                float moveScaler = constrain(ballStr / ORBIT_STRENGTH_RADIUS, 0, 1);
+                moveScaler = constrain((0.02 * moveScaler * expf(4.5 * moveScaler)), 0, 1);
+                float moveOffset = moveScaler * min(0.4 * expf(0.25 * abs(modBallDir))
+                                - 0.4, 90.0);
+                moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + ballDir, 360.0);
+                moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
+                if((ballDir < 30.0 || ballDir > 330.0) && ballStr > 110.0) {
+                    moveDir = ballDir;
+                    moveSpeed = SURGE_SPEED+20;
+                };
+            } else {
+                moveDir = 0.0;
+                moveSpeed = 0.0;
+            }
+        } else {
+            float vertVect = 0;
+            float defHeading = (ballDir > 180) ? ballDir - 360 :
+                                ballDir;
+            float hoztVect = -defendHozt.update(defHeading, 0.0);
+            moveDir = floatMod(atan2f(hoztVect, vertVect)*RAD_TO_DEG, 360);
+            moveSpeed = sqrtf(powf(vertVect, 2) + powf(hoztVect, 2));
+        }
+    }
 }
 
 /*!
@@ -141,4 +173,22 @@ float Tssp_system::getBallStr() {
  */
 float Tssp_system::getBallDir() {
     return ballDir;
+}
+
+/*!
+ * @brief Get function for the movement speed (orbit).
+ * 
+ * @returns Speed from 0-255 that the robot moves at when orbiting.
+ */
+float Tssp_system::getMoveSpd() {
+    return moveSpeed;
+}
+
+/*!
+ * @brief Get function for the movement direction (orbit).
+ * 
+ * @returns Angle from 0-360 which the robot moves at.
+ */
+float Tssp_system::getMoveDir() {
+    return moveDir;
 }

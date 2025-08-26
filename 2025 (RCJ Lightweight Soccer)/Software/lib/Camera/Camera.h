@@ -12,6 +12,7 @@
 #define CAMERA_H
  
 #include <Arduino.h>
+#include <PID.h>
 #include <math.h>
 #include <config.h>
 #include <common.h>
@@ -22,9 +23,12 @@
 */
 class Camera {
 public:
+    Camera();
     void init();
-    void update(bool attackBlue);
+    void update(bool attackBlue, float bearing);
 
+    float getAttackCorrection();
+    float getDefendCorrection();
     float getAttackGoalAngle();
     float getAttackGoalDist();
     float getDefendGoalAngle();
@@ -41,11 +45,17 @@ private:
     float defendGoalAngle;
     float defendGoalDist;
     float attackGoalX;
+    float attackCorrection;
+    float defendCorrection;
     bool seeingAttackingGoal;
     bool seeingDefendingGoal;
 
     float calcDistance(float x, float y);
     float calculateAngleDistance(float opp, float adj);
+
+    PID attackCor;
+    PID defendCor;
+    PID bearingCor;
 };
  
 #endif

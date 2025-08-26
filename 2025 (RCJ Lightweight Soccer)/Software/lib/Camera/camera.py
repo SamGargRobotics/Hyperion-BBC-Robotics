@@ -7,7 +7,7 @@ import time
 from pyb import UART, LED
 
 #              Yellow                          Blue
-Both = [(35, 100, -30, -3, 31, 83),(16, 37, -18, 2, -63, -11)]
+Both = [(56, 100, -16, 7, 14, 127),(54, 86, -23, 9, -64, -23)]
 LED(1).on()
 sensor.reset()  # Reset and initialize the sensor.
 sensor.set_pixformat(sensor.RGB565)
@@ -15,7 +15,7 @@ sensor.set_framesize(sensor.QVGA)
 sensor.skip_frames(time=2000)  # Wait for settings take effect.
 sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
-sensor.set_auto_exposure(False, exposure_us=8000)
+sensor.set_auto_exposure(False, exposure_us=80000)
 sensor.set_windowing((240,240))
 LED(1).off()
 clock = time.clock()  # Create a clock object to track the FPS.
