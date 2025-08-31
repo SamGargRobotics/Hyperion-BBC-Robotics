@@ -23,9 +23,9 @@
 */
 class Camera {
 public:
-    Camera();
+    Camera() {};
     void init();
-    void update(bool attackBlue, float bearing);
+    void update(bool attackBlue);
 
     float getAttackCorrection();
     float getDefendCorrection();
@@ -52,10 +52,6 @@ private:
 
     float calcDistance(float x, float y);
     float calculateAngleDistance(float opp, float adj);
-
-    PID attackCor;
-    PID defendCor;
-    PID bearingCor;
 };
  
 #endif

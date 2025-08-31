@@ -75,7 +75,7 @@ float midAngleBetween(float angleCounterClockwise, float angleClockwise);
     #define TOFFSET15 0
     #define TOFFSET16 0
 #else
-    #define TOFFSET1 30.0
+    #define TOFFSET1 40.0
     #define TOFFSET2 0
     #define TOFFSET3 0
     #define TOFFSET4 0

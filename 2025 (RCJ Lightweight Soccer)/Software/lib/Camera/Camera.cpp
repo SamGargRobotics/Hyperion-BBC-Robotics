@@ -3,12 +3,6 @@
  */
  
 #include "Camera.h"
-
-Camera::Camera() :
-    attackCor(KP_CAM_ATTACK, KI_CAM_ATTACK, KD_CAM_ATTACK),
-    defendCor(KP_CAM_DEFEND, KI_CAM_DEFEND, KD_CAM_DEFEND),
-    bearingCor(KP_IMU, KI_IMU, KD_IMU, 100.0)
-{}
  
 /*!
  * @brief Initalizes the Camera System for usage.
@@ -23,7 +17,7 @@ void Camera::init(){
  * 
  * @param attackBlue If the robot is attacking the blue goal or not.
  */
-void Camera::update(bool attackBlue, float bearing) {
+void Camera::update(bool attackBlue) {
     if (cameraSerial.available() >= CAM_PACKET_SIZE) {
         // read the incoming stuff
         int byte1 = cameraSerial.read();
@@ -78,26 +72,6 @@ void Camera::update(bool attackBlue, float bearing) {
         Serial.print(seeingDefendingGoal);
         Serial.println();
     #endif
-
-    if(seeingAttackingGoal && GOAL_TRACKING_TOGGLE) {
-        attackCorrection = attackCor.update(
-                attackGoalAngle > 180.0 ? attackGoalAngle - 360.0 :
-                attackGoalAngle, 0.0);
-    } else {
-        attackCorrection = -bearingCor.update((bearing > 180) ? 
-                                            bearing - 360
-                                            : bearing, 0.0);
-    }
-
-    if(seeingDefendingGoal && GOAL_TRACKING_TOGGLE) {
-        float target = floatMod(defendGoalAngle + 180.0, 360.0);
-        defendCorrection = defendCor.update(target > 180 ? target - 360.0 : 
-                                            target, 0.0);
-    } else {
-        defendCorrection = -bearingCor.update((bearing > 180) ? 
-                                            bearing - 360
-                                            : bearing, 0.0);
-    }
 }
 
 /*!

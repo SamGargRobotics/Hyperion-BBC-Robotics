@@ -21,9 +21,9 @@
  */
 class Tssp_system {
 public:
-    Tssp_system();
+    Tssp_system() {};
     void init();
-    void update(bool role, float goalDis);
+    void update();
 
     float getBallStr();
     float getBallDir();
@@ -44,9 +44,6 @@ private:
     double offset[TSSPNUM] = {TOFFSET1, TOFFSET2, TOFFSET3, TOFFSET4, TOFFSET5, TOFFSET6, TOFFSET7, TOFFSET8, TOFFSET9, TOFFSET10, TOFFSET11, TOFFSET12, TOFFSET13, TOFFSET14, TOFFSET15, TOFFSET16};
     float tsspX[TSSPNUM] = {0};
     float tsspY[TSSPNUM] = {0};
-
-    PID defendHozt;
-    PID defendVert;
 };
 
 
