@@ -6,9 +6,13 @@ import sensor
 import time
 from pyb import UART, LED
 
+red = LED(1)
+green = LED(2)
+blue = LED(3)
+
 #              Yellow                          Blue
-Both = [(56, 100, -16, 7, 14, 127),(54, 86, -23, 9, -64, -23)]
-LED(1).on()
+Both = [(70, 97, -22, 8, 21, 127),(54, 86, -23, 9, -64, -23)]
+red.on()
 sensor.reset()  # Reset and initialize the sensor.
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QVGA)
@@ -17,7 +21,7 @@ sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
 sensor.set_auto_exposure(False, exposure_us=80000)
 sensor.set_windowing((240,240))
-LED(1).off()
+red.off()
 clock = time.clock()  # Create a clock object to track the FPS.
 
 # Setting up UART
@@ -50,13 +54,19 @@ while True:
     Temp2 = [0, 0]
     blobs = img.find_blobs(Both,  pixels_threshold=10, area_threshold=10, merge=True, x_stride = 2, y_stride = 2, margin=0)
     blobs = sorted(blobs, key=lambda blob: -blob.area())
+    # red.off()
+    # green.off()
+    # blue.off()
     for blob in blobs:
         if(blob.code() == 1 and Temp1[0] == 0):
             img.draw_rectangle(blob.rect(),color=(255,255,0))
             Temp1 = [blob.cx(),blob.cy()]
+            # red.on()
+            # green.on()
         elif(blob.code() == 2 and Temp2[0] == 0):
             img.draw_rectangle(blob.rect(),color=(0,0,255))
             Temp2 = [blob.cx(),blob.cy()]
+            # blue.on()
 
     uart.writechar(200)
     uart.writechar(122)

@@ -59,7 +59,6 @@ void loop() {
 
     if(role) {
         if(tssp.getBallStr() != 0) {
-            Serial.println("A");
             float modBallDir = tssp.getBallDir() > 180 ? tssp.getBallDir() - 360
                 : tssp.getBallDir();
             float moveScaler = constrain(tssp.getBallStr() /
@@ -69,15 +68,15 @@ void loop() {
                             - 0.4, 90.0);
             moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + tssp.getBallDir(), 360.0);
             moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
-            // if((tssp.getBallDir() < 30.0 || tssp.getBallDir() > 330.0) && tssp.getBallStr() > 110.0) {
-            //     moveDir = tssp.getBallDir();
-            //     moveSpeed = SURGE_SPEED+20;
-            // };
+            if((tssp.getBallDir() < 30.0 || tssp.getBallDir() > 330.0) && tssp.getBallStr() > 110.0) {
+                moveDir = tssp.getBallDir();
+                moveSpeed = SURGE_SPEED+20;
+            }
         } else {
             moveDir = 0.0;
             moveSpeed = 0.0;
         }
-        if(cam.getAttackGoalVisible() && GOAL_TRACKING_TOGGLE) {
+        if(cam.getAttackGoalVisible() && GOAL_TRACKING_TOGGLE && !(tssp.getBallDir() > 50 && tssp.getBallDir() < 310)) {
             correction = attackCor.update(cam.getAttackGoalAngle() > 180.0 ? cam.getAttackGoalAngle() - 360.0 :
                 cam.getAttackGoalAngle(), 0.0);
         }
@@ -131,7 +130,6 @@ void loop() {
     } else {
         batteryTimer.resetTime();
     }
-
-    Serial.println(moveDir);
+    
     motors.run(moveSpeed, moveDir, correction);
 }
