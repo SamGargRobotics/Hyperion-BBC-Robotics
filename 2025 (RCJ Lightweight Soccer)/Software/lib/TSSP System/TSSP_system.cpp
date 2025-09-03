@@ -72,7 +72,6 @@ void Tssp_system::update() {
 
     // Average the top 4 readings from each of the sensors by their
     // corresponding x and y components
-
     float x = ((tsspSortedValues[0] * tsspX[tsspSortedIndex[0]]) + \
               (tsspSortedValues[1] * tsspX[tsspSortedIndex[1]]) + \
               (tsspSortedValues[2] * tsspX[tsspSortedIndex[2]]) + \
@@ -87,16 +86,8 @@ void Tssp_system::update() {
     //                there.
     // ballDir: Using vector calculations, a certain radian value can be found 
     //          and then that is converted to degrees.
-    // static bool firstRun = true;
-    float newBallStr = ((3 * tsspSortedValues[0]) + (2 * tsspSortedValues[1]) + 
+    ballStr = ((3 * tsspSortedValues[0]) + (2 * tsspSortedValues[1]) + 
                         tsspSortedValues[2] + tsspSortedValues[3]) / 7.0;
-    ballStr = newBallStr;
-    // if (firstRun) {
-    //     ballStr = newBallStr;
-    //     firstRun = false;
-    // } else {
-    //     ballStr = (TSSP_SMOOTHING_VAL * newBallStr) + ((1 - TSSP_SMOOTHING_VAL) * ballStr);
-    // }
     ballDir = (ballStr != 0) ? 360 - \
                             floatMod((RAD_TO_DEG * (atan2f(y, x)))-90, 360) : 0;
     #if DEBUG_TSSP
@@ -105,6 +96,27 @@ void Tssp_system::update() {
         Serial.print("\tBallStr: ");
         Serial.println(ballStr);
     #endif
+}
+
+void Tssp_system::orbit() {
+    if(ballStr != 0) {
+        float modBallDir = ballDir > 180 ? ballDir - 360
+            : ballDir;
+        float moveScaler = constrain(ballStr /
+                        ORBIT_STRENGTH_RADIUS, 0, 1);
+        moveScaler = constrain((0.02 * moveScaler * expf(4.5 * moveScaler)), 0, 1);
+        float moveOffset = moveScaler * min(0.4 * expf(0.25 * abs(modBallDir))
+                        - 0.4, 90.0);
+        moveDir = floatMod((modBallDir < 0 ? -moveOffset : moveOffset) + ballDir, 360.0);
+        moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
+        if((ballDir < 30.0 || ballDir > 330.0) && ballStr > 110.0) {
+            moveDir = ballDir;
+            moveSpeed = SURGE_SPEED+20;
+        }
+    } else {
+        moveDir = 0.0;
+        moveSpeed = 0.0;
+    }
 }
 
 /*!

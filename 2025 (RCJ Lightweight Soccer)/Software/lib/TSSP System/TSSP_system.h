@@ -24,6 +24,7 @@ public:
     Tssp_system() {};
     void init();
     void update();
+    void orbit();
 
     float getBallStr();
     float getBallDir();
