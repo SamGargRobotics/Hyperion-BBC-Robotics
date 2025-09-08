@@ -11,16 +11,17 @@ green = LED(2)
 blue = LED(3)
 
 #              Yellow                          Blue
-Both = [(70, 97, -22, 8, 21, 127),(54, 86, -23, 9, -64, -23)]
+Both = [(70, 97, -22, 8, 21, 127),(41, 81, -128, 127, -128, -21)]
 red.on()
 sensor.reset()  # Reset and initialize the sensor.
 sensor.set_pixformat(sensor.RGB565)
-sensor.set_framesize(sensor.QVGA)
+sensor.set_framesize(sensor.QQVGA)
 sensor.skip_frames(time=2000)  # Wait for settings take effect.
 sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
-sensor.set_auto_exposure(False, exposure_us=80000)
-sensor.set_windowing((240,240))
+# sensor.set_auto_exposure(False, exposure_us=50000)
+sensor.set_auto_exposure(False, exposure_us=20000)
+sensor.set_windowing((120,120))
 red.off()
 clock = time.clock()  # Create a clock object to track the FPS.
 

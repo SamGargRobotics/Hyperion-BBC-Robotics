@@ -55,7 +55,7 @@ void loop() {
                                             bearing.orientation.x - 360
                                             : bearing.orientation.x, 0.0);
 
-    if(true) { //bt.getRole() if switching --> otherwise hard set
+    if(bt.getRole()) { //bt.getRole() if switching --> otherwise hard set
         tssp.orbit();
         moveDir = tssp.getMoveDir();
         moveSpeed = tssp.getMoveSpd();
@@ -64,16 +64,26 @@ void loop() {
                 cam.getAttackGoalAngle(), 0.0);
         }
     } else {
-        if(tssp.getBallStr() >= ORBIT_STRENGTH_RADIUS) {
+        if((tssp.getBallStr() >= DEFEND_SURGE && (tssp.getBallDir() < 30 || tssp.getBallDir() > 330)) || (tssp.getBallDir() < 270 && tssp.getBallDir() > 90)) {
             tssp.orbit();
             moveDir = tssp.getMoveDir();
+            // moveSpeed = tssp.getMoveSpd()/2 < 30.0 ? 30.0 : tssp.getMoveSpd()/2;
             moveSpeed = tssp.getMoveSpd();
+            if(cam.getAttackGoalVisible() && GOAL_TRACKING_TOGGLE && !(tssp.getBallDir() > 50 && tssp.getBallDir() < 310)) {
+                correction = attackCor.update(cam.getAttackGoalAngle() > 180.0 ? cam.getAttackGoalAngle() - 360.0 :
+                    cam.getAttackGoalAngle(), 0.0);
+            }
         } else {
-            float vertVect = 0;
-            float defHeading = (tssp.getBallDir() > 180) ? tssp.getBallDir() - 360 :
-                                tssp.getBallDir();
+            float vertVect = defendVert.update(cam.getDefendGoalDist() - 37.0, 0);
+            float defHeading = (tssp.getBallStr() != 0) ? ((tssp.getBallDir() > 180) ? tssp.getBallDir() - 360 : tssp.getBallDir()) : -((bearing.orientation.x > 180) ? bearing.orientation.x - 360 : bearing.orientation.x);
             float hoztVect = -defendHozt.update(defHeading, 0.0);
-            moveDir = floatMod(atan2f(hoztVect, vertVect)*RAD_TO_DEG, 360);
+            // hoztVect = 0;
+            if(cam.getDefendGoalVisible()) {
+                moveDir = floatMod(atan2f(hoztVect, vertVect)*RAD_TO_DEG, 360);
+            } else {
+                moveDir = 180.0;
+                moveSpeed = 80.0;
+            }
             moveSpeed = sqrtf(powf(vertVect, 2) + powf(hoztVect, 2));
             if(cam.getDefendGoalVisible() && GOAL_TRACKING_TOGGLE) {
                 float target = floatMod(cam.getDefendGoalAngle() + 180.0, 360.0);
@@ -100,6 +110,6 @@ void loop() {
     } else {
         batteryTimer.resetTime();
     }
-    
+    // Serial.println(cam.getDefendGoalDist());
     motors.run(moveSpeed, moveDir, correction);
 }

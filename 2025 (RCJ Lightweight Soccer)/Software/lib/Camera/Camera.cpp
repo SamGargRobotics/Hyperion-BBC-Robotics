@@ -29,12 +29,12 @@ void Camera::update(bool attackBlue) {
             int goal_x_blue = cameraSerial.read();
             int goal_y_blue = cameraSerial.read();
             if(goal_x_yellow != 0) {
-                goal_x_yellow -= 120;
-                goal_y_yellow -= 120;
+                goal_x_yellow -= 60;
+                goal_y_yellow -= 60;
             }
             if(goal_x_blue != 0) {
-                goal_x_blue -= 120;
-                goal_y_blue -= 120;
+                goal_x_blue -= 60;
+                goal_y_blue -= 60;
             }
             if (attackBlue) {
                 attackGoalAngle = calculateAngleDistance(goal_y_blue, goal_x_blue);

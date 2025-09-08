@@ -73,7 +73,7 @@ void Bluetooth::update(float ballDir, float ballStr, bool enabled) {
           bluetooth module.
  */
 void Bluetooth::read() {
-   if(BT_SERIAL.available() >= BT_PACKET_SIZE) {
+   while(BT_SERIAL.available() >= BT_PACKET_SIZE) {
         uint8_t byte1 = BT_SERIAL.read();
         uint8_t byte2 = BT_SERIAL.peek();
         if(byte1 == BT_START_BYTE && byte2 == BT_START_BYTE) {

@@ -15,8 +15,9 @@
 #include <Arduino.h>
 #include <common.h>
 
+
 // --[MASTER Values]--
-    #define SECOND_ROBOT false
+    #define SECOND_ROBOT true
     //! @def COMPETITION_MODE @brief If the robot is in international comp
     #define COMPETITION_MODE false
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
@@ -60,14 +61,14 @@
     #define KD_CAM_DEFEND 0.05
 
  //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
-    #define KP_DEFEND_VERT 6.0
+    #define KP_DEFEND_VERT 12.0
  //! @def KI_DEFEND_VERT @brief Intergral value for the Def Vert Goal Pos PID
     #define KI_DEFEND_VERT 0.0
  //! @def KD_DEFEND_VERT @brief Derivative value for the Def Vert Goal Pos PID
     #define KD_DEFEND_VERT 0.0
 
 //! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
-    #define KP_DEFEND_HOZT 12.0
+    #define KP_DEFEND_HOZT 1.5
 //! @def KI_DEFEND_HOZT @brief Intergral value for the Def Hozt Goal Pos PID
     #define KI_DEFEND_HOZT 0.0
 //! @def KD_DEFEND_HOZT @brief Derivative value for the Def Hozt Goal Pos PID
@@ -102,14 +103,14 @@
     #define KD_CAM_DEFEND 0.05
 
  //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
-    #define KP_DEFEND_VERT 6.0
+    #define KP_DEFEND_VERT 12.0
  //! @def KI_DEFEND_VERT @brief Intergral value for the Def Vert Goal Pos PID
     #define KI_DEFEND_VERT 0.0
  //! @def KD_DEFEND_VERT @brief Derivative value for the Def Vert Goal Pos PID
     #define KD_DEFEND_VERT 0.0
 
 //! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
-    #define KP_DEFEND_HOZT 12.0
+    #define KP_DEFEND_HOZT 1.5
 //! @def KI_DEFEND_HOZT @brief Intergral value for the Def Hozt Goal Pos PID
     #define KI_DEFEND_HOZT 0.0
 //! @def KD_DEFEND_HOZT @brief Derivative value for the Def Hozt Goal Pos PID
@@ -131,7 +132,7 @@
     #define ORBIT_STRENGTH_RADIUS 125.0
     //! @def DEFEND_SURGE @brief The ball strength at which the defender
     //!                          switches to attacker.
-    #define DEFEND_SURGE 255
+    #define DEFEND_SURGE 120
     //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
     //!                         avoid PID.
     #define ATK_LINE_SP 0.5
@@ -142,7 +143,7 @@
     #define ORBIT_STRENGTH_RADIUS 125.0
     //! @def DEFEND_SURGE @brief The ball strength at which the defender
     //!                          switches to attacker.
-    #define DEFEND_SURGE 255
+    #define DEFEND_SURGE 120
     //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
     //!                         avoid PID.
     #define ATK_LINE_SP 0.5
@@ -210,7 +211,7 @@
     #define DEBUG_LS_VALS false
     //! @def DEBUG_LS_TRIG @brief Allows printing and debugging of individual
     //!                           triggered values for testing.
-    #define DEBUG_LS_TRIG falseug
+    #define DEBUG_LS_TRIG false
     //! @def DEBUG_LS_CALCS @brief Allows printing and debugging of the calcs
     //!                            involved in the LS library.
     #define DEBUG_LS_CALCS false
