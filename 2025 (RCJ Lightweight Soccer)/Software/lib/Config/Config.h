@@ -17,7 +17,7 @@
 
 
 // --[MASTER Values]--
-    #define SECOND_ROBOT true
+    #define SECOND_ROBOT false
     //! @def COMPETITION_MODE @brief If the robot is in international comp
     #define COMPETITION_MODE false
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
@@ -135,7 +135,7 @@
     #define DEFEND_SURGE 120
     //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
     //!                         avoid PID.
-    #define ATK_LINE_SP 0.5
+    #define ATK_LINE_SP 0.3
 #else
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches
@@ -146,7 +146,7 @@
     #define DEFEND_SURGE 120
     //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
     //!                         avoid PID.
-    #define ATK_LINE_SP 0.5
+    #define ATK_LINE_SP 0.3
 #endif
 
 // --[LIGHT SENSOR Values]--

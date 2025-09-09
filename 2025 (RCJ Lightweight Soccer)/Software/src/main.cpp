@@ -1,11 +1,10 @@
 #include <Drive_system.h>
-#include <TSSP_system.h>
 #include <Light_system.h>
 #include <Adafruit_BNO055.h>
-#include <Camera.h>
 #include <VoltDiv.h>
 #include <Timer.h>
 #include <Bluetooth.h>
+#include <Debug.h>
 
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55, BNO055_ADDRESS_B, &Wire);
@@ -23,9 +22,12 @@ Timer batteryTimer(5000000);
 Tssp_system tssp;
 VoltDiv battery(BATT_READ_PIN, BATTERY1_DIVIDER);
 sensors_event_t bearing;
+Debug debug;
+
+String serialMode = "none";
 
 void setup() {
-    Serial.begin(9600);
+    debug.init();
     tssp.init();
     ls.init();
     motors.init();
@@ -47,7 +49,7 @@ void loop() {
     tssp.update();
     bt.update(tssp.getBallDir(), tssp.getBallStr(), true);
     bno.getEvent(&bearing);
-    cam.update(false);
+    cam.update(true);
     ls.update(bearing.orientation.x, true);
     float moveDir = 0.0;
     float moveSpeed = 0.0;
@@ -101,6 +103,9 @@ void loop() {
             moveSpeed = BASE_SPEED;
         }
     }
+
+    debug.update(&tssp, &cam);
+
 
     if((battery.update() <= BATTERY_CRITICAL) && !COMPETITION_MODE) {
         if(batteryTimer.timeHasPassedNoUpdate()) {
