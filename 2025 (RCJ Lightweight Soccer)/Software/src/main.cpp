@@ -4,6 +4,8 @@
 #include <VoltDiv.h>
 #include <Timer.h>
 #include <Bluetooth.h>
+#include <Camera.h>
+#include <TSSP_system.h>
 #include <Debug.h>
 
 
@@ -24,10 +26,30 @@ VoltDiv battery(BATT_READ_PIN, BATTERY1_DIVIDER);
 sensors_event_t bearing;
 Debug debug;
 
-String serialMode = "none";
-
 void setup() {
-    debug.init();
+    debug.init(9600);
+    if(DEBUG_CORE_CODE) {
+        // Type any of the below strings into the terminal (when monitoring) and
+        // the program sends out the corresponding value
+        debug.addMode("ballDir", []() { return String(tssp.getBallDir()); });
+        debug.addMode("ballStr", []() { return String(tssp.getBallStr()); });
+        debug.addMode("compass", []() { return String(bearing.orientation.x); });
+        debug.addMode("switch", []() { return String(bt.getRole()); });
+        debug.addMode("camAtkAng", []() { return String(cam.getAttackGoalAngle()); });
+        debug.addMode("camAtkDis", []() { return String(cam.getAttackGoalDist()); });
+        debug.addMode("camDefAng", []() { return String(cam.getDefendGoalAngle()); });
+        debug.addMode("camDefDis", []() { return String(cam.getDefendGoalDist()); });
+        debug.addMode("lsDir", []() { return String(ls.getLineDirection()); });
+        debug.addMode("lsState", []() { return String(ls.getLineState()); });
+        debug.addMode("batLvl", []() { return String(battery.update()); });
+        // After you are done monitoring that specific variable and want to do
+        // another, you can simply say "stop" in the terminal, and it stops.
+        
+        // If you want to see multiple things at the same time, you can seperate
+        // them by commas, for example:
+        // "switch,camAtkDis,camDefDis" --> outputs the corresponding functions
+    }
+
     tssp.init();
     ls.init();
     motors.init();
@@ -49,7 +71,7 @@ void loop() {
     tssp.update();
     bt.update(tssp.getBallDir(), tssp.getBallStr(), true);
     bno.getEvent(&bearing);
-    cam.update(true);
+    cam.update(digitalRead(GOAL_PIN));
     ls.update(bearing.orientation.x, true);
     float moveDir = 0.0;
     float moveSpeed = 0.0;
@@ -57,7 +79,7 @@ void loop() {
                                             bearing.orientation.x - 360
                                             : bearing.orientation.x, 0.0);
 
-    if(bt.getRole()) { //bt.getRole() if switching --> otherwise hard set
+    if(bt.getRole()) {
         tssp.orbit();
         moveDir = tssp.getMoveDir();
         moveSpeed = tssp.getMoveSpd();
@@ -104,17 +126,16 @@ void loop() {
         }
     }
 
-    debug.update(&tssp, &cam);
+    if(DEBUG_CORE_CODE) {
+        debug.update();
+    }
 
-
-    if((battery.update() <= BATTERY_CRITICAL) && !COMPETITION_MODE) {
-        if(batteryTimer.timeHasPassedNoUpdate()) {
-            moveSpeed = 0;
-            correction = 20;
-        }
+    if (battery.update() <= BATTERY_CRITICAL && batteryTimer.timeHasPassedNoUpdate()) {
+        moveSpeed = 0;
+        correction = 20;
     } else {
         batteryTimer.resetTime();
     }
-    // Serial.println(cam.getDefendGoalDist());
+
     motors.run(moveSpeed, moveDir, correction);
 }

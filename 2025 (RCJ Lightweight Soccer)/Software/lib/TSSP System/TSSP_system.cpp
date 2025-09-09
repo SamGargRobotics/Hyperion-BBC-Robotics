@@ -90,12 +90,6 @@ void Tssp_system::update() {
                         tsspSortedValues[2] + tsspSortedValues[3]) / 7.0;
     ballDir = (ballStr != 0) ? 360 - \
                             floatMod((RAD_TO_DEG * (atan2f(y, x)))-90, 360) : 0;
-    #if DEBUG_TSSP
-        Serial.print("BallDir: ");
-        Serial.print(ballDir);
-        Serial.print("\tBallStr: ");
-        Serial.println(ballStr);
-    #endif
 }
 
 void Tssp_system::orbit() {

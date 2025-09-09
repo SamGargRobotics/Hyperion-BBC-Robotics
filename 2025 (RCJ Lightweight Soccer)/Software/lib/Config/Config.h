@@ -18,10 +18,11 @@
 
 // --[MASTER Values]--
     #define SECOND_ROBOT false
-    //! @def COMPETITION_MODE @brief If the robot is in international comp
-    #define COMPETITION_MODE false
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
     #define GOAL_TRACKING_TOGGLE true
+    //! @def DEBUG_CORE_CODE @brief Debug core parts of the main code quickly 
+    //!                             through serial
+    #define DEBUG_CORE_CODE true
 
 #if not SECOND_ROBOT
     //! @def SURGE_SPEED @brief Speed that is set for surging
@@ -215,15 +216,9 @@
     //! @def DEBUG_LS_CALCS @brief Allows printing and debugging of the calcs
     //!                            involved in the LS library.
     #define DEBUG_LS_CALCS false
-    //! @def DEBUG_LS @brief Allows printing and debugging of the light sensor
-    //!                      final values for testing.
-    #define DEBUG_LS false
     //! @def DEBUG_TSSP_SENSOR_VAL @brief Allows printing of tssp values for
     //!                                   testing.
     #define DEBUG_TSSP_VALS  false
-    //! @def DEBUG_TSSP @brief Allows printing and debugging of the tssp sensor
-    //!                        final values for testing.
-    #define DEBUG_TSSP false
     //! @def DEBUG_VD @brief Allows printing and debuggin of the voltage divider
     //!                      for testing and comparison.
     #define DEBUG_VD false
