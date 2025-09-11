@@ -20,7 +20,7 @@ PID defendVert(KP_DEFEND_VERT, KI_DEFEND_HOZT, KD_DEFEND_HOZT);
 PID attackCor(KP_CAM_ATTACK, KI_CAM_ATTACK, KD_CAM_ATTACK);
 PID defendCor(KP_CAM_DEFEND, KI_CAM_DEFEND, KD_CAM_DEFEND);
 PID bearingCor(KP_IMU, KI_IMU, KD_IMU, 100.0);
-PID centeringPID(1.5, KI_DEFEND_HOZT, KD_DEFEND_HOZT);
+PID centeringPID(2.0, KI_DEFEND_HOZT, KD_DEFEND_HOZT);
 PID centeringPIDVert(7.0, KI_DEFEND_HOZT, KD_DEFEND_HOZT);
 Timer batteryTimer(5000000);
 Tssp_system tssp;
@@ -84,6 +84,7 @@ void loop() {
 
     if(!SECOND_ROBOT) {
         if(tssp.getBallStr() == 0) {
+            // CENTER TO CENTER OF FIELD
             if(cam.getAttackGoalVisible()) {
                 float set = cam.getAttackGoalAngle() > 180.0 ? cam.getAttackGoalAngle() - 360.0 :
                     cam.getAttackGoalAngle();

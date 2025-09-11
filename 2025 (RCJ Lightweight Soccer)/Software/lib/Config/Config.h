@@ -17,7 +17,7 @@
 
 
 // --[MASTER Values]--
-    #define SECOND_ROBOT true
+    #define SECOND_ROBOT false
     //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
     #define GOAL_TRACKING_TOGGLE true
     //! @def DEBUG_CORE_CODE @brief Debug core parts of the main code quickly 
