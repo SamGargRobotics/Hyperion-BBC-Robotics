@@ -14,14 +14,14 @@ Bluetooth bt;
 Camera cam;
 Drive_system motors;
 Light_system ls;
-PID avoidLine(KP_LINE_AVOID, KI_LINE_AVOID, KD_LINE_AVOID, 255.0);
-PID defendHozt(KP_DEFEND_HOZT, KI_DEFEND_HOZT, KD_DEFEND_HOZT);
-PID defendVert(KP_DEFEND_VERT, KI_DEFEND_HOZT, KD_DEFEND_HOZT);
-PID attackCor(KP_CAM_ATTACK, KI_CAM_ATTACK, KD_CAM_ATTACK);
-PID defendCor(KP_CAM_DEFEND, KI_CAM_DEFEND, KD_CAM_DEFEND);
-PID bearingCor(KP_IMU, KI_IMU, KD_IMU, 100.0);
-PID centeringPID(2.0, KI_DEFEND_HOZT, KD_DEFEND_HOZT);
-PID centeringPIDVert(7.0, KI_DEFEND_HOZT, KD_DEFEND_HOZT);
+PID avoidLine(KP_LINE_AVOID, 0.0, 0.0, 255.0);
+PID defendHozt(KP_DEFEND_HOZT, 0.0, 0.0);
+PID defendVert(KP_DEFEND_VERT, 0.0, 0.0);
+PID attackCor(KP_CAM_ATTACK, 0.0, KD_CAM_ATTACK);
+PID defendCor(KP_CAM_DEFEND, 0.0, KD_CAM_DEFEND);
+PID bearingCor(KP_IMU, 0.0, KD_IMU, 100.0);
+PID centeringPIDHozt(KP_HOZT_CENTERING, 0.0, 0.0);
+PID centeringPIDVert(KP_VERT_CENTERING, 0.0, 0.0);
 Timer batteryTimer(5000000);
 Tssp_system tssp;
 VoltDiv battery(BATT_READ_PIN, BATTERY1_DIVIDER);
@@ -81,19 +81,25 @@ void loop() {
     float correction = -bearingCor.update((bearing.orientation.x > 180) ? 
                                             bearing.orientation.x - 360
                                             : bearing.orientation.x, 0.0);
+    if(BLUETOOTH_SWITCHING?bt.getRole():(DEFINED_ROBOT_ROLES?!SECOND_ROBOT:ATTACKING)) {
+        if((tssp.getBallStr() == 0) && cam.getAttackGoalVisible() && GOAL_TRACKING_TOGGLE && NEUTRAL_POINT_MOVE) {
+            // GOING TO A SET POINT ON THE FIELD (targetPoint)
+            // float targetPoint[2] = {0, 0};
+            // float offSetDis[2] = {0,0};
+            // offSetDis[0] = targetPoint[0] - cam.getAttackGoalDist()*sinf(cam.getAttackGoalAngle()*DEG_TO_RAD);
+            // offSetDis[1] = targetPoint[1] - cam.getAttackGoalDist()*cosf(cam.getAttackGoalAngle()*DEG_TO_RAD);
 
-    if(!SECOND_ROBOT) {
-        if(tssp.getBallStr() == 0) {
+            // float hoztVect = -centeringPIDHozt.update(offSetDis[0], targetPoint[0]);
+            // float vertVect = -centeringPIDVert.update(offSetDis[1], targetPoint[1]);
+            // moveDir = moveDir = floatMod(atan2f(hoztVect, vertVect) * RAD_TO_DEG, 360.0);
+            // moveSpeed = sqrtf(powf(vertVect, 2) + powf(hoztVect, 2));
+
             // CENTER TO CENTER OF FIELD
-            if(cam.getAttackGoalVisible()) {
-                float set = cam.getAttackGoalAngle() > 180.0 ? cam.getAttackGoalAngle() - 360.0 :
-                    cam.getAttackGoalAngle();
-                float otherSet = 47.0 - cam.getAttackGoalDist();
-                float hoztVect = -centeringPID.update(set, 0.0);
-                float vertVect = centeringPIDVert.update(otherSet, 0.0);
-                moveDir = floatMod(atan2f(hoztVect, vertVect) * RAD_TO_DEG, 360.0);
-                moveSpeed = sqrtf(powf(vertVect, 2) + powf(hoztVect, 2));
-            }
+            float hoztVect = -centeringPIDHozt.update(cam.getAttackGoalAngle() > 180.0 ? cam.getAttackGoalAngle() - 360.0 :
+                cam.getAttackGoalAngle(), 0.0);
+            float vertVect = centeringPIDVert.update(SP_VERT_CENTERING - cam.getAttackGoalDist(), 0.0);
+            moveDir = floatMod(atan2f(hoztVect, vertVect) * RAD_TO_DEG, 360.0);
+            moveSpeed = sqrtf(powf(vertVect, 2) + powf(hoztVect, 2));
         } else {
             if(cam.getAttackGoalVisible() && GOAL_TRACKING_TOGGLE && !(tssp.getBallDir() > 50 && tssp.getBallDir() < 310)) {
                 correction = attackCor.update(cam.getAttackGoalAngle() > 180.0 ? cam.getAttackGoalAngle() - 360.0 :
@@ -107,17 +113,15 @@ void loop() {
         if((tssp.getBallStr() >= DEFEND_SURGE && (tssp.getBallDir() < 30 || tssp.getBallDir() > 330)) || (tssp.getBallDir() < 270 && tssp.getBallDir() > 90)) {
             tssp.orbit();
             moveDir = tssp.getMoveDir();
-            // moveSpeed = tssp.getMoveSpd()/2 < 30.0 ? 30.0 : tssp.getMoveSpd()/2;
             moveSpeed = tssp.getMoveSpd();
             if(cam.getAttackGoalVisible() && GOAL_TRACKING_TOGGLE && !(tssp.getBallDir() > 50 && tssp.getBallDir() < 310)) {
                 correction = attackCor.update(cam.getAttackGoalAngle() > 180.0 ? cam.getAttackGoalAngle() - 360.0 :
                     cam.getAttackGoalAngle(), 0.0);
             }
         } else {
-            float vertVect = defendVert.update(cam.getDefendGoalDist() - 30.0, 0);
+            float vertVect = defendVert.update(cam.getDefendGoalDist() - SP_DEFEND_VERT, 0);
             float defHeading = (tssp.getBallStr() != 0) ? ((tssp.getBallDir() > 180) ? tssp.getBallDir() - 360 : tssp.getBallDir()) : -((bearing.orientation.x > 180) ? bearing.orientation.x - 360 : bearing.orientation.x);
             float hoztVect = -defendHozt.update(defHeading, 0.0);
-            // hoztVect = 0;
             if(cam.getDefendGoalVisible()) {
                 moveDir = floatMod(atan2f(hoztVect, vertVect)*RAD_TO_DEG, 360);
             } else {

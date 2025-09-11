@@ -38,91 +38,95 @@
     //!                          tuned.
 #endif
 
+// --[STRATEGIC Values]--
+    #define BLUETOOTH_SWITCHING 0
+    #define DEFINED_ROBOT_ROLES true
+    #define ATTACKING 0
+    #define NEUTRAL_POINT_MOVE true
+
+// --[DEBUG TOGGLES]--
+    //! @def DEBUG_BLUETOOTH @brief Allows printing and debugging of bluetooth
+    //!                             values.
+    #define DEBUG_BLUETOOTH false
+    //! @def DEBUG_CAMERA @brief Allows printing and debugging of camera values.
+    #define DEBUG_CAMERA false
+    //! @def DEBUG_MOTORS @brief Allows printing and debugging of sent motor
+    //!                          values.
+    #define DEBUG_MOTORS false
+    //! @def DEBUG_LS_VALS @brief Allows printing and debugging of individual
+    //!                           sensor values for testing.
+    #define DEBUG_LS_VALS false
+    //! @def DEBUG_LS_TRIG @brief Allows printing and debugging of individual
+    //!                           triggered values for testing.
+    #define DEBUG_LS_TRIG false
+    //! @def DEBUG_LS_CALCS @brief Allows printing and debugging of the calcs
+    //!                            involved in the LS library.
+    #define DEBUG_LS_CALCS false
+    //! @def DEBUG_TSSP_SENSOR_VAL @brief Allows printing of tssp values for
+    //!                                   testing.
+    #define DEBUG_TSSP_VALS  false
+    //! @def DEBUG_VD @brief Allows printing and debuggin of the voltage divider
+    //!                      for testing and comparison.
+    #define DEBUG_VD false
+
 // --[PID Values]--
 #if not SECOND_ROBOT
     //! @def KP_IMU @brief Proportional value for the IMU PID
     #define KP_IMU 1.0
-    //! @def KI_IMU @brief Intergral value for the IMU PID
-    #define KI_IMU 0.0
     //! @def KD_IMU @brief Derivative value for the IMU PID
     #define KD_IMU 0.08
-
     //! @def KP_CAM_ATTACK @brief Proportional value for the Goal Track Atk PID
     #define KP_CAM_ATTACK 1.0
-    //! @def KI_CAM_ATTACK @brief Intergral value for the Goal Track Atk PID
-    #define KI_CAM_ATTACK 0.0
     //! @def KD_CAM_ATTACK @brief Derivative value for the Goal Track Atk PID
     #define KD_CAM_ATTACK 0.1
-
     //! @def KP_CAM_DEFEND @brief Proportional value for the Goal Track Def PID
     #define KP_CAM_DEFEND 1.2
-    //! @def KI_CAM_DEFEND @brief Intergral value for the Goal Track Def PID
-    #define KI_CAM_DEFEND 0.0
     //! @def KD_CAM_DEFEND @brief Derivative value for the Goal Track Def PID
     #define KD_CAM_DEFEND 0.05
-
- //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
+    //! @def SP_DEFEND_VERT @brief Setpoint for vertical defender PID
+    #define SP_DEFEND_VERT 30.0
+    //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
     #define KP_DEFEND_VERT 12.0
- //! @def KI_DEFEND_VERT @brief Intergral value for the Def Vert Goal Pos PID
-    #define KI_DEFEND_VERT 0.0
- //! @def KD_DEFEND_VERT @brief Derivative value for the Def Vert Goal Pos PID
-    #define KD_DEFEND_VERT 0.0
-
-//! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
+    //! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
     #define KP_DEFEND_HOZT 1.5
-//! @def KI_DEFEND_HOZT @brief Intergral value for the Def Hozt Goal Pos PID
-    #define KI_DEFEND_HOZT 0.0
-//! @def KD_DEFEND_HOZT @brief Derivative value for the Def Hozt Goal Pos PID
-    #define KD_DEFEND_HOZT 0.0
-
-//! @def KP_LINE_AVOID @brief Proportional value for the line avoid PID
+    //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
+    //!                         avoid PID.
+    #define ATK_LINE_SP 0.3
+    //! @def KP_LINE_AVOID @brief Proportional value for the line avoid PID
     #define KP_LINE_AVOID 15.0
-//! @def KI_LINE_AVOID @brief Intergral value for the line avoid PID
-    #define KI_LINE_AVOID 0.0
-//! @def KD_LINE_AVOID @brief Derivative value for the line avoid PID
-    #define KD_LINE_AVOID 0.0
+    //! @def SP_VERT_CENTERING @brief Setpoint for the vertical centering pid
+    #define SP_VERT_CENTERING 47.0
+    //! @def KP_VERT_CENTERING @brief Proportional value for Vertical Centering PID
+    #define KP_VERT_CENTERING 7.0
+    //! @def KP_HOZT_CENTERING @brief Proportional value for the Horizontal 
+    //!                               Centering PID
+    #define KP_HOZT_CENTERING 2.0
 #else
     //! @def KP_IMU @brief Proportional value for the IMU PID
     #define KP_IMU 1.0
-    //! @def KI_IMU @brief Intergral value for the IMU PID
-    #define KI_IMU 0.0
     //! @def KD_IMU @brief Derivative value for the IMU PID
     #define KD_IMU 0.08
-
     //! @def KP_CAM_ATTACK @brief Proportional value for the Goal Track Atk PID
     #define KP_CAM_ATTACK 1.0
-    //! @def KI_CAM_ATTACK @brief Intergral value for the Goal Track Atk PID
-    #define KI_CAM_ATTACK 0.0
     //! @def KD_CAM_ATTACK @brief Derivative value for the Goal Track Atk PID
     #define KD_CAM_ATTACK 0.1
-
     //! @def KP_CAM_DEFEND @brief Proportional value for the Goal Track Def PID
     #define KP_CAM_DEFEND 1.2
-    //! @def KI_CAM_DEFEND @brief Intergral value for the Goal Track Def PID
-    #define KI_CAM_DEFEND 0.0
     //! @def KD_CAM_DEFEND @brief Derivative value for the Goal Track Def PID
     #define KD_CAM_DEFEND 0.05
-
- //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
+    //! @def SP_DEFEND_VERT @brief Setpoint for vertical defender PID
+    #define SP_DEFEND_VERT 30.0
+    //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
     #define KP_DEFEND_VERT 12.0
- //! @def KI_DEFEND_VERT @brief Intergral value for the Def Vert Goal Pos PID
-    #define KI_DEFEND_VERT 0.0
- //! @def KD_DEFEND_VERT @brief Derivative value for the Def Vert Goal Pos PID
-    #define KD_DEFEND_VERT 0.0
-
-//! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
+    //! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
     #define KP_DEFEND_HOZT 1.5
-//! @def KI_DEFEND_HOZT @brief Intergral value for the Def Hozt Goal Pos PID
-    #define KI_DEFEND_HOZT 0.0
-//! @def KD_DEFEND_HOZT @brief Derivative value for the Def Hozt Goal Pos PID
-    #define KD_DEFEND_HOZT 0.0
-
-//! @def KP_LINE_AVOID @brief Proportional value for the line avoid PID
+    //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
+    //!                         avoid PID.
+    #define ATK_LINE_SP 0.3
+    //! @def KP_LINE_AVOID @brief Proportional value for the line avoid PID
     #define KP_LINE_AVOID 15.0
-//! @def KI_LINE_AVOID @brief Intergral value for the line avoid PID
-    #define KI_LINE_AVOID 0.0
-//! @def KD_LINE_AVOID @brief Derivative value for the line avoid PID
-    #define KD_LINE_AVOID 0.0
+    //! @def CENTERING_VERT_SP @brief Setpoint for the vertical centering pid
+    #define CENTERING_VERT_SP 47.0
 #endif
 
 // --[LOGIC Values]
@@ -134,9 +138,6 @@
     //! @def DEFEND_SURGE @brief The ball strength at which the defender
     //!                          switches to attacker.
     #define DEFEND_SURGE 120
-    //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
-    //!                         avoid PID.
-    #define ATK_LINE_SP 0.3
 #else
     //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
     //!                                   switches
@@ -145,9 +146,6 @@
     //! @def DEFEND_SURGE @brief The ball strength at which the defender
     //!                          switches to attacker.
     #define DEFEND_SURGE 120
-    //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
-    //!                         avoid PID.
-    #define ATK_LINE_SP 0.3
 #endif
 
 // --[LIGHT SENSOR Values]--
@@ -197,29 +195,4 @@
     //! @def BATTERY1_DIVIDER @brief The divider of the analogue value to 
     //!                              achieve a battery level in volts.
     #define BATTERY1_DIVIDER 71
-
-// --[DEBUG TOGGLES]--
-    //! @def DEBUG_BLUETOOTH @brief Allows printing and debugging of bluetooth
-    //!                             values.
-    #define DEBUG_BLUETOOTH false
-    //! @def DEBUG_CAMERA @brief Allows printing and debugging of camera values.
-    #define DEBUG_CAMERA false
-    //! @def DEBUG_MOTORS @brief Allows printing and debugging of sent motor
-    //!                          values.
-    #define DEBUG_MOTORS false
-    //! @def DEBUG_LS_VALS @brief Allows printing and debugging of individual
-    //!                           sensor values for testing.
-    #define DEBUG_LS_VALS false
-    //! @def DEBUG_LS_TRIG @brief Allows printing and debugging of individual
-    //!                           triggered values for testing.
-    #define DEBUG_LS_TRIG false
-    //! @def DEBUG_LS_CALCS @brief Allows printing and debugging of the calcs
-    //!                            involved in the LS library.
-    #define DEBUG_LS_CALCS false
-    //! @def DEBUG_TSSP_SENSOR_VAL @brief Allows printing of tssp values for
-    //!                                   testing.
-    #define DEBUG_TSSP_VALS  false
-    //! @def DEBUG_VD @brief Allows printing and debuggin of the voltage divider
-    //!                      for testing and comparison.
-    #define DEBUG_VD false
 #endif
