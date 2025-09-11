@@ -30,6 +30,12 @@ void Bluetooth::update(float ballDir, float ballStr, bool enabled) {
 
     bool connected = !connectedTimer.timeHasPassedNoUpdate();
     
+    // 🛑 stop switching if ball is not detected by either robot
+    if (self.ballStr == 0 && other.ballStr == 0) {
+        switching = false;
+        return;
+    }
+
     if(!self.enabled) {
         self.role = 1;
         roleConflict.resetTime();
@@ -44,9 +50,10 @@ void Bluetooth::update(float ballDir, float ballStr, bool enabled) {
             self.role = self.ballStr > other.ballStr;
             roleConflict.resetTime();
         }
-    } else if(!self.role && ((self.ballDir < 15 || self.ballDir > 345) && self.ballStr > DEFEND_SURGE)) {
+    } else if(!self.role && ((self.ballDir < 15 || self.ballDir > 345) && (self.ballStr > DEFEND_SURGE))) {
         switching = true;
     }
+
 
     #if DEBUG_BLUETOOTH
         Serial.print("SELF - role: ");
