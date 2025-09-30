@@ -15,184 +15,108 @@
 #include <Arduino.h>
 #include <common.h>
 
-
 // --[MASTER Values]--
-    #define SECOND_ROBOT false
-    //! @def GOAL_TRACKING_TOGGLE @brief If the robot should goal track
-    #define GOAL_TRACKING_TOGGLE true
-    //! @def DEBUG_CORE_CODE @brief Debug core parts of the main code quickly 
-    //!                             through serial
-    #define DEBUG_CORE_CODE true
+#define SECOND_ROBOT false
+#define GOAL_TRACKING_TOGGLE true
+#define DEBUG_CORE_CODE true
 
 #if not SECOND_ROBOT
-    //! @def SURGE_SPEED @brief Speed that is set for surging
-    #define  SURGE_SPEED 90
-    //! @def BASE_SPEED @brief Speed that is set for minimum
-    #define  BASE_SPEED 90
+#define SURGE_SPEED 120
+#define BASE_SPEED 110
 #else
-    //! @def SURGE_SPEED @brief Speed that is set for surging
-    #define  SURGE_SPEED 90
-    //! @def BASE_SPEED @brief Speed that is set for minimum
-    #define  BASE_SPEED 90
-    //! @def SECOND_ROBOT @brief Defines if the second or first robot is being 
-    //!                          tuned.
+#define SURGE_SPEED 100
+#define BASE_SPEED 90
 #endif
 
 // --[STRATEGIC Values]--
-    #define BLUETOOTH_SWITCHING 0
-    #define DEFINED_ROBOT_ROLES true
-    #define ATTACKING 0
-    #define NEUTRAL_POINT_MOVE true
+#define BLUETOOTH_SWITCHING false
+#define DEFINED_ROBOT_ROLES false
+#define ATTACKING true
+#define NEUTRAL_POINT_MOVE true
 
 // --[DEBUG TOGGLES]--
-    //! @def DEBUG_BLUETOOTH @brief Allows printing and debugging of bluetooth
-    //!                             values.
-    #define DEBUG_BLUETOOTH false
-    //! @def DEBUG_CAMERA @brief Allows printing and debugging of camera values.
-    #define DEBUG_CAMERA false
-    //! @def DEBUG_MOTORS @brief Allows printing and debugging of sent motor
-    //!                          values.
-    #define DEBUG_MOTORS false
-    //! @def DEBUG_LS_VALS @brief Allows printing and debugging of individual
-    //!                           sensor values for testing.
-    #define DEBUG_LS_VALS false
-    //! @def DEBUG_LS_TRIG @brief Allows printing and debugging of individual
-    //!                           triggered values for testing.
-    #define DEBUG_LS_TRIG false
-    //! @def DEBUG_LS_CALCS @brief Allows printing and debugging of the calcs
-    //!                            involved in the LS library.
-    #define DEBUG_LS_CALCS false
-    //! @def DEBUG_TSSP_SENSOR_VAL @brief Allows printing of tssp values for
-    //!                                   testing.
-    #define DEBUG_TSSP_VALS  false
-    //! @def DEBUG_VD @brief Allows printing and debuggin of the voltage divider
-    //!                      for testing and comparison.
-    #define DEBUG_VD false
+#define DEBUG_BLUETOOTH false
+#define DEBUG_CAMERA false
+#define DEBUG_MOTORS false
+#define DEBUG_LS_VALS false
+#define DEBUG_LS_TRIG false
+#define DEBUG_LS_CALCS false
+#define DEBUG_TSSP_VALS  false
+#define DEBUG_VD false
 
 // --[PID Values]--
 #if not SECOND_ROBOT
-    //! @def KP_IMU @brief Proportional value for the IMU PID
-    #define KP_IMU 1.0
-    //! @def KD_IMU @brief Derivative value for the IMU PID
-    #define KD_IMU 0.08
-    //! @def KP_CAM_ATTACK @brief Proportional value for the Goal Track Atk PID
-    #define KP_CAM_ATTACK 1.0
-    //! @def KD_CAM_ATTACK @brief Derivative value for the Goal Track Atk PID
-    #define KD_CAM_ATTACK 0.1
-    //! @def KP_CAM_DEFEND @brief Proportional value for the Goal Track Def PID
-    #define KP_CAM_DEFEND 1.2
-    //! @def KD_CAM_DEFEND @brief Derivative value for the Goal Track Def PID
-    #define KD_CAM_DEFEND 0.05
-    //! @def SP_DEFEND_VERT @brief Setpoint for vertical defender PID
-    #define SP_DEFEND_VERT 30.0
-    //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
-    #define KP_DEFEND_VERT 12.0
-    //! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
-    #define KP_DEFEND_HOZT 1.5
-    //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
-    //!                         avoid PID.
-    #define ATK_LINE_SP 0.3
-    //! @def KP_LINE_AVOID @brief Proportional value for the line avoid PID
-    #define KP_LINE_AVOID 15.0
-    //! @def SP_VERT_CENTERING @brief Setpoint for the vertical centering pid
-    #define SP_VERT_CENTERING 47.0
-    //! @def KP_VERT_CENTERING @brief Proportional value for Vertical Centering PID
-    #define KP_VERT_CENTERING 7.0
-    //! @def KP_HOZT_CENTERING @brief Proportional value for the Horizontal 
-    //!                               Centering PID
-    #define KP_HOZT_CENTERING 2.0
+#define KP_IMU 1.0
+#define KD_IMU 0.08
+#define KP_CAM_ATTACK 1.0
+#define KD_CAM_ATTACK 0.1
+#define KP_CAM_DEFEND 1.0
+#define KD_CAM_DEFEND 0.1
+#define SP_DEFEND_VERT 27.0
+#define KP_DEFEND_VERT 6.75
+#define KD_DEFEND_VERT 0.0
+#define KP_DEFEND_HOZT 1.5
+#define KD_DEFEND_HOZT 0.0
+#define ATK_LINE_SP 0.3
+#define KP_LINE_AVOID 150.0
+#define SP_VERT_CENTERING 43.0
+#define KP_VERT_CENTERING 15.0
+#define KP_HOZT_CENTERING 6.0
 #else
-    //! @def KP_IMU @brief Proportional value for the IMU PID
-    #define KP_IMU 1.0
-    //! @def KD_IMU @brief Derivative value for the IMU PID
-    #define KD_IMU 0.08
-    //! @def KP_CAM_ATTACK @brief Proportional value for the Goal Track Atk PID
-    #define KP_CAM_ATTACK 1.0
-    //! @def KD_CAM_ATTACK @brief Derivative value for the Goal Track Atk PID
-    #define KD_CAM_ATTACK 0.1
-    //! @def KP_CAM_DEFEND @brief Proportional value for the Goal Track Def PID
-    #define KP_CAM_DEFEND 1.2
-    //! @def KD_CAM_DEFEND @brief Derivative value for the Goal Track Def PID
-    #define KD_CAM_DEFEND 0.05
-    //! @def SP_DEFEND_VERT @brief Setpoint for vertical defender PID
-    #define SP_DEFEND_VERT 30.0
-    //! @def KP_DEFEND_VERT @brief Proportional value for the Def Vert Goal Pos PID
-    #define KP_DEFEND_VERT 12.0
-    //! @def KP_DEFEND_HOZT @brief Proportional value for the Def Hozt Goal Pos PID
-    #define KP_DEFEND_HOZT 1.5
-    //! @def ATK_LINE_SP @brief Target line state of the attacker robots line 
-    //!                         avoid PID.
-    #define ATK_LINE_SP 0.3
-    //! @def KP_LINE_AVOID @brief Proportional value for the line avoid PID
-    #define KP_LINE_AVOID 15.0
-    //! @def CENTERING_VERT_SP @brief Setpoint for the vertical centering pid
-    #define CENTERING_VERT_SP 47.0
+#define KP_IMU 1.0
+#define KD_IMU 0.08
+#define KP_CAM_ATTACK 1.0
+#define KD_CAM_ATTACK 0.1
+#define KP_CAM_DEFEND 1.0
+#define KD_CAM_DEFEND 0.1
+#define SP_DEFEND_VERT 24.0
+#define KP_DEFEND_VERT 6.75
+#define KD_DEFEND_VERT 0.0
+#define KP_DEFEND_HOZT 1.0
+#define KD_DEFEND_HOZT 0.0
+#define ATK_LINE_SP 0.3
+#define KP_LINE_AVOID 200.0
+#define SP_VERT_CENTERING 37.0
+#define KP_VERT_CENTERING 15.0
+#define KP_HOZT_CENTERING 6.0
 #endif
 
 // --[LOGIC Values]
+#define SWITCHING_STRENGTH 130.0
 #if not SECOND_ROBOT
-    //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
-    //!                                   switches
-    // strats for orbit
-    #define ORBIT_STRENGTH_RADIUS 125.0
-    //! @def DEFEND_SURGE @brief The ball strength at which the defender
-    //!                          switches to attacker.
-    #define DEFEND_SURGE 120
+#define ORBIT_STRENGTH_RADIUS 135.0
+#define DEF_START_SURGE 150.0
+#define DEF_KEEP_SURGE_UNTIL 100.0
 #else
-    //! @def ORBIT_STRENGTH_RADIUS @brief The strength value that the robot 
-    //!                                   switches
-    // strats for orbit
-    #define ORBIT_STRENGTH_RADIUS 125.0
-    //! @def DEFEND_SURGE @brief The ball strength at which the defender
-    //!                          switches to attacker.
-    #define DEFEND_SURGE 120
+#define ORBIT_STRENGTH_RADIUS 125.0
+#define DEF_START_SURGE 160.0
+#define DEF_KEEP_SURGE_UNTIL 100.0
 #endif
 
 // --[LIGHT SENSOR Values]--
 #if not SECOND_ROBOT
-    //! @def LS_CLB_THRESH @brief Threshold to determine if a sensor is
-    //!                           detecting white.
-    #define LS_CLB_THRESH 300
-    //! @def LS_FLIP_THRESH @brief Threshold to determine when the robot
-    //!                            flips from state 1 to 2, or 2 to 1.
-    #define LS_FLIP_THRESH 90
+#define LS_CLB_THRESH 300
+#define LS_FLIP_THRESH 90
 #else
-    //! @def LS_CLB_THRESH @brief Threshold to determine if a sensor is
-    //!                           detecting white.
-    #define LS_CLB_THRESH 300
-    //! @def LS_FLIP_THRESH @brief Threshold to determine when the robot
-    //!                            flips from state 1 to 2, or 2 to 1.
-    #define LS_FLIP_THRESH 90
+#define LS_CLB_THRESH 300
+#define LS_FLIP_THRESH 90
 #endif
 
 // --[BLUETOOTH Values]
-    //! @def BT_SERIAL @brief Serial used to transfer data from the
-    //!                              bluetooth modules
-    #define BT_SERIAL Serial1
-    //! @def BT_BAUD @brief Bluetooth communication baud rate.
-    #define BT_BAUD 9600
-    //! @def BT_PACKET_SIZE @brief Size of data being sent over.
-    #define BT_PACKET_SIZE 6
-    //! @def BT_START_BYTE @brief Byte start identifier.
-    #define BT_START_BYTE 255
-    //! @def BT_NO_DATA @brief If module has no data output.
-    #define BT_NO_DATA 255`
+#define BT_SERIAL Serial1
+#define BT_BAUD 9600
+#define BT_PACKET_SIZE 6
+#define BT_START_BYTE 255
+#define BT_NO_DATA 255
 
 // --[CAMERA Values]--
-    //! @def cameraSerial @brief Serial that the camera sends data over to
-    #define cameraSerial Serial8
-    //! @def CAM_PACKET_SIZE @brief Size of the sent data accross camera
-    #define CAM_PACKET_SIZE 6
-    //! @def CAM_START_PACK_1 @brief First start byte of camera.
-    #define CAM_START_PACK_1 200
-    //! @def CAM_START_PACK_2 @brief Second start byte of camera.
-    #define CAM_START_PACK_2 122
+#define cameraSerial Serial8
+#define CAM_PACKET_SIZE 6
+#define CAM_START_PACK_1 200
+#define CAM_START_PACK_2 122
 
 // --[BATTERY TRACKING Values]--
-    //! @def BATTERY_CRITICAL @brief The battery level where the battery is 
-    //!                              critical.
-    #define BATTERY_CRITICAL 11.0
-    //! @def BATTERY1_DIVIDER @brief The divider of the analogue value to 
-    //!                              achieve a battery level in volts.
-    #define BATTERY1_DIVIDER 71
+#define BATTERY_CRITICAL 11.0
+#define BATTERY1_DIVIDER 71
+
 #endif

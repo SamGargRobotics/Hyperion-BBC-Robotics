@@ -33,6 +33,10 @@ void Tssp_system::update() {
     for(uint8_t i = 0; i < 255; i++) {
         for(uint8_t j = 0; j < TSSPNUM; j++) {
             readTssp[j] += 1 - digitalRead(tsspPins[j]);
+        }
+        if(!SECOND_ROBOT) {
+            delayMicroseconds(3);
+        } else {
             delayMicroseconds(3);
         }
     }
@@ -95,7 +99,7 @@ void Tssp_system::update() {
 void Tssp_system::orbit() {
     if(ballStr != 0) {
         float modBallDir = ballDir > 180 ? ballDir - 360
-            : ballDir;
+       21     : ballDir;
         float moveScaler = constrain(ballStr /
                         ORBIT_STRENGTH_RADIUS, 0, 1);
         moveScaler = constrain((0.02 * moveScaler * expf(4.5 * moveScaler)), 0, 1);
@@ -105,7 +109,7 @@ void Tssp_system::orbit() {
         moveSpeed = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0 - moveOffset / 90.0);
         if((ballDir < 30.0 || ballDir > 330.0) && ballStr > 110.0) {
             moveDir = ballDir;
-            moveSpeed = SURGE_SPEED+20;
+            moveSpeed = SURGE_SPEED+40;
         }
     } else {
         moveDir = 0.0;

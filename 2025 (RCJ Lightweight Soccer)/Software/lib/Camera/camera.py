@@ -1,10 +1,18 @@
 import sensor
 import time
 from pyb import UART, LED
+
+secondRobot = True
 red = LED(1)
 green = LED(2)
 blue = LED(3)
-Both = [(54, 68, -10, 127, 23, 127),(41, 81, -128, 127, -128, -21)]
+
+if(secondRobot):
+    Both = [(49, 100, -29, 127, 49, 127),(38, 100, -30, 127, -128, -14)]
+    exposure = 20000
+else:
+    Both = [(72, 100, -30, -5, 54, 127),(43, 100, -128, 127, -128, -11)]
+    exposure = 20000
 red.on()
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
@@ -12,7 +20,7 @@ sensor.set_framesize(sensor.QQVGA)
 sensor.skip_frames(time=2000)
 sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
-sensor.set_auto_exposure(False, exposure_us=50000)
+sensor.set_auto_exposure(False, exposure_us=exposure)
 sensor.set_windowing((120,120))
 red.off()
 clock = time.clock()
@@ -48,4 +56,6 @@ while True:
     uart.writechar(Temp1[1])
     uart.writechar(Temp2[0])
     uart.writechar(Temp2[1])
-    print(Temp2)
+    # print("set")
+    # print(Temp2)
+    print(Temp1)

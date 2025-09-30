@@ -50,7 +50,7 @@ void Bluetooth::update(float ballDir, float ballStr, bool enabled) {
             self.role = self.ballStr > other.ballStr;
             roleConflict.resetTime();
         }
-    } else if(!self.role && ((self.ballDir < 15 || self.ballDir > 345) && (self.ballStr > DEFEND_SURGE))) {
+    } else if(!self.role && ((self.ballDir < 15 || self.ballDir > 345) && (self.ballStr > SWITCHING_STRENGTH))) {
         switching = true;
     }
 
