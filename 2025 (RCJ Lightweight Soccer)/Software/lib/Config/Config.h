@@ -31,14 +31,14 @@
 // --[STRATEGIC Values]--
 #define BLUETOOTH_SWITCHING false
 #define DEFINED_ROBOT_ROLES false
-#define ATTACKING true
-#define NEUTRAL_POINT_MOVE true
+#define ATTACKING false
+#define NEUTRAL_POINT_MOVE false
 
 // --[DEBUG TOGGLES]--
 #define DEBUG_BLUETOOTH false
 #define DEBUG_CAMERA false
 #define DEBUG_MOTORS false
-#define DEBUG_LS_VALS false
+#define DEBUG_LS_VALS true
 #define DEBUG_LS_TRIG false
 #define DEBUG_LS_CALCS false
 #define DEBUG_TSSP_VALS  false
@@ -85,8 +85,8 @@
 #define SWITCHING_STRENGTH 130.0
 #if not SECOND_ROBOT
 #define ORBIT_STRENGTH_RADIUS 135.0
-#define DEF_START_SURGE 150.0
-#define DEF_KEEP_SURGE_UNTIL 100.0
+#define DEF_START_SURGE 160.0
+#define DEF_KEEP_SURGE_UNTIL 100.
 #else
 #define ORBIT_STRENGTH_RADIUS 125.0
 #define DEF_START_SURGE 160.0
@@ -98,7 +98,7 @@
 #define LS_CLB_THRESH 300
 #define LS_FLIP_THRESH 90
 #else
-#define LS_CLB_THRESH 300
+#define LS_CLB_THRESH 250
 #define LS_FLIP_THRESH 90
 #endif
 

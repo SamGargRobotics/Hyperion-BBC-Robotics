@@ -106,7 +106,7 @@ void loop() {
         }
     } else {
         if (isSurging && (tssp.getBallDir() < 30 || tssp.getBallDir() > 330) 
-            && (cam.getDefendGoalDist() <= (SP_DEFEND_VERT + 13.0))) {
+            && (cam.getDefendGoalDist() <= (SP_DEFEND_VERT + 8.0))) {
             moveDir = tssp.getBallDir();
             moveSpeed = 200.0;
             if(cam.getAttackGoalVisible() && GOAL_TRACKING_TOGGLE && !(tssp.getBallDir() > 40 && tssp.getBallDir() < 320)) {
@@ -142,7 +142,7 @@ void loop() {
     } else if (ls.getLineState() > 0.0) {
         if(smallestAngleBetween(floatMod(moveDir + bearing.orientation.x, 360.0), ls.getLineDirection()) < 60) {
             moveDir = floatMod(ls.getLineDirection() + 180.0 - bearing.orientation.x, 360.0);
-            moveSpeed = -avoidLine.update(ls.getLineState(), ATK_LINE_SP);
+            moveSpeed = abs(avoidLine.update(ls.getLineState(), ATK_LINE_SP));
         }
     }
 
@@ -157,5 +157,6 @@ void loop() {
         batteryTimer.resetTime();
     }
 
+    // Serial.println(moveSpeed);
     motors.run(moveSpeed, moveDir, correction);
 }

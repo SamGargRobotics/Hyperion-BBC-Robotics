@@ -98,8 +98,7 @@ void Tssp_system::update() {
 
 void Tssp_system::orbit() {
     if(ballStr != 0) {
-        float modBallDir = ballDir > 180 ? ballDir - 360
-       21     : ballDir;
+        float modBallDir = ballDir > 180 ? ballDir - 360 : ballDir;
         float moveScaler = constrain(ballStr /
                         ORBIT_STRENGTH_RADIUS, 0, 1);
         moveScaler = constrain((0.02 * moveScaler * expf(4.5 * moveScaler)), 0, 1);
