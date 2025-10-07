@@ -29,7 +29,7 @@
 #endif
 
 // --[STRATEGIC Values]--
-#define BLUETOOTH_SWITCHING false
+#define BLUETOOTH_SWITCHING true
 #define DEFINED_ROBOT_ROLES false
 #define ATTACKING false
 #define NEUTRAL_POINT_MOVE false
@@ -38,7 +38,7 @@
 #define DEBUG_BLUETOOTH false
 #define DEBUG_CAMERA false
 #define DEBUG_MOTORS false
-#define DEBUG_LS_VALS true
+#define DEBUG_LS_VALS false
 #define DEBUG_LS_TRIG false
 #define DEBUG_LS_CALCS false
 #define DEBUG_TSSP_VALS  false
@@ -72,7 +72,7 @@
 #define SP_DEFEND_VERT 24.0
 #define KP_DEFEND_VERT 6.75
 #define KD_DEFEND_VERT 0.0
-#define KP_DEFEND_HOZT 1.0
+#define KP_DEFEND_HOZT 1.5
 #define KD_DEFEND_HOZT 0.0
 #define ATK_LINE_SP 0.3
 #define KP_LINE_AVOID 200.0
@@ -89,7 +89,7 @@
 #define DEF_KEEP_SURGE_UNTIL 100.0
 #else
 #define ORBIT_STRENGTH_RADIUS 125.0
-#define DEF_START_SURGE 160.0
+#define DEF_START_SURGE 137.0
 #define DEF_KEEP_SURGE_UNTIL 100.0
 #endif
 
@@ -98,7 +98,7 @@
 #define LS_CLB_THRESH 300
 #define LS_FLIP_THRESH 90
 #else
-#define LS_CLB_THRESH 250
+#define LS_CLB_THRESH 300
 #define LS_FLIP_THRESH 90
 #endif
 

@@ -72,6 +72,7 @@ void setup() {
     delay(500);
 }
 
+
 void loop() {
     tssp.update();
     bt.update(tssp.getBallDir(), tssp.getBallStr(), true);
@@ -105,7 +106,7 @@ void loop() {
             moveSpeed = tssp.getMoveSpd();
         }
     } else {
-        if (isSurging && (tssp.getBallDir() < 30 || tssp.getBallDir() > 330) 
+        if (isSurging && (tssp.getBallDir() < 30 || tssp.getBallDir() > 330)
             && (cam.getDefendGoalDist() <= (SP_DEFEND_VERT + 8.0))) {
             moveDir = tssp.getBallDir();
             moveSpeed = 200.0;
