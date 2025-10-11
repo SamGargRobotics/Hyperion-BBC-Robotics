@@ -19,11 +19,13 @@ class VoltDiv {
 public:
     VoltDiv(uint8_t p, float d) : pin(p), divider(d) {}
     void init();
-    float update();
+    void update();
+    float getLvl();
     bool getMotorOn();
 private:
     uint8_t pin;
     float divider;
+    float lvl;
     bool motorOn;
 };
 

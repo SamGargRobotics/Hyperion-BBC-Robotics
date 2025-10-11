@@ -22,7 +22,7 @@ PID defendCor(KP_CAM_DEFEND, 0.0, KD_CAM_DEFEND);
 PID bearingCor(KP_IMU, 0.0, KD_IMU, 100.0);
 PID centeringPIDHozt(KP_HOZT_CENTERING, 0.0, 0.0, 80.0);
 PID centeringPIDVert(KP_VERT_CENTERING, 0.0, 0.0);
-Timer batteryTimer(5000000);
+Timer batteryTimer(5000000);    
 Tssp_system tssp;
 VoltDiv battery(BATT_READ_PIN, BATTERY1_DIVIDER);
 sensors_event_t bearing;
@@ -45,7 +45,7 @@ void setup() {
         debug.addMode("camDefDis", []() { return String(cam.getDefendGoalDist()); });
         debug.addMode("lsDir", []() { return String(ls.getLineDirection()); });
         debug.addMode("lsState", []() { return String(ls.getLineState()); });
-        // debug.addMode("batLvl", []() { return String(battery.update()); });
+        debug.addMode("batLvl", []() { return String(battery.getLvl()); });
 
         // After you are done monitoring that specific variable and want to do
         // another, you can simply say "stop" in the terminal, and it stops.
@@ -79,6 +79,7 @@ void loop() {
     bno.getEvent(&bearing);
     cam.update(digitalRead(GOAL_PIN));
     ls.update(bearing.orientation.x, true);
+    battery.update();
     float moveDir = 0.0;
     float moveSpeed = 0.0;
     float correction = -bearingCor.update((bearing.orientation.x > 180) ? bearing.orientation.x - 360  : bearing.orientation.x, 0.0);
@@ -95,7 +96,7 @@ void loop() {
                 cam.getAttackGoalAngle(), 0.0);
             float vertVect = centeringPIDVert.update(SP_VERT_CENTERING - cam.getAttackGoalDist(), 0.0);
             moveDir = cam.getAttackGoalVisible()?floatMod(atan2f(hoztVect, vertVect) * RAD_TO_DEG, 360.0):0;
-            moveSpeed = cam.getAttackGoalVisible()?sqrtf(powf(vertVect, 2) + powf(hoztVect, 2)):SURGE_SPEED/2;
+            moveSpeed = cam.getAttackGoalVisible()?sqrtf(powf(vertVect, 2) + powf(hoztVect, 452)):SURGE_SPEED/2;
         } else {
             if(cam.getAttackGoalVisible() && GOAL_TRACKING_TOGGLE && !(tssp.getBallDir() > 40 && tssp.getBallDir() < 320)) {
                 correction = attackCor.update(cam.getAttackGoalAngle() > 180.0 ? cam.getAttackGoalAngle() - 360.0 :
@@ -151,7 +152,7 @@ void loop() {
         debug.update();
     }
 
-    if (battery.update() <= BATTERY_CRITICAL && batteryTimer.timeHasPassedNoUpdate()) {
+    if (battery.getLvl() <= BATTERY_CRITICAL && batteryTimer.timeHasPassedNoUpdate()) {
         moveSpeed = 0;
         correction = 20;
     } else {

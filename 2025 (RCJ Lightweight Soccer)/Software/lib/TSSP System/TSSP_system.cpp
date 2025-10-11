@@ -34,11 +34,7 @@ void Tssp_system::update() {
         for(uint8_t j = 0; j < TSSPNUM; j++) {
             readTssp[j] += 1 - digitalRead(tsspPins[j]);
         }
-        if(!SECOND_ROBOT) {
-            delayMicroseconds(3);
-        } else {
-            delayMicroseconds(3);
-        }
+        delayMicroseconds(3);
     }
 
 

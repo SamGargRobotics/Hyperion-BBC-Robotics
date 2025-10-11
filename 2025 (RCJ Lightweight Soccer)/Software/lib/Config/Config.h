@@ -18,7 +18,7 @@
 // --[MASTER Values]--
 #define SECOND_ROBOT false
 #define GOAL_TRACKING_TOGGLE true
-#define DEBUG_CORE_CODE true
+#define DEBUG_CORE_CODE false
 
 #if not SECOND_ROBOT
 #define SURGE_SPEED 120
@@ -52,8 +52,8 @@
 #define KD_CAM_ATTACK 0.1
 #define KP_CAM_DEFEND 1.0
 #define KD_CAM_DEFEND 0.1
-#define SP_DEFEND_VERT 27.0
-#define KP_DEFEND_VERT 6.75
+#define SP_DEFEND_VERT 24.0
+#define KP_DEFEND_VERT 9.0
 #define KD_DEFEND_VERT 0.0
 #define KP_DEFEND_HOZT 1.5
 #define KD_DEFEND_HOZT 0.0
@@ -69,8 +69,8 @@
 #define KD_CAM_ATTACK 0.1
 #define KP_CAM_DEFEND 1.0
 #define KD_CAM_DEFEND 0.1
-#define SP_DEFEND_VERT 24.0
-#define KP_DEFEND_VERT 6.75
+#define SP_DEFEND_VERT 25.0
+#define KP_DEFEND_VERT 9.0
 #define KD_DEFEND_VERT 0.0
 #define KP_DEFEND_HOZT 1.5
 #define KD_DEFEND_HOZT 0.0
@@ -89,11 +89,11 @@
 #define DEF_KEEP_SURGE_UNTIL 100.0
 #else
 #define ORBIT_STRENGTH_RADIUS 125.0
-#define DEF_START_SURGE 137.0
+#define DEF_START_SURGE 150.0
 #define DEF_KEEP_SURGE_UNTIL 100.0
 #endif
 
-// --[LIGHT SENSOR Values]--
+// --[LIGHT SENSOR Values]--=
 #if not SECOND_ROBOT
 #define LS_CLB_THRESH 300
 #define LS_FLIP_THRESH 90
