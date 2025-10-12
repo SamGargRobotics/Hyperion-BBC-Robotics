@@ -18,19 +18,17 @@
 // --[MASTER Values]--
 #define SECOND_ROBOT false
 #define GOAL_TRACKING_TOGGLE true
-#define DEBUG_CORE_CODE false
+#define DEBUG_CORE_CODE true
 
 #if not SECOND_ROBOT
-#define SURGE_SPEED 120
-#define BASE_SPEED 110
+#define SURGE_SPEED 100 //100
+#define BASE_SPEED 90
 #else
-#define SURGE_SPEED 100
+#define SURGE_SPEED 100 //100
 #define BASE_SPEED 90
 #endif
 
 // --[STRATEGIC Values]--
-#define BLUETOOTH_SWITCHING true
-#define DEFINED_ROBOT_ROLES false
 #define ATTACKING false
 #define NEUTRAL_POINT_MOVE false
 
@@ -52,11 +50,12 @@
 #define KD_CAM_ATTACK 0.1
 #define KP_CAM_DEFEND 1.0
 #define KD_CAM_DEFEND 0.1
-#define SP_DEFEND_VERT 24.0
+#define SP_DEFEND_VERT 26.0
 #define KP_DEFEND_VERT 9.0
 #define KD_DEFEND_VERT 0.0
 #define KP_DEFEND_HOZT 1.5
 #define KD_DEFEND_HOZT 0.0
+#define ABSM_DEFEND_HOZT 100.0
 #define ATK_LINE_SP 0.3
 #define KP_LINE_AVOID 150.0
 #define SP_VERT_CENTERING 43.0
@@ -69,11 +68,12 @@
 #define KD_CAM_ATTACK 0.1
 #define KP_CAM_DEFEND 1.0
 #define KD_CAM_DEFEND 0.1
-#define SP_DEFEND_VERT 25.0
+#define SP_DEFEND_VERT 31.0
 #define KP_DEFEND_VERT 9.0
 #define KD_DEFEND_VERT 0.0
 #define KP_DEFEND_HOZT 1.5
 #define KD_DEFEND_HOZT 0.0
+#define ABSM_DEFEND_HOZT 100.0
 #define ATK_LINE_SP 0.3
 #define KP_LINE_AVOID 200.0
 #define SP_VERT_CENTERING 37.0

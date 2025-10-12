@@ -42,6 +42,7 @@ private:
     Timer connectedTimer = Timer(1000000);
     Timer roleConflict = Timer(1000000);
     Timer sendTimer = Timer(10000);
+    Timer switchTimer = Timer(1000000);
 
     bool otherPrevRole = false;
     bool switching = false;

@@ -15,7 +15,7 @@ Timer::Timer(unsigned long duration) {
 /*! 
  * @brief Function to reset the timer based on the current micros.
  */
-void Timer::resetTime() {
+void Timer::update() {
     lastUpdate = micros();
 }
 
@@ -24,7 +24,7 @@ void Timer::resetTime() {
  */
 bool Timer::timeHasPassed() {
     if (micros() - lastUpdate > timerDuration) {
-        resetTime();
+        update();
         return true;
     }
 

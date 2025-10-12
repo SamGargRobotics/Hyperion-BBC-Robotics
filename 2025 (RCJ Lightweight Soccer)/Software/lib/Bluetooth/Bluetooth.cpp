@@ -8,9 +8,9 @@
  */
 void Bluetooth::init() {
     BT_SERIAL.begin(BT_BAUD);
-    connectedTimer.resetTime();
-    roleConflict.resetTime();
-    sendTimer.resetTime();
+    connectedTimer.update();
+    roleConflict.update();
+    sendTimer.update();
 }
 
 /*!
@@ -38,17 +38,17 @@ void Bluetooth::update(float ballDir, float ballStr, bool enabled) {
 
     if(!self.enabled) {
         self.role = 1;
-        roleConflict.resetTime();
+        roleConflict.update();
     } else if(!connected || !other.enabled) {
         self.role = 0;
-        roleConflict.resetTime();
+        roleConflict.update();
     } else if(switching) {
         self.role = !self.role;
-        roleConflict.resetTime();
+        roleConflict.update();
     } else if(self.role == other.role) {
         if(roleConflict.timeHasPassedNoUpdate()) {
             self.role = self.ballStr > other.ballStr;
-            roleConflict.resetTime();
+            roleConflict.update();
         }
     } else if(!self.role && ((self.ballDir < 15 || self.ballDir > 345) && (self.ballStr > SWITCHING_STRENGTH))) {
         switching = true;
@@ -95,7 +95,7 @@ void Bluetooth::read() {
             uint16_t tempBallDir = (byte1 << 8) | byte2;
             other.ballDir = tempBallDir / 100.0f;
             other.ballStr = BT_SERIAL.read();
-            connectedTimer.resetTime();
+            connectedTimer.update();
         }
     }
 }

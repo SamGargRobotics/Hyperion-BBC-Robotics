@@ -15,7 +15,7 @@ Camera cam;
 Drive_system motors;
 Light_system ls;
 PID avoidLine(KP_LINE_AVOID, 0.0, 0.0, 200.0);
-PID defendHozt(KP_DEFEND_HOZT, 0.0, KD_DEFEND_HOZT);
+PID defendHozt(KP_DEFEND_HOZT, 0.0, KD_DEFEND_HOZT, ABSM_DEFEND_HOZT);
 PID defendVert(KP_DEFEND_VERT, 0.0, KD_DEFEND_VERT);
 PID attackCor(KP_CAM_ATTACK, 0.0, KD_CAM_ATTACK);
 PID defendCor(KP_CAM_DEFEND, 0.0, KD_CAM_DEFEND);
@@ -60,7 +60,7 @@ void setup() {
     motors.init();
     bt.init();
     battery.init();
-    batteryTimer.resetTime();
+    batteryTimer.update();
     cam.init();
     pinMode(GOAL_PIN, INPUT);
     while(!bno.begin(OPERATION_MODE_IMUPLUS)) {
@@ -78,6 +78,8 @@ void loop() {
     bt.update(tssp.getBallDir(), tssp.getBallStr(), true);
     bno.getEvent(&bearing);
     cam.update(digitalRead(GOAL_PIN));
+    // cam.update(true);
+    // Serial.println((digitalRead(GOAL_PIN)));
     ls.update(bearing.orientation.x, true);
     battery.update();
     float moveDir = 0.0;
@@ -90,7 +92,7 @@ void loop() {
     else if (isSurging && tssp.getBallStr() < DEF_KEEP_SURGE_UNTIL) {
         isSurging = false;  // Stop surging
     }
-    if(BLUETOOTH_SWITCHING?bt.getRole():(DEFINED_ROBOT_ROLES?SECOND_ROBOT:ATTACKING)) {
+    if(bt.getRole() || ATTACKING) {
         if((tssp.getBallStr() == 0) && GOAL_TRACKING_TOGGLE && NEUTRAL_POINT_MOVE) {
             float hoztVect = -centeringPIDHozt.update(cam.getAttackGoalAngle() > 180.0 ? cam.getAttackGoalAngle() - 360.0 :
                 cam.getAttackGoalAngle(), 0.0);
@@ -154,9 +156,10 @@ void loop() {
 
     if (battery.getLvl() <= BATTERY_CRITICAL && batteryTimer.timeHasPassedNoUpdate()) {
         moveSpeed = 0;
+        moveDir = 0;
         correction = 20;
     } else {
-        batteryTimer.resetTime();
+        batteryTimer.update();
     }
 
     // Serial.println(moveSpeed);

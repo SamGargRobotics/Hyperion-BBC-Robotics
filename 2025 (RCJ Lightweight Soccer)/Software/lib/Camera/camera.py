@@ -58,4 +58,4 @@ while True:
     uart.writechar(Temp2[1])
     # print("set")
     # print(Temp2)
-    print(Temp1)
+    # print(Temp1)
