@@ -16,7 +16,7 @@
 #include <common.h>
 
 // --[MASTER Values]--
-#define SECOND_ROBOT false
+#define SECOND_ROBOT true
 #define GOAL_TRACKING_TOGGLE true
 #define DEBUG_CORE_CODE true
 
