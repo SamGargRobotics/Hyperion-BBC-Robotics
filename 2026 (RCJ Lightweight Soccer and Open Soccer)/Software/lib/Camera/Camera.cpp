@@ -53,6 +53,7 @@ void Camera::update(bool attackBlue) {
                 seeingDefendingGoal = (goal_y_blue != 0);
                 attackGoalX = goal_y_blue;
             }
+            
         }
     }
     #if DEBUG_CAMERA
