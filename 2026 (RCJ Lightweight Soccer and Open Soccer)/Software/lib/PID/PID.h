@@ -3,9 +3,19 @@
 
 #include <Arduino.h>
 
-Class PID {
+class PID {
 public:
+    PID(float p, float i, float d, float absoluteMax = 0.0);
+    float update(float input, float setpoint, float modulus = 0.0);
 private:
+    float kp;
+    float ki;
+    float kd;
+    uint32_t lastTime;
+    float lastError = 0;
+    float absMax;
+    float integral;
+    float last;
 };
 
 #endif
