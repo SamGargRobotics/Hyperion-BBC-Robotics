@@ -3,4 +3,6 @@
 
 #include <Arduino.h>
 
+#define ROBOT 0
+
 #endif
