@@ -15,7 +15,7 @@ struct RobotData {
     bool enabled;
 };
 
-Class Bluetooth {
+class Bluetooth {
 public:
     void init();
     void update(float ballDir, float ballStr, float goalAng, float goalDist, float batLvl, bool enabled);

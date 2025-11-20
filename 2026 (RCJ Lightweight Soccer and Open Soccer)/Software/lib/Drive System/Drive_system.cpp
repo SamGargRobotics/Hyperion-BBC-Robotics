@@ -4,7 +4,7 @@
 /*!
  * @brief Initializes the motors for use.
  */
-void Drive_system::init() {
+void DriveSystem::init() {
     for(uint8_t i = 0; i < MOTOR_NUM; i++) {
         pinMode(motorInA[i], OUTPUT);
         pinMode(motorInB[i], OUTPUT);
@@ -19,7 +19,7 @@ void Drive_system::init() {
  * @param ang ang that the robot should move in.
  * @param cor Rotation needed to ensure that the robot stays forward.
  */
-void Drive_system::run(float spd, float ang, float cor) {
+void DriveSystem::run(float spd, float ang, float cor) {
     for(int i = 0; i < MOTOR_NUM; i++) {
         values[i] = cosf(DEG_TO_RAD * (ang + motorAng[i])) * spd + cor;
     }

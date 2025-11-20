@@ -13,16 +13,20 @@
 class TsspSystem {
 public:
     void init();
-    void read_all_tssp();
+    void update();
     float get_ball_dir();
     int get_ball_str();
+    float get_move_dir();
+    float get_move_spd();
 private:
     #define TSSP_NUM 16
     uint8_t tsspPins[TSSP_NUM] = {TSSP1, TSSP2, TSSP3, TSSP4, TSSP5, TSSP6, 
                                  TSSP7, TSSP8, TSSP9, TSSP10, TSSP11, TSSP12,
                                  TSSP13, TSSP14, TSSP15, TSSP16};
-    float ballDir = 0;
     int ballStr = 0;
+    float ballDir = 0;
+    float moveDir = 0;
+    float moveSpd = 0;
 };
 
 #endif

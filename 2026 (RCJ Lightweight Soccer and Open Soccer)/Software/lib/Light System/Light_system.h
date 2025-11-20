@@ -12,6 +12,7 @@ private:
     int whiteThreshold[NUM_LS] = {0};
     int sensorIsWhite[NUM_LS] = {0};
     int read_one(int sensorNum);
+    void inner_circle_direction_calc();
 };
 
 #endif

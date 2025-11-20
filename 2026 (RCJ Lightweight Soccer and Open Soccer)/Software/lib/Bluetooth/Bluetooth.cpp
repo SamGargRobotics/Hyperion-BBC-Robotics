@@ -6,7 +6,6 @@
 void Bluetooth::init() {
     BT_SERIAL.begin(BT_BAUD);
     connectedTimer.update();
-    roleConflict.update();
     sendTimer.update();
 }
 

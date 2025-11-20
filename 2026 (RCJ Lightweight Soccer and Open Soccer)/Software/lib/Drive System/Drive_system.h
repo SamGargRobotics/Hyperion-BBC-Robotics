@@ -4,9 +4,9 @@
 #include <Arduino.h>
 #include <Pins.h>
 
-class Drive_system {
+class DriveSystem {
 public:
-    Drive_system() {};
+    DriveSystem() {};
     void init();
     void run(float spd, float ang, float cor);
 private:

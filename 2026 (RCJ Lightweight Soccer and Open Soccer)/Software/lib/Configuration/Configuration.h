@@ -6,8 +6,13 @@
 #define ROBOT 1
 
 #if ROBOT
-    
+    #define ORBIT_TUNER 1
+    #define BASE_SPEED 0
+    #define SURGE_SPEED 0
 #else
+    #define ORBIT_TUNER 1
+    #define BASE_SPEED 0
+    #define SURGE_SPEED 0
 #endif
 
 #define BT_SERIAL Serial1
