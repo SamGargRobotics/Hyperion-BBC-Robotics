@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-Class Common {
+class Common {
 public:
 private:
 };

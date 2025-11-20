@@ -1,12 +1,12 @@
 /*!
  * @file VoltDiv.cpp
  */
-#include "VoltDiv.h"
+#include "Voltage_divider.h"
 
 /*!
  * @brief Initializes the pin to ensure that it can be read from.
  */
-void VoltDiv::init() {
+void VoltageDivider::init() {
     pinMode(pin, INPUT);
 }
 
@@ -16,7 +16,7 @@ void VoltDiv::init() {
  * 
  * @returns Voltage drawn through voltage divider in volts.
  */
-void Voltage_divider::update() {
+void VoltageDivider::update() {
     #if DEBUG_VD
         Serial.print("Analog: ");
         Serial.print(analogRead(pin));
@@ -26,10 +26,10 @@ void Voltage_divider::update() {
     lvl = analogRead(pin) / divider;
 }
 
-float Voltage_divider::get_lvl() {
+float VoltageDivider::get_lvl() {
     return lvl;
 }
 
-bool Voltage_divider::get_motor_on() {
+bool VoltageDivider::get_motor_on() {
     return motorOn;
 }
