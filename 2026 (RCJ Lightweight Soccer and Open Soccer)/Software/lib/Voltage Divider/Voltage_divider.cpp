@@ -16,7 +16,7 @@ void VoltDiv::init() {
  * 
  * @returns Voltage drawn through voltage divider in volts.
  */
-void VoltDiv::update() {
+void Voltage_divider::update() {
     #if DEBUG_VD
         Serial.print("Analog: ");
         Serial.print(analogRead(pin));
@@ -26,10 +26,10 @@ void VoltDiv::update() {
     lvl = analogRead(pin) / divider;
 }
 
-float VoltDiv::get_lvl() {
+float Voltage_divider::get_lvl() {
     return lvl;
 }
 
-bool VoltDiv::get_motor_on() {
+bool Voltage_divider::get_motor_on() {
     return motorOn;
 }

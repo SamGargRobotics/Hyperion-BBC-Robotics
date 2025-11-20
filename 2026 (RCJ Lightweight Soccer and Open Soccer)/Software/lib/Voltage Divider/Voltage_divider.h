@@ -15,9 +15,9 @@
  *        robot's electrical circuit using voltage dividers to uncover battery
  *        level.
  */
-class VoltDiv { 
+class Voltage_divider { 
 public:
-    VoltDiv(uint8_t p, float d) : pin(p), divider(d) {}
+    Voltage_divider(uint8_t p, float d) : pin(p), divider(d) {}
     void init();
     void update();
     float get_lvl();

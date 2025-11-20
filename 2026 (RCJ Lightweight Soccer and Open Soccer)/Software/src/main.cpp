@@ -5,6 +5,12 @@
 #include <Voltage_divider.h>
 #include <Timer.h>
 
+Drive_system motors;
+Debug print;
+PID pid;
+Voltage_divider kicker;
+Timer time;
+
 void setup() {
 
 }
