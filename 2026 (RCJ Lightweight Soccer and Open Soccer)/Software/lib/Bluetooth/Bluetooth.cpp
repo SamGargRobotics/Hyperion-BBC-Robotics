@@ -23,8 +23,44 @@ void Bluetooth::update(float ballDir, float ballStr, float goalAng, float goalDi
 
     bool connected = !connectedTimer.time_has_passed_no_update();
 
-    // strategy here and below
+    // If either robot doesn’t see the ball at all → stop switching & keep roles stable.
+    if (self.ballStr == 0 && other.ballStr == 0) {
+        switching = false;
+        return;
+    } if (!self.enabled) {
+        self.role = 1;
+        return;
+    } if (!connected || !other.enabled) {
+        self.role = 0;
+        return;
+    } if (switching) {
+        self.role = !self.role;
+        switching = false;
+        return;
+    } if (self.batLvl < 11 && other.batLvl < 11 && self.batLvl != other.batLvl) {
+        self.role = (self.batLvl > other.batLvl);  
+        return;
+    }
+
+    int sSelf  = roleWeighting(self);
+    int sOther = roleWeighting(other);
+    self.role = (sSelf >= sOther);
 }
+
+int Bluetooth::roleWeighting(const RobotData& r) {
+    // -------- BALL STRENGTH (0–40 pts) --------
+    int score = r.ballStr * 0.4f;
+    // -------- ATTACK CONE (0 or 20 pts) -------
+    score += (r.ballDir <= 30 || r.ballDir >= 330) ? 20 : 0;
+    // -------- GOAL ALIGNMENT (0 or 15 pts) ---- 
+    score += (r.goalAng <= 25 || r.goalAng >= 335) ? 15 : 0;
+    // -------- DISTANCE FROM OWN GOAL (0–15) ----
+    score += r.goalDist * 0.15f;
+    // -------- BATTERY LEVEL (0–10 pts) ---------
+    score += r.batLvl * 1.0f;
+    return score;
+}
+
 
 void Bluetooth::read() {
        while(BT_SERIAL.available() >= BT_PACKET_SIZE) {
@@ -34,8 +70,8 @@ void Bluetooth::read() {
             BT_SERIAL.read();
             otherPrevRole = other.role;
             uint8_t info = BT_SERIAL.read();
-            other.enabled = info >> 4;
-            other.role = info % 2;
+            other.enabled = (info >> 4) & 0x01;
+            other.role = info & 0x01;
             switching = (otherPrevRole != other.role) && (self.role == other.role);
             other.ballDir = BT_SERIAL.read();
             other.ballStr = BT_SERIAL.read();

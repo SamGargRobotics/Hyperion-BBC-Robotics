@@ -23,6 +23,7 @@ public:
 private:
     void read();
     void send();
+    int roleWeighting(const RobotData& r);
 
     RobotData self = {0};
     RobotData other = {0};
