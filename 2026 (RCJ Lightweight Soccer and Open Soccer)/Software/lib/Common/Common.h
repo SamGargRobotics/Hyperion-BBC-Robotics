@@ -5,6 +5,9 @@
 
 class Common {
 public:
+    float angleBetween(float angleCounterClockwise, float angleClockwise);
+    float midAngleBetween(float angleCounterClockwise, float angleClockwise);
+    int intMod(int x, int m);
 private:
 };
 

@@ -35,6 +35,8 @@
 #define TSSP16 0
 
 #define KICKER_PIN 0
+
 #define KICKER_VD_PIN 0 
+#define ROBOT_VD_PIN 0
 
 #endif

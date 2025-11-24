@@ -8,20 +8,19 @@
 #include <Adafruit_BNO055.h>
 #include <Camera.h>
 
-// CAMERA (openmv)
-// KICKER (strategy)
-// STRATEGY (defender)
-// DRIBBLER (mechanics, strategy)
-// DEBUG SETUP
-// ROBOT BATTERY VD SETUP
-// LIGHT SYSTEM (setup & library)
-// IDEA FOR TSSP --> use the different class system similar to camera for movement direction/distance and ball direction/distance
+// CAMERA (openmv) - tom
+// KICKER (strategy) - tom
+// DRIBBLER (mechanics, strategy) - (tom, sam)
+// DEBUG SETUP (sam)
+// LIGHT SYSTEM (setup & library) (tom)
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55, BNO055_ADDRESS_B, &Wire);
 PID correction(KP_IMU, 0.0, KD_IMU, 100.0);
 PID goalTrack(KP_GOALT, 0.0, KP_GOALT, 100.0);
 PID hozt(KP_HOZT, 0.0, KD_HOZT);
 PID vert(KP_VERT, 0.0, KD_VERT);
+VoltageDivider battery(ROBOT_VD_PIN, ROBOT_VOLTAGE_STABALISER);
+Timer batteryTimer(5000000);    
 DriveSystem motors;
 TsspSystem tssp;
 Bluetooth bt;
@@ -49,7 +48,7 @@ void loop() {
     bno.getEvent(&bearing);
     tssp.update();
     cam.update(false);
-    bt.update(tssp.get_ball_dir(), tssp.get_ball_str(), cam.attack().angle(), 
+    bt.update(tssp.ball().dir(), tssp.ball().str(), cam.attack().angle(), 
               cam.defend().dist(), 0.0f, false);
     float _dir = 0;
     float _spd = 0;
@@ -57,20 +56,20 @@ void loop() {
                                     bearing.orientation.x - 360  : 
                                     bearing.orientation.x, 0.0);
     if(bt.get_role()) {
-        _dir = tssp.get_move_dir();
-        _spd = tssp.get_move_spd();
+        _dir = tssp.move().dir();
+        _spd = tssp.move().spd();
         _cor = -goalTrack.update((cam.attack().angle() > 180) ? 
                                 cam.attack().angle() - 360  : 
                                 cam.attack().angle(), 0.0);
     } else {
-        if (!isSurging && tssp.get_ball_str() >= DEF_START_SURGE) {
+        if (!isSurging && tssp.ball().str() >= DEF_START_SURGE) {
             isSurging = true;
-        } else if (isSurging && tssp.get_ball_str() < DEF_KEEP_SURGE_UNTIL) {
+        } else if (isSurging && tssp.ball().str() < DEF_KEEP_SURGE_UNTIL) {
             isSurging = false;
         }
-        if (isSurging && (tssp.get_ball_dir() < 30 || tssp.get_ball_dir() > 330)
+        if (isSurging && (tssp.ball().dir() < 30 || tssp.ball().dir() > 330)
             && (cam.defend().dist() <= (SP_DEFEND_VERT + 8.0))) {
-            _dir = tssp.get_ball_dir();
+            _dir = tssp.ball().dir();
             _spd = SURGE_SPEED;
             if(GOAL_TRACKING_TOGGLE & cam.defend().visible()) {
                 _cor = goalTrack.update((fmod(cam.defend().angle() + 180.0, 
@@ -79,17 +78,17 @@ void loop() {
                                         360.0 : (fmod(cam.defend().angle() + 
                                         180.0, 360.0)), 0.0);
             }
-        } else if((tssp.get_ball_dir() < 310 && tssp.get_ball_dir() > 130)) {
-            _dir = tssp.get_move_dir();
-            _spd = tssp.get_move_spd();
+        } else if((tssp.ball().dir() < 310 && tssp.ball().dir() > 130)) {
+            _dir = tssp.move().dir();
+            _spd = tssp.move().spd();
         } else {
             if(cam.defend().visible()) {
                 float vertVect = vert.update(cam.defend().visible() - 
                                                 SP_DEFEND_VERT, 0);
-                float hoztVect = -hozt.update((tssp.get_ball_str() != 0) ? 
-                                                    ((tssp.get_ball_dir() > 180) ? 
-                                                    tssp.get_ball_dir() - 360 : 
-                                                    tssp.get_ball_dir()) : 
+                float hoztVect = -hozt.update((tssp.ball().str() != 0) ? 
+                                                    ((tssp.ball().dir() > 180) ? 
+                                                    tssp.ball().dir() - 360 : 
+                                                    tssp.ball().dir()) : 
                                                     -((bearing.orientation.x > 180) 
                                                     ? bearing.orientation.x - 360 : 
                                                     bearing.orientation.x), 0.0);
@@ -107,6 +106,13 @@ void loop() {
                 _spd = BASE_SPEED;
             }
         }
+    }
+    if (battery.get_lvl() <= ROBOT_REQUIRED_VOLT && batteryTimer.time_has_passed_no_update()) {
+        _spd = 0;
+        _dir = 0;
+        _cor = 20;
+    } else {
+        batteryTimer.update();
     }
     motors.run(_spd, _dir, _cor);
 }
