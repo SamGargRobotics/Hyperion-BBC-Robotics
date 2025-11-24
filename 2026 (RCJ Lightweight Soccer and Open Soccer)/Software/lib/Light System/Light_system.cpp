@@ -40,29 +40,34 @@ int LightSystem::read_one(int sensorNum) {
 /*!
 * 
 * @brief Function for inner circle direction calculation
+* @param rot Robots current rotation
+* @param motorOn Whether the motors are on
 */
-void LightSystem::inner_circle_direction_calc() {
+void LightSystem::inner_circle_direction_calc(float rot, bool motorOn) {
+    /*REFS*/
+    bool (&sIW)[NUM_LS] = sensorIsWhite;
+    int (&sT)[NUM_LS] = whiteThreshold;
     for (int8_t i = 0; i < NUM_LS; i++) {
-        sensorIsWhite[i] = (read_one(i) >= whiteThreshold[i]);
+        sIW[i] = (read_one(i) >= sT[i]);
     }
-    if(sensorIsWhite[0]) {sensorIsWhite[31] = 1; sensorIsWhite[1] = 1;}
+    if(sIW[0]) {sIW[31] = 1; sIW[1] = 1;}
     for(int8_t i = 0; i < NUM_LS; i++) {
-        if(sensorIsWhite[intMod(i+1, NUM_LS)] && sensorIsWhite[intMod(i-1, NUM_LS)]) {
-            sensorIsWhite[i] = 1;
+        if(sIW[intMod(i+1, NUM_LS)] && sIW[intMod(i-1, NUM_LS)]) {
+            sIW[i] = 1;
         }
     }
     int8_t clustersList[4][2]; float clusterCenter[3] = {44};
-    int8_t clusterAmt = 0; int8_t minIndex; int8_t maxIndex;
+    int clusterAmount = 0; int minIndex = 0; int maxIndex = 0;
     for(int8_t i = 0; i < NUM_LS; i++) {
-        if(sensorIsWhite[i]) {
-            if(!sensorIsWhite[intMod(i - 1, NUM_LS)]) {
+        if(sIW[i]) {
+            if(!sIW[intMod(i - 1, NUM_LS)]) {
                 minIndex = i;
             }
             if(!sensorIsWhite[intMod(i + 1, NUM_LS)]) {
                 maxIndex = i;
-                clustersList[clusterAmt][0] = minIndex;
-                clustersList[clusterAmt][1] = maxIndex;
-                clusterAmt++;
+                clustersList[clusterAmount][0] = minIndex;
+                clustersList[clusterAmount][1] = maxIndex;
+                clusterAmount++;
             }  
         }
     }

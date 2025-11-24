@@ -1,7 +1,13 @@
 #include <Bluetooth.h>
 
-/*!
- * @brief Initializes bluetooth module for usage.
+/**
+ * @brief Initialises the Bluetooth interface and resets internal timers.
+ *
+ * This sets up the serial communication at the configured baud rate
+ * (defined by @ref BT_BAUD) and primes both the connection timer and
+ * transmission timer. This must be called once during system startup.
+ *
+ * @return void
  */
 void Bluetooth::init() {
     BT_SERIAL.begin(BT_BAUD);
@@ -9,6 +15,28 @@ void Bluetooth::init() {
     sendTimer.update();
 }
 
+/**
+ * @brief Updates local telemetry, handles sending, reading, and role resolution.
+ *
+ * This function is called every loop cycle. It performs:
+ *  - Updating outbound robot information (ball, goal, battery, enabled state)
+ *  - Periodic transmission via @ref sendTimer
+ *  - Incoming packet parsing via @ref read
+ *  - Role determination logic based on: ball visibility, teammate connectivity,
+ *    switching state, battery fallback, and calculated weighting via @ref 
+ *    roleWeighting.
+ *
+ * The resulting role is stored in @ref self.role.
+ *
+ * @param ballDir  Ball direction in degrees (0–359).
+ * @param ballStr  Ball signal strength (0–255).
+ * @param goalAng  Goal angle in degrees (0–359).
+ * @param goalDist Estimated distance to goal (0–255).
+ * @param batLvl   Battery level percentage (0–100).
+ * @param enabled  Robot enabled state.
+ *
+ * @return void
+ */
 void Bluetooth::update(float ballDir, float ballStr, float goalAng, float goalDist, float batLvl, bool enabled) {
     self.ballDir = ballDir;
     self.ballStr = ballStr;
@@ -47,6 +75,21 @@ void Bluetooth::update(float ballDir, float ballStr, float goalAng, float goalDi
     self.role = (sSelf >= sOther);
 }
 
+/**
+ * @brief Computes the "importance rating" of a robot for striker role selection.
+ *
+ * This method uses a weighted scoring system based on:
+ *  - Ball strength (0–40 pts)
+ *  - Ball attack cone alignment (+20 pts)
+ *  - Goal alignment (+15 pts)
+ *  - Distance to goal (0–15 pts)
+ *  - Battery level (+0–10 pts)
+ *
+ * The robot with the higher score becomes striker.
+ *
+ * @param r Reference to the robot's telemetry state.
+ * @return int Calculated weighting score.
+ */
 int Bluetooth::roleWeighting(const RobotData& r) {
     // -------- BALL STRENGTH (0–40 pts) --------
     int score = r.ballStr * 0.4f;
@@ -61,7 +104,21 @@ int Bluetooth::roleWeighting(const RobotData& r) {
     return score;
 }
 
-
+/**
+ * @brief Reads and parses Bluetooth packets from the teammate robot.
+ *
+ * Valid packets begin with two @ref BT_START_BYTE markers.  
+ * Once detected, the function extracts the teammate's: enabled state, role,
+ * ball direction, ball strength, goal angle, goal distance, battery level.
+ *
+ * When a valid packet is received, @ref connectedTimer is reset,
+ * meaning the robots are still in communication.
+ *
+ * Additionally, if the teammate’s role changes and matches our own,
+ * the system enters "switching" mode, triggering a coordinated role swap.
+ *
+ * @return void
+ */
 void Bluetooth::read() {
        while(BT_SERIAL.available() >= BT_PACKET_SIZE) {
         uint8_t byte1 = BT_SERIAL.read();
@@ -83,6 +140,20 @@ void Bluetooth::read() {
     }
 }
 
+/**
+ * @brief Sends this robot's telemetry data through Bluetooth.
+ *
+ * The packet format is:
+ *  [START][START][INFO][ballDir][ballStr][goalAng][goalDist][batLvl]
+ *
+ * Where INFO encodes:
+ *  - bit 4 → enabled flag  
+ *  - bit 0 → role flag  
+ *
+ * Transmission frequency is controlled by @ref sendTimer.
+ *
+ * @return void
+ */
 void Bluetooth::send() {
     BT_SERIAL.write(BT_START_BYTE);
     BT_SERIAL.write(BT_START_BYTE);
@@ -95,10 +166,11 @@ void Bluetooth::send() {
     BT_SERIAL.write(self.batLvl);
 }
 
-/*! 
- * @brief Get function for role of robot (Attack/Defend).
- * 
- * @returns Role of the robot.
+/**
+ * @brief Returns this robot's currently assigned role.
+ *
+ * @return true  Robot is striker.
+ * @return false Robot is defender.
  */
 bool Bluetooth::get_role() {
     return self.role;

@@ -12,7 +12,7 @@
 // KICKER (strategy) - tom
 // DRIBBLER (mechanics, strategy) - (tom, sam)
 // DEBUG SETUP (sam)
-// LIGHT SYSTEM (setup & library) (tom)
+// LIGHT SYSTEM (setup) (tom)
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55, BNO055_ADDRESS_B, &Wire);
 PID correction(KP_IMU, 0.0, KD_IMU, 100.0);
@@ -25,8 +25,9 @@ DriveSystem motors;
 TsspSystem tssp;
 Bluetooth bt;
 Camera cam;
-
 sensors_event_t bearing;
+LightSystem ls;
+
 
 bool isSurging = false;
 
@@ -35,6 +36,7 @@ void setup() {
     tssp.init();
     bt.init();
     cam.init();
+    ls.init();
     while(!bno.begin(OPERATION_MODE_IMUPLUS)) {
         Serial.println("No BNO055 detected. Check your wiring or I2C ADDR.");
         delay(1000);
@@ -50,6 +52,7 @@ void loop() {
     cam.update(false);
     bt.update(tssp.ball().dir(), tssp.ball().str(), cam.attack().angle(), 
               cam.defend().dist(), 0.0f, false);
+    ls.inner_circle_direction_calc(bearing.orientation.x,true);
     float _dir = 0;
     float _spd = 0;
     float _cor = -correction.update((bearing.orientation.x > 180) ? 
