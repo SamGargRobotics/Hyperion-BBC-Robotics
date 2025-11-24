@@ -1,5 +1,16 @@
 #include <Light_System.h>
 
+/*!
+ * @brief Initializes the light sensor system.
+ *
+ * Sets the pin modes for all sensor control pins and input pins.
+ * Loads previously stored sensor thresholds from EEPROM, or sets
+ * default values if EEPROM values are invalid or uninitialized.
+ *
+ * @note The function reads EEPROM values from @ref EEPROM_START_ADDR.
+ *       If a value is invalid or uninitialized (EEPROM_CLEAR_VALUE), 
+ *       a default threshold of 200 is used.
+ */
 void LightSystem::init() {
     for(uint8_t i = 0; i < 4; i++) {
         pinMode(pinList[i], OUTPUT);
@@ -8,7 +19,51 @@ void LightSystem::init() {
     pinMode(LIGHT_PIN2, INPUT);
 
     for(int i = 0; i < NUM_LS; i++) {
-        whiteThreshold[i] = read_one(i) + LS_CLB_THRESH;
+        int val = EEPROM.read(EEPROM_START_ADDR + i);
+        // If EEPROM was never written, fallback to a default value
+        if(val == EEPROM_CLEAR_VALUE || val > 255 || val < 0) {
+            whiteThreshold[i] = 200; // some reasonable default
+        } else {
+            whiteThreshold[i] = val;
+        }
+    }
+}
+
+/*!
+ * @brief Calibrates all light sensors to detect white lines.
+ *
+ * Performs a sensor sweep and determines if each sensor detects a white line.
+ * Updates the `whiteThreshold` array accordingly:
+ *   - If a sensor sees white, threshold is set below the reading minus LS_OFFSET.
+ *   - If no white is detected, threshold is set above the reading plus BACKUP_OFFSET.
+ * The calibrated thresholds are then saved to EEPROM for persistent storage.
+ *
+ * @note EEPROM is cleared before writing new thresholds.
+ * @note The function uses constants CALIBRATE_THRESHOLD, LS_OFFSET, and BACKUP_OFFSET.
+ */
+void LightSystem::calibrate() {
+    int readings[NUM_LS];
+    bool detected[NUM_LS] = {false};
+    // First, read all sensors and check for white line
+    for(int i = 0; i < NUM_LS; i++) {
+        readings[i] = read_one(i);
+        if(read_one(i) >= CALIBRATE_THRESHOLD) {
+            detected[i] = true;  // Sensor sees white line
+        }
+    }
+    // Clear EEPROM first
+    for(int i = 0; i < NUM_LS; i++) {
+        EEPROM.write(EEPROM_START_ADDR + i, EEPROM_CLEAR_VALUE);
+    }
+    // Write thresholds
+    for(int i = 0; i < NUM_LS; i++) {
+        if(detected[i]) {
+            whiteThreshold[i] = readings[i] - LS_OFFSET;  // Normal calibrated value
+        } else {
+            whiteThreshold[i] = readings[i] + BACKUP_OFFSET;  // Backup threshold
+        }
+        // Save to EEPROM
+        EEPROM.write(EEPROM_START_ADDR + i, whiteThreshold[i]);
     }
 }
 
@@ -38,13 +93,12 @@ int LightSystem::read_one(int sensorNum) {
 
 
 /*!
-* 
 * @brief Function for inner circle direction calculation
 * @param rot Robots current rotation
 * @param motorOn Whether the motors are on
 */
 void LightSystem::inner_circle_direction_calc(float rot, bool motorOn) {
-    /*REFS*/
+    /*AKA's | VARIABLE SHORT HANDS*/
     bool (&sIW)[NUM_LS] = sensorIsWhite;
     int (&sT)[NUM_LS] = whiteThreshold;
     for (int8_t i = 0; i < NUM_LS; i++) {
@@ -52,7 +106,7 @@ void LightSystem::inner_circle_direction_calc(float rot, bool motorOn) {
     }
     if(sIW[0]) {sIW[31] = 1; sIW[1] = 1;}
     for(int8_t i = 0; i < NUM_LS; i++) {
-        if(sIW[intMod(i+1, NUM_LS)] && sIW[intMod(i-1, NUM_LS)]) {
+        if(sIW[com.intMod(i+1, NUM_LS)] && sIW[com.intMod(i-1, NUM_LS)]) {
             sIW[i] = 1;
         }
     }
@@ -60,10 +114,10 @@ void LightSystem::inner_circle_direction_calc(float rot, bool motorOn) {
     int clusterAmount = 0; int minIndex = 0; int maxIndex = 0;
     for(int8_t i = 0; i < NUM_LS; i++) {
         if(sIW[i]) {
-            if(!sIW[intMod(i - 1, NUM_LS)]) {
+            if(!sIW[com.intMod(i - 1, NUM_LS)]) {
                 minIndex = i;
             }
-            if(!sensorIsWhite[intMod(i + 1, NUM_LS)]) {
+            if(!sIW[com.intMod(i + 1, NUM_LS)]) {
                 maxIndex = i;
                 clustersList[clusterAmount][0] = minIndex;
                 clustersList[clusterAmount][1] = maxIndex;
@@ -71,11 +125,11 @@ void LightSystem::inner_circle_direction_calc(float rot, bool motorOn) {
             }  
         }
     }
-    if(sensorIsWhite[31] && sensorIsWhite[0]) {
+    if(sIW[31] && sIW[0]) {
         clustersList[0][0] = minIndex;
     }
     for(int i = 0; i < clusterAmount; i++) {
-        clusterCenter[i] = midAngleBetween(clustersList[i][0]*11.25, clustersList[i][1]*11.25);
+        clusterCenter[i] = com.midAngleBetween(clustersList[i][0]*11.25, clustersList[i][1]*11.25);
     }
     float lineDirection = -1;
     float linePos = 0;
@@ -83,20 +137,20 @@ void LightSystem::inner_circle_direction_calc(float rot, bool motorOn) {
         lineDirection = clusterCenter[0]; // just the 1 cluster angle
         linePos = calculate_distance_over(clustersList[0][0]*11.25, clustersList[0][1]*11.25);
     } else if(clusterAmount == 2) {
-        lineDirection = angleBetween(clusterCenter[0], clusterCenter[1]) <= 180\
-                        ? midAngleBetween(clusterCenter[0], clusterCenter[1]) :\
-                        midAngleBetween(clusterCenter[1], clusterCenter[0]);
+        lineDirection = com.angleBetween(clusterCenter[0], clusterCenter[1]) <= 180\
+                        ? com.midAngleBetween(clusterCenter[0], clusterCenter[1]) :\
+                        com.midAngleBetween(clusterCenter[1], clusterCenter[0]);
         linePos = calculate_distance_over(clusterCenter[0], clusterCenter[1]);
     } else if(clusterAmount == 3) {
         float differences[3];
         for(int i = 0; i < 3; i++) {
-            differences[i] = angleBetween(clusterCenter[i], clusterCenter[(i + 1) % 3]);
+            differences[i] = com.angleBetween(clusterCenter[i], clusterCenter[(i + 1) % 3]);
         }
         float bigDiff = max(differences[0], max(differences[1], differences[2]));
         for(int i = 0; i < 3; i++) {
             if(bigDiff == differences[i]) {
                 // lineDirection = clusterCenter[(i+2)%3];
-                lineDirection = midAngleBetween(clusterCenter[(i+1) % 3], clusterCenter[i]);
+                lineDirection = com.midAngleBetween(clusterCenter[(i+1) % 3], clusterCenter[i]);
                 linePos = calculate_distance_over(clusterCenter[(i+1) % 3], clusterCenter[i]);
                 break;
             }
@@ -119,7 +173,7 @@ void LightSystem::inner_circle_direction_calc(float rot, bool motorOn) {
  */
 void LightSystem::calculate_line_state(float rot, float lineDirection, float linePos) {
     bool onLine = lineDirection != -1;
-    float relLineDirection = onLine ? floatMod(lineDirection + rot, 360.0) : -1;
+    float relLineDirection = onLine ? com.floatMod(lineDirection + rot, 360.0) : -1;
     if(lineState == 0.0) {
         if(onLine) {
             lineState = linePos;
@@ -129,7 +183,7 @@ void LightSystem::calculate_line_state(float rot, float lineDirection, float lin
         if(!onLine) {
             lineState = 0.0;
             lineDir = -1.0;
-        } else if(smallestAngleBetween(lineDir, relLineDirection) > LS_FLIP_THRESH) {
+        } else if(com.smallestAngleBetween(lineDir, relLineDirection) > LS_FLIP_THRESH) {
             lineState = 2 - linePos;
             lineDir = floatMod(relLineDirection + 180.0, 360.0);
         } else {
@@ -139,7 +193,7 @@ void LightSystem::calculate_line_state(float rot, float lineDirection, float lin
     } else if(lineState <= 2.0) {
         if(!onLine) {
             lineState = 3;
-        } else if(smallestAngleBetween(lineDir, relLineDirection) < (180 - LS_FLIP_THRESH)) {
+        } else if(com.smallestAngleBetween(lineDir, relLineDirection) < (180 - LS_FLIP_THRESH)) {
             lineState = linePos;
             lineDir = relLineDirection;
         } else {
@@ -147,7 +201,7 @@ void LightSystem::calculate_line_state(float rot, float lineDirection, float lin
             lineState = 2 - linePos;
         }
     } else if(lineState == 3) {
-        if(onLine && smallestAngleBetween(lineDir, relLineDirection) > LS_FLIP_THRESH) {
+        if(onLine && com.smallestAngleBetween(lineDir, relLineDirection) > LS_FLIP_THRESH) {
             lineState = 2 - linePos;
             lineDir = floatMod(relLineDirection + 180, 360);
         }
@@ -168,7 +222,7 @@ void LightSystem::calculate_line_state(float rot, float lineDirection, float lin
  * @returns A float between 0 and 1 representing the angular difference.
  */
 float LightSystem::calculate_distance_over(float angle1, float angle2) {
-    float condition = 0.5 * (1 - cosf(DEG_TO_RAD * smallestAngleBetween(angle1, angle2)));
+    float condition = 0.5 * (1 - cosf(DEG_TO_RAD * com.smallestAngleBetween(angle1, angle2)));
     return (condition == 0)?condition+=0.001:condition;
 }
 

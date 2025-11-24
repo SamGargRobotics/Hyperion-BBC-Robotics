@@ -39,4 +39,6 @@
 #define KICKER_VD_PIN 0 
 #define ROBOT_VD_PIN 0
 
+#define CALIBRATION_SWITCH 0
+
 #endif

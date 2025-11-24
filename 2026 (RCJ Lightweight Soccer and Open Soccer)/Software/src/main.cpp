@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <Drive_system.h>
+#include <Light_system.h>
 #include <Debug.h>
 #include <PID.h>   
 #include <TSSP_system.h>
@@ -9,13 +10,12 @@
 #include <Camera.h>
 
 // CAMERA (openmv) - tom
-// KICKER (strategy) - tom
 // DRIBBLER (mechanics, strategy) - (tom, sam)
 // DEBUG SETUP (sam)
 // LIGHT SYSTEM (setup) (tom)
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55, BNO055_ADDRESS_B, &Wire);
-PID correction(KP_IMU, 0.0, KD_IMU, 100.0);
+PID correction(KP_IMU, 0.0, KD_IMU, 100.0);;
 PID goalTrack(KP_GOALT, 0.0, KP_GOALT, 100.0);
 PID hozt(KP_HOZT, 0.0, KD_HOZT);
 PID vert(KP_VERT, 0.0, KD_VERT);
@@ -25,9 +25,9 @@ DriveSystem motors;
 TsspSystem tssp;
 Bluetooth bt;
 Camera cam;
-sensors_event_t bearing;
 LightSystem ls;
-
+Kicker kicker;
+sensors_event_t bearing;
 
 bool isSurging = false;
 
@@ -37,6 +37,8 @@ void setup() {
     bt.init();
     cam.init();
     ls.init();
+    kicker.init();
+    pinMode(CALIBRATION_SWITCH, INPUT);
     while(!bno.begin(OPERATION_MODE_IMUPLUS)) {
         Serial.println("No BNO055 detected. Check your wiring or I2C ADDR.");
         delay(1000);
@@ -52,6 +54,9 @@ void loop() {
     cam.update(false);
     bt.update(tssp.ball().dir(), tssp.ball().str(), cam.attack().angle(), 
               cam.defend().dist(), 0.0f, false);
+    if(digitalRead(CALIBRATION_SWITCH)) {
+        ls.calibrate();
+    }
     ls.inner_circle_direction_calc(bearing.orientation.x,true);
     float _dir = 0;
     float _spd = 0;
@@ -61,10 +66,18 @@ void loop() {
     if(bt.get_role()) {
         _dir = tssp.move().dir();
         _spd = tssp.move().spd();
-        _cor = -goalTrack.update((cam.attack().angle() > 180) ? 
-                                cam.attack().angle() - 360  : 
-                                cam.attack().angle(), 0.0);
+        float modCamAngle = (cam.attack().angle() > 180) ? 
+                            cam.attack().angle() - 360  : 
+                            cam.attack().angle();
+        if(abs(modCamAngle) < 8.0) {
+            kicker.fire();
+        }
+        _cor = -goalTrack.update(modCamAngle, 0.0);
     } else {
+        if(GOAL_TRACKING_TOGGLE && abs((cam.attack().angle() > 180) ? 
+           cam.attack().angle() - 360  : cam.attack().angle()) < 8.0) {
+            kicker.fire();
+        }
         if (!isSurging && tssp.ball().str() >= DEF_START_SURGE) {
             isSurging = true;
         } else if (isSurging && tssp.ball().str() < DEF_KEEP_SURGE_UNTIL) {

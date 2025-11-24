@@ -50,6 +50,12 @@
 #define CAM_START_PACK_1 200
 #define CAM_START_PACK_2 122
 
+#define CALIBRATE_THRESHOLD 100   // Threshold to detect white line spike
+#define LS_OFFSET 50              // Amount to subtract from detected white line
+#define BACKUP_OFFSET 20          // Amount to add for backup threshold if not detected
+#define EEPROM_START_ADDR 0       // Start address for EEPROM
+#define EEPROM_CLEAR_VALUE 0xFF   // Optional: clear EEPROM before writing
+
 #define KICKER_VOLTAGE_STABALISER 1
 #define KICKER_REQUIRED_VOLT 0
 #define ROBOT_VOLTAGE_STABALISER 1 
