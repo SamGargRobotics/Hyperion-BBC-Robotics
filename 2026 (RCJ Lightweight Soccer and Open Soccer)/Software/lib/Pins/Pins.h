@@ -43,5 +43,6 @@
 #define ROBOT_VD_PIN 0
 
 #define CALIBRATION_SWITCH 0
+#define MOTOR_SWITCH 0
 
 #endif

@@ -40,6 +40,7 @@ void setup() {
     ls.init();
     kicker.init();
     pinMode(CALIBRATION_SWITCH, INPUT);
+    pinMode(MOTOR_SWITCH, INPUT);
     while(!bno.begin(OPERATION_MODE_IMUPLUS)) {
         Serial.println("No BNO055 detected. Check your wiring or I2C ADDR.");
         delay(1000);
@@ -137,5 +138,7 @@ void loop() {
     } else {
         batteryTimer.update();
     }
-    motors.run(_spd, _dir, _cor);
+    if(digitalRead(MOTOR_SWITCH)) {
+        motors.run(_spd, _dir, _cor);
+    }
 }

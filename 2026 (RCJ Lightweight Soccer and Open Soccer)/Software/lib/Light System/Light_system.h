@@ -12,11 +12,14 @@ public:
     void init();
     void calibrate();
     float get_line_dir();
-    void inner_circle_direction_calc(float rot, bool motorOn);
+    void inner_circle_direction_calc(float rot);
+    void outer_circle_dir_calc(float rot);
 private:
     #define NUM_LS 32
-    int pinList[4] = {LIGHT_PIN_DIGI_0, LIGHT_PIN_DIGI_1, LIGHT_PIN_DIGI_2,
+    #define OUTER_NUM_LS 16
+    int innerPinList[4] = {LIGHT_PIN_DIGI_0, LIGHT_PIN_DIGI_1, LIGHT_PIN_DIGI_2,
                         LIGHT_PIN_DIGI_3};
+    int outerPinList[2] = {LIGHT_PIN_DIGI_4, LIGHT_PIN_DIGI_5};
     int whiteThreshold[NUM_LS] = {0};
     bool sensorIsWhite[NUM_LS] = {0};
     int read_one(int sensorNum);

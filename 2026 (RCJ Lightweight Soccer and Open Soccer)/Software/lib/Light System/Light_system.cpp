@@ -81,7 +81,7 @@ int LightSystem::read_one(int sensorNum) {
         throw 112;
     } else {
          for(int8_t i = 0; i < 4; i++) {
-            digitalWrite(pinList[i], (sensorNum>>i)&0x01);
+            digitalWrite(innerPinList[i], (sensorNum>>i)&0x01);
         }
         if(((sensorNum>>4)&0x01) == 0) {
             return analogRead(LIGHT_PIN);
@@ -97,14 +97,16 @@ int LightSystem::read_one(int sensorNum) {
 * @param rot Robots current rotation
 * @param motorOn Whether the motors are on
 */
-void LightSystem::inner_circle_direction_calc(float rot, bool motorOn) {
+void LightSystem::inner_circle_direction_calc(float rot) {
     /*VARIABLES*/
         int8_t clustersList[4][2]; float clusterCenter[3] = {44};
         int clusterAmount = 0; int minIndex = 0; int maxIndex = 0;
+        float lineDirection = -1; float linePos = 0;
     /*AKA's | VARIABLE SHORT HANDS*/
         bool (&sIW)[NUM_LS] = sensorIsWhite; int8_t (&cL)[4][2] = clustersList;
         int (&sT)[NUM_LS] = whiteThreshold; float (&cC)[4][2] = clusterCenter;
         int (&miI) = minIndex; int (&maI) = maxIndex; int (&cA) = clusterAmount;
+        float (&lD) = lineDirection; float (&lP) = linePos;
     // Checks Every Sensor To See If They Are White Or !
         for (int8_t i = 0; i < NUM_LS; i++) {
             sIW[i] = (read_one(i) >= sT[i]);
@@ -118,27 +120,54 @@ void LightSystem::inner_circle_direction_calc(float rot, bool motorOn) {
             }
         }
     // Creates The Clusters
-    for(int8_t i = 0; i < NUM_LS; i++) {
-        if(sIW[i]) {
-            if(!sIW[com.intMod(i - 1, NUM_LS)]) {
-                miI = i;
+        for(int8_t i = 0; i < NUM_LS; i++) {
+            if(sIW[i]) {
+                if(!sIW[com.intMod(i - 1, NUM_LS)]) {
+                    miI = i;
+                }
+                if(!sIW[com.intMod(i + 1, NUM_LS)]) {
+                    maI = i;
+                    cL[cA][0] = miI;
+                    cL[cA][1] = maI;
+                    cA++;
+                }  
             }
-            if(!sIW[com.intMod(i + 1, NUM_LS)]) {
-                maI = i;
-                cL[cA][0] = miI;
-                cL[cA][1] = maI;
-                cA++;
-            }  
         }
-    }
-    if(sIW[31] && sIW[0]) {
-        cL[0][0] = miI;
-    }
-    for(int i = 0; i < cA; i++) {
-        cC[i] = com.midAngleBetween(cL[i][0]*11.25, cL[i][1]*11.25);
-    }
+        if(sIW[31] && sIW[0]) {
+            cL[0][0] = miI;
+        }
+    // Finds The Angle Of Every Cluster
+        for(int i = 0; i < cA; i++) {
+            cC[i] = com.midAngleBetween(cL[i][0]*11.25, cL[i][1]*11.25);
+        }
+    // Finds The Direction Of The Line
+        if(cA == 1) {
+            lD = cC[0]; // just the 1 cluster angle
+            lP = calculateDistanceOver(cL[0][0]*11.25, cL[0][1]*11.25);
+        } else if(cA == 2) {
+            lD = angleBetween(cC[0], cC[1]) <= 180 ? midAngleBetween(cC[0], cC[1]) :\
+                            midAngleBetween(cC[1], cC[0]);
+            lP = calculateDistanceOver(cC[0], cC[1]);
+        } else if(cA == 3) {
+            float d[3];
+            for(int i = 0; i < 3; i++) {
+                d[i] = angleBetween(cC[i], cC[(i + 1) % 3]);
+            }
+            float bD = max(d[0], max(d[1], d[2]));
+            for(int i = 0; i < 3; i++) {
+                if(bD == d[i]) {
+                    lD = midAngleBetween(cC[(i+1) % 3], cC[i]);
+                    lP = calculateDistanceOver(cC[(i+1) % 3], cC[i]);
+                    break;
+                }
+            }
+        }
+    lineDir = lD;
 }
 
+void LightSystem::outer_circle_dir_calc(){
+    
+}
 
 /**
  * @brief Calculates a normalized distance metric between two angles.
