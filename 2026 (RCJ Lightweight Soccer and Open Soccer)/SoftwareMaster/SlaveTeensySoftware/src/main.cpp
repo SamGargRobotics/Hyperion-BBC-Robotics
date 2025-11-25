@@ -1,18 +1,14 @@
 #include <Arduino.h>
+#include <TSSP_system.h>
 
-// put function declarations here:
-int myFunction(int, int);
+TsspSystem tssp;
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  Serial1.begin(115200);   // high speed, stable
+  tssp.init();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  tssp.update();
+  Serial1.printf("DIR:%.2f,STR:%.2f\n", tssp.get_ball_dir(), tssp.get_ball_str());
 }

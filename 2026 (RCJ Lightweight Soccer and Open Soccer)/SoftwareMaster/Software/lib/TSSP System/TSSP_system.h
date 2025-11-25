@@ -24,6 +24,7 @@ private:
     friend class TsspSystem;
     float _dir = 0;
     float _spd = 0;
+    float _mag = 0;
 };
 
 class TsspSystem {
@@ -32,13 +33,14 @@ public:
     void update();
     const BallInfo&   ball()  const { return bInfo; }
     const MoveInfo&   move()  const { return mInfo; }
+
 private:
-    #define TSSP_NUM 16
-    uint8_t tsspPins[TSSP_NUM] = {TSSP1, TSSP2, TSSP3, TSSP4, TSSP5, TSSP6, 
-                                 TSSP7, TSSP8, TSSP9, TSSP10, TSSP11, TSSP12,
-                                 TSSP13, TSSP14, TSSP15, TSSP16};
-    MoveInfo mInfo;
+    void readUartData();   // new function for receiving UART packets
+
     BallInfo bInfo;
+    MoveInfo mInfo;
+
+    String uartBuffer = "";   // stores incoming serial line temporarily
 };
 
 #endif

@@ -10,9 +10,10 @@
 #include <Adafruit_BNO055.h>
 #include <Camera.h>
 
-// DRIBBLER (mechanics, strategy) - (tom, sam)
+// CONFIRM DRIBBLER SWITCH - sam
 // DEBUG SETUP (sam)
 // LIGHT SYSTEM (setup) (tom)
+// TSSP SYTEM UNIT CIRCLE INTERGRATION
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55, BNO055_ADDRESS_B, &Wire);
 PID correction(KP_IMU, 0.0, KD_IMU, 100.0);;

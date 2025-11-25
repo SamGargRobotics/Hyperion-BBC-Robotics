@@ -177,15 +177,69 @@ void LightSystem::inner_circle_direction_calc(float rot) {
             }
         }
     lineDir = lD;
+    calculateLineState(rot, lineDirection, linePos);
+}
+
+/*!
+ * @brief Calculates the state at which the robot is relative to the line and
+ *        field.
+ * 
+ * @param rot Rotation of the robot relative to forward (bno value).
+ * @param lineDirection Direction of the line.
+ * @param linePos How far over the robot is over the line.
+ */
+void Light_system::calculate_line_state(float rot, float lineDirection, float linePos) {
+    bool onLine = lineDirection != -1;
+    float relLineDirection = onLine ? floatMod(lineDirection + rot, 360.0) : -1;
+    if(lineState == 0.0) {
+        if(onLine) {
+            lineState = linePos;
+            lineDir = relLineDirection;
+        }
+    } else if(lineState <= 1.0) {
+        if(!onLine) {
+            lineState = 0.0;
+            lineDir = -1.0;
+        } else if(smallestAngleBetween(lineDir, relLineDirection) > LS_FLIP_THRESH) {
+            lineState = 2 - linePos;
+            lineDir = floatMod(relLineDirection + 180.0, 360.0);
+        } else {
+            lineDir = relLineDirection;
+            lineState = linePos;
+        }
+    } else if(lineState <= 2.0) {
+        if(!onLine) {
+            lineState = 3;
+        } else if(smallestAngleBetween(lineDir, relLineDirection) < (180 - LS_FLIP_THRESH)) {
+            lineState = linePos;
+            lineDir = relLineDirection;
+        } else {
+            lineDir = floatMod(relLineDirection + 180.0, 360.0);
+            lineState = 2 - linePos;
+        }
+    } else if(lineState == 3) {
+        if(onLine && smallestAngleBetween(lineDir, relLineDirection) > LS_FLIP_THRESH) {
+            lineState = 2 - linePos;
+            lineDir = floatMod(relLineDirection + 180, 360);
+        }
+    }
 }
 
 void LightSystem::outer_circle_dir_calc() {
-    float lineDirection = -1;
-    int isOn[16] = {0};
+    float lineDirection = -1; int isOn[16] = {0}; 
+    int (&O) = isOn; int x = 0; int y = 0;
     for(int i = 0; i < 16; i++) {
         isOn[i] = read_one_outer(i);
     }
+    if((O[0]+O[1]+O[2]+O[3]) >= 0.4){y++;}
+    if((O[4]+O[5]+O[6]+O[7]) >= 0.4){x++;}
+    if((O[8]+O[9]+O[10]+O[11]) >= 0.4){y--;}
+    if((O[12]+O[13]+O[14]+O[15]) >= 0.4){x--;}
+    lineDir = atan2(y, x) * 180.0f / M_PI;
+    if (lineDir < 0) lineDir += 360.0f;
 }
+
+
 
 /**
  * @brief Calculates a normalized distance metric between two angles.
