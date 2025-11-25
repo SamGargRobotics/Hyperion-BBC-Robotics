@@ -16,6 +16,9 @@
 #define FLINA 0
 #define FLINB 0
 #define FLPWM 0
+#define DRINA 0
+#define DRINB 0
+#define DRPWM 0
 
 #define TSSP1 0
 #define TSSP2 0

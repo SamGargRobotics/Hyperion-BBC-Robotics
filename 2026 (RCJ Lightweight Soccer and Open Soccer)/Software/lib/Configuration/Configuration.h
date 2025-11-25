@@ -19,7 +19,7 @@
     #define KP_HOZT 0
     #define KD_HOZT 0
     #define SP_DEFEND_VERT 0
-    #define DEF_START_SURGE 0
+    #define BALL_CLOSE_STR 0
     #define DEF_KEEP_SURGE_UNTIL 0
 #else
     #define ORBIT_TUNER 1
@@ -34,7 +34,7 @@
     #define KP_HOZT 0
     #define KD_HOZT 0
     #define SP_DEFEND_VERT 0
-    #define DEF_START_SURGE 0
+    #define BALL_CLOSE_STR 0
     #define DEF_KEEP_SURGE_UNTIL 0
 #endif
 

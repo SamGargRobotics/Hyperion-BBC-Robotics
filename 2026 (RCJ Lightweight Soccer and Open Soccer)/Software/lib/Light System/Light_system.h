@@ -24,10 +24,6 @@ private:
     float calculate_distance_over(float angle1, float angle2);
     float lineState = 0;
     float lineDir = -1;
-    int maxIndex = 44;
-    int minIndex = 44;
-    int clustersList[4][2];
-    float clusterCenter[3] = {44, 44, 44};
 
     Common com;
 };

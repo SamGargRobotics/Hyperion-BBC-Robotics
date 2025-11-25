@@ -2,9 +2,11 @@
 #define DRIBBLER_H
 
 #include <Arduino.h>
+#include <Pins.h>
 
-Class Dribbler {
+class Dribbler {
 public:
+    void run(float spd);
 private:
 };
 

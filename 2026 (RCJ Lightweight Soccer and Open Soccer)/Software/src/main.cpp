@@ -6,10 +6,10 @@
 #include <TSSP_system.h>
 #include <Bluetooth.h>
 #include <Kicker.h>
+#include <Dribbler.h>
 #include <Adafruit_BNO055.h>
 #include <Camera.h>
 
-// CAMERA (openmv) - tom
 // DRIBBLER (mechanics, strategy) - (tom, sam)
 // DEBUG SETUP (sam)
 // LIGHT SYSTEM (setup) (tom)
@@ -27,6 +27,7 @@ Bluetooth bt;
 Camera cam;
 LightSystem ls;
 Kicker kicker;
+Dribbler dribbler;
 sensors_event_t bearing;
 
 bool isSurging = false;
@@ -56,6 +57,9 @@ void loop() {
               cam.defend().dist(), 0.0f, false);
     if(digitalRead(CALIBRATION_SWITCH)) {
         ls.calibrate();
+        bno.setMode(OPERATION_MODE_CONFIG);
+        delay(20);
+        bno.setMode(OPERATION_MODE_IMUPLUS);
     }
     ls.inner_circle_direction_calc(bearing.orientation.x,true);
     float _dir = 0;
@@ -78,9 +82,9 @@ void loop() {
            cam.attack().angle() - 360  : cam.attack().angle()) < 8.0) {
             kicker.fire();
         }
-        if (!isSurging && tssp.ball().str() >= DEF_START_SURGE) {
+        if (!isSurging && tssp.ball().str() >= BALL_CLOSE_STR) {
             isSurging = true;
-        } else if (isSurging && tssp.ball().str() < DEF_KEEP_SURGE_UNTIL) {
+        } else if (isSurging && tssp.ball().str() < BALL_CLOSE_STR) {
             isSurging = false;
         }
         if (isSurging && (tssp.ball().dir() < 30 || tssp.ball().dir() > 330)
@@ -122,6 +126,9 @@ void loop() {
                 _spd = BASE_SPEED;
             }
         }
+    }
+    if(tssp.ball().str() > BALL_CLOSE_STR) {
+        dribbler.run(100);
     }
     if (battery.get_lvl() <= ROBOT_REQUIRED_VOLT && batteryTimer.time_has_passed_no_update()) {
         _spd = 0;

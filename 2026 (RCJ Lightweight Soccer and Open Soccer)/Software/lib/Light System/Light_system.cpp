@@ -98,115 +98,47 @@ int LightSystem::read_one(int sensorNum) {
 * @param motorOn Whether the motors are on
 */
 void LightSystem::inner_circle_direction_calc(float rot, bool motorOn) {
+    /*VARIABLES*/
+        int8_t clustersList[4][2]; float clusterCenter[3] = {44};
+        int clusterAmount = 0; int minIndex = 0; int maxIndex = 0;
     /*AKA's | VARIABLE SHORT HANDS*/
-    bool (&sIW)[NUM_LS] = sensorIsWhite;
-    int (&sT)[NUM_LS] = whiteThreshold;
-    for (int8_t i = 0; i < NUM_LS; i++) {
-        sIW[i] = (read_one(i) >= sT[i]);
-    }
-    if(sIW[0]) {sIW[31] = 1; sIW[1] = 1;}
-    for(int8_t i = 0; i < NUM_LS; i++) {
-        if(sIW[com.intMod(i+1, NUM_LS)] && sIW[com.intMod(i-1, NUM_LS)]) {
-            sIW[i] = 1;
+        bool (&sIW)[NUM_LS] = sensorIsWhite; int8_t (&cL)[4][2] = clustersList;
+        int (&sT)[NUM_LS] = whiteThreshold; float (&cC)[4][2] = clusterCenter;
+        int (&miI) = minIndex; int (&maI) = maxIndex; int (&cA) = clusterAmount;
+    // Checks Every Sensor To See If They Are White Or !
+        for (int8_t i = 0; i < NUM_LS; i++) {
+            sIW[i] = (read_one(i) >= sT[i]);
         }
-    }
-    int8_t clustersList[4][2]; float clusterCenter[3] = {44};
-    int clusterAmount = 0; int minIndex = 0; int maxIndex = 0;
+    // Bleed Thee Index Loops Together
+        if(sIW[0]) {sIW[31] = 1; sIW[1] = 1;}
+    // Fills In The Gaps For Broken Sensors
+        for(int8_t i = 0; i < NUM_LS; i++) {
+            if(sIW[com.intMod(i+1, NUM_LS)] && sIW[com.intMod(i-1, NUM_LS)]) {
+                sIW[i] = 1;
+            }
+        }
+    // Creates The Clusters
     for(int8_t i = 0; i < NUM_LS; i++) {
         if(sIW[i]) {
             if(!sIW[com.intMod(i - 1, NUM_LS)]) {
-                minIndex = i;
+                miI = i;
             }
             if(!sIW[com.intMod(i + 1, NUM_LS)]) {
-                maxIndex = i;
-                clustersList[clusterAmount][0] = minIndex;
-                clustersList[clusterAmount][1] = maxIndex;
-                clusterAmount++;
+                maI = i;
+                cL[cA][0] = miI;
+                cL[cA][1] = maI;
+                cA++;
             }  
         }
     }
     if(sIW[31] && sIW[0]) {
-        clustersList[0][0] = minIndex;
+        cL[0][0] = miI;
     }
-    for(int i = 0; i < clusterAmount; i++) {
-        clusterCenter[i] = com.midAngleBetween(clustersList[i][0]*11.25, clustersList[i][1]*11.25);
-    }
-    float lineDirection = -1;
-    float linePos = 0;
-    if(clusterAmount == 1) {
-        lineDirection = clusterCenter[0]; // just the 1 cluster angle
-        linePos = calculate_distance_over(clustersList[0][0]*11.25, clustersList[0][1]*11.25);
-    } else if(clusterAmount == 2) {
-        lineDirection = com.angleBetween(clusterCenter[0], clusterCenter[1]) <= 180\
-                        ? com.midAngleBetween(clusterCenter[0], clusterCenter[1]) :\
-                        com.midAngleBetween(clusterCenter[1], clusterCenter[0]);
-        linePos = calculate_distance_over(clusterCenter[0], clusterCenter[1]);
-    } else if(clusterAmount == 3) {
-        float differences[3];
-        for(int i = 0; i < 3; i++) {
-            differences[i] = com.angleBetween(clusterCenter[i], clusterCenter[(i + 1) % 3]);
-        }
-        float bigDiff = max(differences[0], max(differences[1], differences[2]));
-        for(int i = 0; i < 3; i++) {
-            if(bigDiff == differences[i]) {
-                // lineDirection = clusterCenter[(i+2)%3];
-                lineDirection = com.midAngleBetween(clusterCenter[(i+1) % 3], clusterCenter[i]);
-                linePos = calculate_distance_over(clusterCenter[(i+1) % 3], clusterCenter[i]);
-                break;
-            }
-        }
-    }
-    calculate_line_state(rot, lineDirection, linePos);
-    if(!motorOn) {
-        lineDir = -1;
-        lineState = 0.0;
+    for(int i = 0; i < cA; i++) {
+        cC[i] = com.midAngleBetween(cL[i][0]*11.25, cL[i][1]*11.25);
     }
 }
 
-/*!
- * @brief Calculates the state at which the robot is relative to the line and
- *        field.
- * 
- * @param rot Rotation of the robot relative to forward (bno value).
- * @param lineDirection Direction of the line.
- * @param linePos How far over the robot is over the line.
- */
-void LightSystem::calculate_line_state(float rot, float lineDirection, float linePos) {
-    bool onLine = lineDirection != -1;
-    float relLineDirection = onLine ? com.floatMod(lineDirection + rot, 360.0) : -1;
-    if(lineState == 0.0) {
-        if(onLine) {
-            lineState = linePos;
-            lineDir = relLineDirection;
-        }
-    } else if(lineState <= 1.0) {
-        if(!onLine) {
-            lineState = 0.0;
-            lineDir = -1.0;
-        } else if(com.smallestAngleBetween(lineDir, relLineDirection) > LS_FLIP_THRESH) {
-            lineState = 2 - linePos;
-            lineDir = floatMod(relLineDirection + 180.0, 360.0);
-        } else {
-            lineDir = relLineDirection;
-            lineState = linePos;
-        }
-    } else if(lineState <= 2.0) {
-        if(!onLine) {
-            lineState = 3;
-        } else if(com.smallestAngleBetween(lineDir, relLineDirection) < (180 - LS_FLIP_THRESH)) {
-            lineState = linePos;
-            lineDir = relLineDirection;
-        } else {
-            lineDir = floatMod(relLineDirection + 180.0, 360.0);
-            lineState = 2 - linePos;
-        }
-    } else if(lineState == 3) {
-        if(onLine && com.smallestAngleBetween(lineDir, relLineDirection) > LS_FLIP_THRESH) {
-            lineState = 2 - linePos;
-            lineDir = floatMod(relLineDirection + 180, 360);
-        }
-    }
-}
 
 /**
  * @brief Calculates a normalized distance metric between two angles.
