@@ -68,13 +68,9 @@ void LightSystem::calibrate() {
 }
 
 /*!
-*
 * @brief Reads one sensor : intended for the inner circle
-*
 * @param sensorNum The sensors index in the pinList array
-*
 * @return Outputs the reading of provided sensor (0 or 1)
-*
 */
 int LightSystem::read_one(int sensorNum) {
     if(sensorNum < 0 || sensorNum > NUM_LS) {
@@ -91,11 +87,29 @@ int LightSystem::read_one(int sensorNum) {
     }
 }
 
+/*!
+* @brief Reads one sensor : intended for the outer circle
+* @param sensorNum The sensors index in the outerPinList array
+* @return Outputs the reading of provided sensor (0 or 1)
+*/
+int LightSystem::read_one_outer(int sensorNum) {
+    if(sensorNum < 0 || sensorNum > OUTER_NUM_LS) {
+        throw 112;
+    } else {
+         for(int8_t i = 0; i < 4; i++) {
+            digitalWrite(outerPinList[i], (sensorNum>>i)&0x01);
+        }
+        if(((sensorNum>>4)&0x01) == 0) {
+            return analogRead(LIGHT_PIN);
+        } else {
+            return analogRead(LIGHT_PIN2);
+        }
+    }
+}
 
 /*!
 * @brief Function for inner circle direction calculation
 * @param rot Robots current rotation
-* @param motorOn Whether the motors are on
 */
 void LightSystem::inner_circle_direction_calc(float rot) {
     /*VARIABLES*/
@@ -165,8 +179,12 @@ void LightSystem::inner_circle_direction_calc(float rot) {
     lineDir = lD;
 }
 
-void LightSystem::outer_circle_dir_calc(){
-    
+void LightSystem::outer_circle_dir_calc() {
+    float lineDirection = -1;
+    int isOn[16] = {0};
+    for(int i = 0; i < 16; i++) {
+        isOn[i] = read_one_outer(i);
+    }
 }
 
 /**
