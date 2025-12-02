@@ -7,9 +7,6 @@ void TsspSystem::init() {
 
 void TsspSystem::update() {
     readUartData();
-    float x = cos(bInfo._dir);
-    float y = sin(bInfo._dir);
-    bInfo._mag = sqrt(pow(x, 2) + pow(y, 2));
     mInfo._dir = fmod(bInfo._dir + (((bInfo._dir > 180 ? bInfo._dir - 360 : bInfo._dir) < 0) ? 
               -(constrain(0.02f * constrain(bInfo._str / ORBIT_TUNER, 0, 1) * 
               expf(4.5f * constrain(bInfo._str / ORBIT_TUNER, 0, 1)), 0.0f, 1.0f) *
@@ -18,7 +15,7 @@ void TsspSystem::update() {
               ORBIT_TUNER, 0, 1) * expf(4.5f * constrain(bInfo._str / ORBIT_TUNER, 
               0, 1)), 0.0f, 1.0f) * min(0.4f * expf(0.25f * abs(bInfo._dir > 180 ? 
               bInfo._dir - 360 : bInfo._dir)) - 0.4f, 90.0f))), 360.0f);
-    mInfo._spd = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) * (1.0f - ((constrain(
+    mInfo._spd = BASE_SPEED + (SURGE_SPEED - BASE_SPEED) *   (1.0f - ((constrain(
               0.02f * constrain(bInfo._str / ORBIT_TUNER, 0, 1) * expf(4.5f * 
               constrain(bInfo._str / ORBIT_TUNER, 0, 1)), 0.0f, 1.0f) * min(0.4f * 
               expf(0.25f * abs(bInfo._dir > 180 ? bInfo._dir - 360 : bInfo._dir)) - 0.4f,

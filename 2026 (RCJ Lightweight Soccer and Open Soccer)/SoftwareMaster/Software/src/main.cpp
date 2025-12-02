@@ -10,10 +10,7 @@
 #include <Adafruit_BNO055.h>
 #include <Camera.h>
 
-// CONFIRM DRIBBLER SWITCH - sam
-// DEBUG SETUP (sam)
-// LIGHT SYSTEM (setup) (tom)
-// TSSP SYTEM UNIT CIRCLE INTERGRATION
+// TSSP SYTEM UNIT CIRCLE INTERGRATION - ask how this works
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55, BNO055_ADDRESS_B, &Wire);
 PID correction(KP_IMU, 0.0, KD_IMU, 100.0);;
@@ -21,7 +18,7 @@ PID goalTrack(KP_GOALT, 0.0, KP_GOALT, 100.0);
 PID hozt(KP_HOZT, 0.0, KD_HOZT);
 PID vert(KP_VERT, 0.0, KD_VERT);
 VoltageDivider battery(ROBOT_VD_PIN, ROBOT_VOLTAGE_STABALISER);
-Timer batteryTimer(5000000);    
+Timer batteryTimer(5000000);
 DriveSystem motors;
 TsspSystem tssp;
 Bluetooth bt;
@@ -57,13 +54,13 @@ void loop() {
     cam.update(false);
     bt.update(tssp.ball().dir(), tssp.ball().str(), cam.attack().angle(), 
               cam.defend().dist(), 0.0f, false);
+    ls.inner_circle_direction_calc(bearing.orientation.x);
     if(digitalRead(CALIBRATION_SWITCH)) {
         ls.calibrate();
         bno.setMode(OPERATION_MODE_CONFIG);
         delay(20);
         bno.setMode(OPERATION_MODE_IMUPLUS);
     }
-    ls.inner_circle_direction_calc(bearing.orientation.x,true);
     float _dir = 0;
     float _spd = 0;
     float _cor = -correction.update((bearing.orientation.x > 180) ? 
@@ -129,9 +126,6 @@ void loop() {
             }
         }
     }
-    if(tssp.ball().str() > BALL_CLOSE_STR) {
-        dribbler.run(100);
-    }
     if (battery.get_lvl() <= ROBOT_REQUIRED_VOLT && batteryTimer.time_has_passed_no_update()) {
         _spd = 0;
         _dir = 0;
@@ -140,6 +134,13 @@ void loop() {
         batteryTimer.update();
     }
     if(digitalRead(MOTOR_SWITCH)) {
-        motors.run(_spd, _dir, _cor);
+        if(ls.get_line_state() >= 1) {
+            motors.run(_spd, ls.get_line_dir(), _cor);
+        } else {
+            motors.run(_spd, _dir, _cor);
+        }
+        if((tssp.ball().str() > BALL_CLOSE_STR)) {
+            dribbler.run(100);
+        }
     }
 }

@@ -2,6 +2,7 @@
 #define TSSP_SYSTEM_H
 
 #include <Arduino.h>
+#include <Common.h>
 
 class TsspSystem {
 public:
@@ -15,6 +16,8 @@ private:
     uint8_t tsspPins[TSSP_NUM] = {0};
     float ballDir = 0;
     float ballStr = 0;
+    float tsspX[TSSPNUM] = {0};
+    float tsspY[TSSPNUM] = {0};
 };
 
 #endif

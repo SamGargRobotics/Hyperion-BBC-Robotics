@@ -20,28 +20,26 @@
 #define DRINB 0
 #define DRPWM 0
 
-#define TSSP1 0
-#define TSSP2 0
-#define TSSP3 0
-#define TSSP4 0
-#define TSSP5 0
-#define TSSP6 0
-#define TSSP7 0
-#define TSSP8 0
-#define TSSP9 0
-#define TSSP10 0
-#define TSSP11 0
-#define TSSP12 0
-#define TSSP13 0
-#define TSSP14 0
-#define TSSP15 0
-#define TSSP16 0
+#define LIGHT_PIN_DIGI_0 0
+#define LIGHT_PIN_DIGI_1 0
+#define LIGHT_PIN_DIGI_2 0
+#define LIGHT_PIN_DIGI_3 0
+#define LIGHT_PIN_DIGI_4 0
+#define LIGHT_PIN_DIGI_5 0
 
 #define KICKER_PIN 0
 
 #define KICKER_VD_PIN 0 
 #define ROBOT_VD_PIN 0
 
+/*
+    SWITCHES:
+    - Power (Hardware Switch) - Powers motors and comm module.
+    - Logic (Hardware Switch) - Powers all logic based systems.
+    - Calibration (Software Switch) - Allows for calibration of IMU and LS.
+    - Motor (Software Switch) - No motors are run unless this switch is turned on.
+    - Dribbler (Software Switch) - Dribbler is not to run unless this switch is turned on.
+*/
 #define CALIBRATION_SWITCH 0
 #define MOTOR_SWITCH 0
 

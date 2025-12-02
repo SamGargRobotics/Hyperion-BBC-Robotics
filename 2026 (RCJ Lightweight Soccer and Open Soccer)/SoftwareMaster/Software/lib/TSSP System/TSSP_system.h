@@ -24,7 +24,6 @@ private:
     friend class TsspSystem;
     float _dir = 0;
     float _spd = 0;
-    float _mag = 0;
 };
 
 class TsspSystem {
